@@ -1,0 +1,91 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Zap, Rocket } from "lucide-react";
+import { GameHeader } from "@/components/shared/game-header";
+import { StepIndicator } from "@/components/shared/step-indicator";
+import { useGameStore } from "@/lib/game-store";
+
+const STEPS = ["Setup", "Handicap", "Turbo", "Play"];
+
+export default function TurboPage() {
+  const router = useRouter();
+  const { config, toggleTurboHole } = useGameStore();
+
+  useEffect(() => {
+    if (!config?.players?.length) {
+      router.replace("/setup");
+    }
+  }, [config, router]);
+
+  if (!config?.players?.length) return null;
+
+  const turboHoles = config.turboHoles;
+
+  const handleStart = () => {
+    router.push("/play");
+  };
+
+  return (
+    <div className="min-h-dvh bg-slate-950 flex flex-col">
+      <GameHeader title="Turbo Holes" backHref="/handicap" />
+      <StepIndicator steps={STEPS} currentStep={2} />
+
+      <div className="flex-1 px-4 pb-28 space-y-4 pt-4">
+        <div className="glass-card p-5">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+              <Zap className="h-4 w-4 text-amber-400" />
+            </div>
+            <h2 className="font-bold text-white">Select Turbo Holes</h2>
+          </div>
+          <p className="text-sm text-slate-400 mb-5 ml-10">
+            Turbo holes score <span className="text-amber-400 font-bold">x2</span>. Tap to toggle.
+          </p>
+
+          <div className="grid grid-cols-6 gap-2">
+            {Array.from({ length: config.numberOfHoles }, (_, i) => i + 1).map(
+              (hole) => {
+                const isTurbo = turboHoles.includes(hole);
+                return (
+                  <button
+                    key={hole}
+                    onClick={() => toggleTurboHole(hole)}
+                    className={`h-12 rounded-xl text-sm font-bold transition-all active:scale-90 ${
+                      isTurbo
+                        ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 scale-105"
+                        : "bg-slate-800/80 text-slate-400 hover:bg-slate-700 border border-slate-700/50"
+                    }`}
+                  >
+                    {hole}
+                  </button>
+                );
+              }
+            )}
+          </div>
+
+          {turboHoles.length > 0 && (
+            <div className="mt-4 flex items-center gap-2">
+              <Zap className="h-3.5 w-3.5 text-amber-400" />
+              <p className="text-sm text-amber-400/80">
+                {turboHoles.length} turbo hole{turboHoles.length !== 1 ? "s" : ""}{" "}
+                selected
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
+        <button
+          className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          onClick={handleStart}
+        >
+          <Rocket className="h-5 w-5" />
+          Start Game
+        </button>
+      </div>
+    </div>
+  );
+}
