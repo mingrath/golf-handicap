@@ -22,15 +22,15 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Score Input
 
-- [ ] **INPT-01**: User can enter strokes with a single tap per player using preset number row (3-7 range with +/- for outliers)
-- [ ] **INPT-02**: After submitting hole scores, app auto-advances to the next hole with brief confirmation flash
-- [ ] **INPT-03**: User can swipe left/right on the play screen to navigate between holes
-- [ ] **INPT-04**: Phone vibrates briefly on score submission (progressive enhancement, no-op if unsupported)
+- [x] **INPT-01**: User can enter strokes with a single tap per player using preset number row (3-7 range with +/- for outliers)
+- [x] **INPT-02**: After submitting hole scores, app auto-advances to the next hole with brief confirmation flash
+- [x] **INPT-03**: User can swipe left/right on the play screen to navigate between holes
+- [x] **INPT-04**: Phone vibrates briefly on score submission (progressive enhancement, no-op if unsupported)
 
 ### Live Display
 
-- [ ] **LIVE-01**: Mini-leaderboard showing ranked players with running totals is always visible below stroke input during play
-- [ ] **LIVE-02**: Each player's leaderboard entry shows inline sparkline of their last 5 holes' cumulative score trend
+- [x] **LIVE-01**: Mini-leaderboard showing ranked players with running totals is always visible below stroke input during play
+- [x] **LIVE-02**: Each player's leaderboard entry shows inline sparkline of their last 5 holes' cumulative score trend
 
 ### Results
 
@@ -102,12 +102,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOUN-08 | Phase 1 | Done |
 | FOUN-09 | Phase 1 | Done |
 | FOUN-10 | Phase 1 | Done |
-| INPT-01 | Phase 2 | Pending |
-| INPT-02 | Phase 2 | Pending |
-| INPT-03 | Phase 2 | Pending |
-| INPT-04 | Phase 2 | Pending |
-| LIVE-01 | Phase 2 | Pending |
-| LIVE-02 | Phase 2 | Pending |
+| INPT-01 | Phase 2 | Done |
+| INPT-02 | Phase 2 | Done |
+| INPT-03 | Phase 2 | Done |
+| INPT-04 | Phase 2 | Done |
+| LIVE-01 | Phase 2 | Done |
+| LIVE-02 | Phase 2 | Done |
 | SETP-01 | Phase 3 | Pending |
 | SETP-02 | Phase 3 | Pending |
 | RSLT-01 | Phase 4 | Pending |
