@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 5 of 7 (Game History)
-Plan: 0 of 2 in current phase
-Status: Ready to execute
-Last activity: 2026-02-17 -- Phase 5 planned (2 plans, verified by plan-checker)
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-17 -- Completed 05-01 (History Auto-Save)
 
-Progress: [███████░░░░░] 57%
+Progress: [████████░░░░] 64%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 4min
-- Total execution time: 0.45 hours
+- Total execution time: 0.48 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [███████░░░░░] 57%
 | 02 | 2/2 | 7min | 3.5min |
 | 03 | 1/1 | 4min | 4min |
 | 04 | 2/2 | 7min | 3.5min |
+| 05 | 1/2 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (3min), 03-01 (4min), 04-01 (3min), 04-02 (4min)
-- Trend: stable
+- Last 5 plans: 03-01 (4min), 04-01 (3min), 04-02 (4min), 05-01 (2min)
+- Trend: stable/improving
 
 *Updated after each plan completion*
 
@@ -70,6 +71,10 @@ Recent decisions affecting current work:
 - [04-02]: Off-screen capture card uses position:fixed left:-9999px (not display:none) for browser layout
 - [04-02]: Unicode crown emoji in share card instead of Lucide icon for reliable PNG rendering
 - [04-02]: Podium animation gated by useRef -- replays on refresh but not on in-session navigation
+- [05-01]: Dexie EntityTable with ++id auto-increment and completedAt index for sort queries
+- [05-01]: useRef guard + minimal deps array for exactly-once save (defense-in-depth)
+- [05-01]: Fire-and-forget save with .catch(console.error) -- failure does not block results UI
+- [05-01]: Full state snapshot stored in HistoryRecord for future detail view and stats
 
 ### Pending Todos
 
@@ -82,5 +87,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 5 planned, ready to execute
+Stopped at: Completed 05-01-PLAN.md (History Auto-Save)
 Resume file: None
