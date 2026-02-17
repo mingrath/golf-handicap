@@ -47,11 +47,11 @@ Plans:
   2. After submitting all strokes for a hole, the app auto-advances to the next hole with a brief visual confirmation
   3. A mini-leaderboard showing ranked players with running totals is always visible below the stroke input area
   4. User can swipe left/right on the play screen to navigate between holes without tapping buttons
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: Fast stroke input and auto-advance (INPT-01, INPT-02, INPT-04)
-- [ ] 02-02: Live leaderboard and hole navigation (LIVE-01, LIVE-02, INPT-03)
+- [ ] 02-01-PLAN.md — Fast stroke input with preset number row, auto-advance with confirmation flash, haptic feedback (INPT-01, INPT-02, INPT-04)
+- [ ] 02-02-PLAN.md — Always-visible mini-leaderboard with sparklines, swipe hole navigation (LIVE-01, LIVE-02, INPT-03)
 
 ### Phase 3: Setup Streamlining
 **Goal**: Users can start a new round in fewer taps while retaining full access to handicap and turbo configuration
