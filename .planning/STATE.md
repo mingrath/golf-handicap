@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 2 - Score Input & Live Play
+**Current focus:** Phase 3 - Results & History
 
 ## Current Position
 
-Phase: 2 of 7 (Score Input & Live Play)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-17 -- Completed 02-01 (StrokeInput + auto-advance)
+Phase: 3 of 7 (Results & History)
+Plan: 1 of ? in current phase
+Status: Ready for next phase
+Last activity: 2026-02-17 -- Completed 02-02 (MiniLeaderboard + sparklines + swipe nav)
 
-Progress: [███░░░░░░░░░] 21%
+Progress: [████░░░░░░░░] 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 4.3min
-- Total execution time: 0.22 hours
+- Total plans completed: 4
+- Average duration: 4min
+- Total execution time: 0.27 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 2/2 | 9min | 4.5min |
-| 02 | 1/2 | 4min | 4min |
+| 02 | 2/2 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (6min), 02-01 (4min)
-- Trend: stable
+- Last 5 plans: 01-01 (3min), 01-02 (6min), 02-01 (4min), 02-02 (3min)
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -54,6 +54,9 @@ Recent decisions affecting current work:
 - [01-02]: Pre-commit hook uses --bail 1 to fail fast
 - [02-01]: Replaced setState-in-useEffect with useMemo+overrides pattern for React 19 lint compliance
 - [02-01]: Confirmation flash as centered fixed overlay for outdoor sunlight visibility
+- [02-02]: Removed scoreboard toggle -- replaced by always-visible MiniLeaderboard
+- [02-02]: Removed Hole Rankings and Running Total cards as redundant with MiniLeaderboard
+- [02-02]: Sparkline color switches between emerald/rose based on player total sign
 
 ### Pending Todos
 
@@ -61,10 +64,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 2 research resolved: no new deps needed, custom useSwipe + SVG sparkline approach
+None currently.
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 02-02-PLAN.md (Phase 2 complete)
 Resume file: None
