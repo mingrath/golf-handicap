@@ -114,11 +114,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. App automatically matches the device's dark/light system preference on first load, and user can manually toggle between themes
   2. After submitting a hole's scores, an undo button appears for 10 seconds that lets the user revert the last submission
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 07-01: Dark/light theme with system detection (THEM-01)
-- [ ] 07-02: Undo last submission (THEM-02)
+- [ ] 07-01-PLAN.md — Dark/light theme with system detection, CSS palettes, color migration across all pages (THEM-01)
+- [ ] 07-02-PLAN.md — Undo last submission with 10-second floating banner and Zustand snapshot/restore (THEM-02)
 
 ## Progress
 
