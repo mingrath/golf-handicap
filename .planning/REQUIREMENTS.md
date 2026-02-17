@@ -1,7 +1,7 @@
 # Requirements: Golf Handicap Scorer v2
 
 **Defined:** 2026-02-17
-**Core Value:** Fast, clear scoring on the course — enter strokes quickly after each hole and always know who's winning at a glance.
+**Core Value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
 
 ## v1 Requirements
 
@@ -36,7 +36,7 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 - [ ] **RSLT-01**: Results page shows line chart of each player's cumulative score across all holes
 - [ ] **RSLT-02**: Results page shows head-to-head breakdown for each pair with final score, hole-by-hole wins, and handicap-adjusted strokes
-- [ ] **RSLT-03**: Results page reveals winner with staggered animated podium (3rd → 2nd → 1st with celebration)
+- [ ] **RSLT-03**: Results page reveals winner with staggered animated podium (3rd -> 2nd -> 1st with celebration)
 - [ ] **RSLT-04**: User can export results as a styled image card via Web Share API (fallback: download PNG)
 
 ### Game History
@@ -53,7 +53,7 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Setup Streamlining
 
-- [ ] **SETP-01**: Setup flow (players → handicaps → turbo → play) is streamlined for fewer total taps while keeping all features
+- [ ] **SETP-01**: Setup flow (players -> handicaps -> turbo -> play) is streamlined for fewer total taps while keeping all features
 - [ ] **SETP-02**: Handicap and turbo steps use smart defaults (0 handicap, no turbo) so users can skip through quickly
 
 ## v2 Requirements
@@ -62,7 +62,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Advanced Results
 
-- **ADVR-01**: Score storytelling — generate narrative highlights ("biggest comeback", "longest winning streak")
+- **ADVR-01**: Score storytelling -- generate narrative highlights ("biggest comeback", "longest winning streak")
 - **ADVR-02**: Player-vs-player lifetime head-to-head records across all saved rounds
 
 ### Advanced Display
@@ -92,40 +92,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUN-01 | — | Pending |
-| FOUN-02 | — | Pending |
-| FOUN-03 | — | Pending |
-| FOUN-04 | — | Pending |
-| FOUN-05 | — | Pending |
-| FOUN-06 | — | Pending |
-| FOUN-07 | — | Pending |
-| FOUN-08 | — | Pending |
-| FOUN-09 | — | Pending |
-| FOUN-10 | — | Pending |
-| INPT-01 | — | Pending |
-| INPT-02 | — | Pending |
-| INPT-03 | — | Pending |
-| INPT-04 | — | Pending |
-| LIVE-01 | — | Pending |
-| LIVE-02 | — | Pending |
-| RSLT-01 | — | Pending |
-| RSLT-02 | — | Pending |
-| RSLT-03 | — | Pending |
-| RSLT-04 | — | Pending |
-| HIST-01 | — | Pending |
-| HIST-02 | — | Pending |
-| HIST-03 | — | Pending |
-| HIST-04 | — | Pending |
-| THEM-01 | — | Pending |
-| THEM-02 | — | Pending |
-| SETP-01 | — | Pending |
-| SETP-02 | — | Pending |
+| FOUN-01 | Phase 1 | Pending |
+| FOUN-02 | Phase 1 | Pending |
+| FOUN-03 | Phase 1 | Pending |
+| FOUN-04 | Phase 1 | Pending |
+| FOUN-05 | Phase 1 | Pending |
+| FOUN-06 | Phase 1 | Pending |
+| FOUN-07 | Phase 1 | Pending |
+| FOUN-08 | Phase 1 | Pending |
+| FOUN-09 | Phase 1 | Pending |
+| FOUN-10 | Phase 1 | Pending |
+| INPT-01 | Phase 2 | Pending |
+| INPT-02 | Phase 2 | Pending |
+| INPT-03 | Phase 2 | Pending |
+| INPT-04 | Phase 2 | Pending |
+| LIVE-01 | Phase 2 | Pending |
+| LIVE-02 | Phase 2 | Pending |
+| SETP-01 | Phase 3 | Pending |
+| SETP-02 | Phase 3 | Pending |
+| RSLT-01 | Phase 4 | Pending |
+| RSLT-02 | Phase 4 | Pending |
+| RSLT-03 | Phase 4 | Pending |
+| RSLT-04 | Phase 4 | Pending |
+| HIST-01 | Phase 5 | Pending |
+| HIST-02 | Phase 5 | Pending |
+| HIST-04 | Phase 5 | Pending |
+| HIST-03 | Phase 6 | Pending |
+| THEM-01 | Phase 7 | Pending |
+| THEM-02 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28 ⚠️
+- Mapped to phases: 28
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 after initial definition*
+*Last updated: 2026-02-17 after roadmap creation*
