@@ -2,13 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Play, Plus, Download } from "lucide-react";
+import { Play, Plus, Download, RotateCcw, History } from "lucide-react";
+import { useLiveQuery } from "dexie-react-hooks";
 import { useGameStore } from "@/lib/game-store";
+import { historyDb } from "@/lib/history-db";
 
 export default function HomePage() {
   const router = useRouter();
-  const { config, holeStrokes, currentHole, isComplete, resetGame } =
-    useGameStore();
+  const {
+    config,
+    holeStrokes,
+    currentHole,
+    isComplete,
+    resetGame,
+    setPlayers,
+    setNumberOfHoles,
+  } = useGameStore();
+
+  const latestGame = useLiveQuery(
+    () => historyDb.games.orderBy("completedAt").reverse().first(),
+    [],
+    null
+  );
 
   const [installReady, setInstallReady] = useState(false);
 
@@ -44,6 +59,19 @@ export default function HomePage() {
 
   const handleResumeGame = () => {
     router.push("/play");
+  };
+
+  const handlePlayAgain = () => {
+    if (!latestGame) return;
+    // Fresh UUIDs, same names -- NEVER reuse old player IDs
+    const players = latestGame.players.map((p) => ({
+      id: crypto.randomUUID(),
+      name: p.name,
+    }));
+    resetGame();
+    setPlayers(players);
+    setNumberOfHoles(latestGame.numberOfHoles);
+    router.push("/setup");
   };
 
   return (
@@ -115,6 +143,36 @@ export default function HomePage() {
           <Plus className="h-5 w-5" />
           New Game
         </button>
+
+        {latestGame && !hasActiveGame && (
+          <button
+            className="w-full glass-card p-4 text-left active:scale-[0.97] transition-all group"
+            onClick={handlePlayAgain}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-emerald-600/20 flex items-center justify-center">
+                <RotateCcw className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-white">Play Again</div>
+                <div className="text-xs text-slate-400 truncate">
+                  {latestGame.players.map((p) => p.name).join(", ")} &middot;{" "}
+                  {latestGame.numberOfHoles} holes
+                </div>
+              </div>
+            </div>
+          </button>
+        )}
+
+        {latestGame && (
+          <button
+            className="w-full h-12 rounded-xl text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2"
+            onClick={() => router.push("/history")}
+          >
+            <History className="h-4 w-4" />
+            View Game History
+          </button>
+        )}
 
         {installReady && (
           <button
