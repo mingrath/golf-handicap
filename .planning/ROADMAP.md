@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Store Hardening & Test Foundation** - Validate inputs, version state, fix ID generation, wire zero-sum checks, add test coverage *(completed 2026-02-17)*
 - [x] **Phase 2: Score Input & Live Play** - Redesign play screen for fast stroke entry and always-visible leaderboard *(completed 2026-02-17)*
-- [ ] **Phase 3: Setup Streamlining** - Reduce taps in setup wizard with smart defaults and flow optimization
+- [x] **Phase 3: Setup Streamlining** - Reduce taps in setup wizard with smart defaults and flow optimization *(completed 2026-02-17)*
 - [ ] **Phase 4: Rich Results** - Winner spotlight, score trend chart, head-to-head pair breakdowns, shareable results
 - [ ] **Phase 5: Game History** - Persist completed rounds and browse past games
 - [ ] **Phase 6: Cross-Round Statistics** - Win rates, score trends, and improvement tracking across saved rounds
@@ -141,7 +141,7 @@ Phase 1 (Foundation)
 |-------|----------------|--------|-----------|
 | 1. Store Hardening & Test Foundation | 2/2 | ✓ Complete | 2026-02-17 |
 | 2. Score Input & Live Play | 2/2 | ✓ Complete | 2026-02-17 |
-| 3. Setup Streamlining | 0/1 | Not started | - |
+| 3. Setup Streamlining | 1/1 | ✓ Complete | 2026-02-17 |
 | 4. Rich Results | 0/2 | Not started | - |
 | 5. Game History | 0/2 | Not started | - |
 | 6. Cross-Round Statistics | 0/1 | Not started | - |

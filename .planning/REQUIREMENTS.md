@@ -53,8 +53,8 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Setup Streamlining
 
-- [ ] **SETP-01**: Setup flow (players -> handicaps -> turbo -> play) is streamlined for fewer total taps while keeping all features
-- [ ] **SETP-02**: Handicap and turbo steps use smart defaults (0 handicap, no turbo) so users can skip through quickly
+- [x] **SETP-01**: Setup flow (players -> handicaps -> turbo -> play) is streamlined for fewer total taps while keeping all features
+- [x] **SETP-02**: Handicap and turbo steps use smart defaults (0 handicap, no turbo) so users can skip through quickly
 
 ## v2 Requirements
 
@@ -108,8 +108,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INPT-04 | Phase 2 | Done |
 | LIVE-01 | Phase 2 | Done |
 | LIVE-02 | Phase 2 | Done |
-| SETP-01 | Phase 3 | Pending |
-| SETP-02 | Phase 3 | Pending |
+| SETP-01 | Phase 3 | Done |
+| SETP-02 | Phase 3 | Done |
 | RSLT-01 | Phase 4 | Pending |
 | RSLT-02 | Phase 4 | Pending |
 | RSLT-03 | Phase 4 | Pending |
