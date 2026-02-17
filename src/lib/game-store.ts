@@ -21,6 +21,11 @@ import {
   verifyZeroSum,
 } from "./scoring";
 
+type UndoSnapshot = Pick<
+  GameState,
+  "holeStrokes" | "pairResults" | "playerScores" | "currentHole"
+>;
+
 interface GameStore extends GameState {
   // Setup actions
   setPlayers: (players: Player[]) => void;
@@ -40,6 +45,11 @@ interface GameStore extends GameState {
   goToPreviousHole: () => void;
   completeGame: () => void;
 
+  // Undo
+  _undoSnapshot: UndoSnapshot | null;
+  undoLastSubmission: () => void;
+  clearUndoSnapshot: () => void;
+
   // Reset
   resetGame: () => void;
   hasActiveGame: () => boolean;
@@ -58,6 +68,7 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       ...initialState,
+      _undoSnapshot: null as UndoSnapshot | null,
 
       setPlayers: (players) =>
         set((state) => {
@@ -184,6 +195,14 @@ export const useGameStore = create<GameStore>()(
         set((state) => {
           if (!state.config) return {};
 
+          // Snapshot current state before mutation (for undo)
+          const snapshot: UndoSnapshot = {
+            holeStrokes: state.holeStrokes,
+            pairResults: state.pairResults,
+            playerScores: state.playerScores,
+            currentHole: state.currentHole,
+          };
+
           const { players, handicaps, turboHoles, numberOfHoles } =
             state.config;
           const holeNumber = strokes.holeNumber;
@@ -277,6 +296,7 @@ export const useGameStore = create<GameStore>()(
             holeStrokes: [...existingStrokes, strokes],
             pairResults: allPairResults,
             playerScores: allPlayerScores,
+            _undoSnapshot: snapshot,
           };
         }),
 
@@ -299,7 +319,21 @@ export const useGameStore = create<GameStore>()(
 
       completeGame: () => set({ isComplete: true }),
 
-      resetGame: () => set({ ...initialState }),
+      undoLastSubmission: () =>
+        set((state) => {
+          if (!state._undoSnapshot) return {};
+          return {
+            holeStrokes: state._undoSnapshot.holeStrokes,
+            pairResults: state._undoSnapshot.pairResults,
+            playerScores: state._undoSnapshot.playerScores,
+            currentHole: state._undoSnapshot.currentHole,
+            _undoSnapshot: null,
+          };
+        }),
+
+      clearUndoSnapshot: () => set({ _undoSnapshot: null }),
+
+      resetGame: () => set({ ...initialState, _undoSnapshot: null }),
 
       hasActiveGame: () => {
         const state = get();
@@ -308,6 +342,11 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: "golf-handicap-game",
+      partialize: (state) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _undoSnapshot, ...rest } = state;
+        return rest;
+      },
       version: 1,
       migrate: (persistedState: unknown, version: number) => {
         if (version < 1) {
