@@ -74,11 +74,11 @@ Plans:
   2. Results page shows a head-to-head section for each pair with final score, hole-by-hole wins, and handicap-adjusted strokes
   3. Winner is revealed with a staggered animated podium (3rd, then 2nd, then 1st with celebration effect)
   4. User can share results as a styled image card via the device share sheet (or download as PNG on unsupported devices)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: Score trend chart and pair breakdowns (RSLT-01, RSLT-02)
-- [ ] 04-02: Winner podium animation and share export (RSLT-03, RSLT-04)
+- [ ] 04-01-PLAN.md — Score trend chart and head-to-head pair breakdowns (RSLT-01, RSLT-02)
+- [ ] 04-02-PLAN.md — Winner podium animation with confetti and shareable results image card (RSLT-03, RSLT-04)
 
 ### Phase 5: Game History
 **Goal**: Completed rounds are saved and users can browse their game history and quickly start a rematch
