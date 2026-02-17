@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 3 - Results & History
+**Current focus:** Phase 3 - Setup Streamlining
 
 ## Current Position
 
-Phase: 3 of 7 (Results & History)
-Plan: 1 of ? in current phase
-Status: Ready for next phase
-Last activity: 2026-02-17 -- Completed 02-02 (MiniLeaderboard + sparklines + swipe nav)
+Phase: 3 of 7 (Setup Streamlining)
+Plan: 0 of 1 in current phase
+Status: Ready to execute
+Last activity: 2026-02-17 -- Phase 3 planned (1 plan, verified by plan-checker)
 
 Progress: [████░░░░░░░░] 29%
 
