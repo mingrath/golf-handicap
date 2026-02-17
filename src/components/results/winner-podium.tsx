@@ -24,7 +24,7 @@ function formatScore(score: number): string {
 function scoreColor(score: number): string {
   if (score > 0) return "text-emerald-400";
   if (score < 0) return "text-rose-400";
-  return "text-slate-500";
+  return "text-muted-foreground";
 }
 
 export function WinnerPodium({ rankings, shouldAnimate }: WinnerPodiumProps) {
@@ -54,7 +54,7 @@ export function WinnerPodium({ rankings, shouldAnimate }: WinnerPodiumProps) {
     if (!solo) return null;
     return (
       <div className="text-center py-8">
-        <h2 className="text-2xl font-bold text-white">{solo.player.name}</h2>
+        <h2 className="text-2xl font-bold text-foreground">{solo.player.name}</h2>
         <p className={`text-xl font-bold mt-1 tabular-nums ${scoreColor(solo.totalScore)}`}>
           {formatScore(solo.totalScore)} points
         </p>
@@ -92,7 +92,7 @@ function TwoPlayerSpotlight({
             <Crown className="h-10 w-10 text-white" />
           </div>
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
           {winner.player.name}
         </h2>
         <p className={`text-2xl font-bold mt-2 tabular-nums ${scoreColor(winner.totalScore)}`}>
@@ -104,7 +104,7 @@ function TwoPlayerSpotlight({
       </div>
 
       {/* Runner-up */}
-      <div className="mt-6 text-slate-400">
+      <div className="mt-6 text-muted-foreground">
         <p className="text-base font-medium">{runnerUp.player.name}</p>
         <p className={`text-lg font-bold tabular-nums ${scoreColor(runnerUp.totalScore)}`}>
           {formatScore(runnerUp.totalScore)} points
@@ -129,11 +129,11 @@ function PodiumLayout({ rankings, shouldAnimate }: WinnerPodiumProps) {
       <div className="flex items-end justify-center gap-2 px-4">
         {/* 2nd Place */}
         <div className={`flex-1 max-w-[120px] text-center ${getAnimClass("2nd")}`}>
-          <p className="text-sm font-bold text-white truncate px-1">{second.player.name}</p>
+          <p className="text-sm font-bold text-foreground truncate px-1">{second.player.name}</p>
           <p className={`text-sm font-bold tabular-nums ${scoreColor(second.totalScore)}`}>
             {formatScore(second.totalScore)}
           </p>
-          <div className="mt-2 h-16 bg-slate-400 rounded-t-lg flex items-center justify-center">
+          <div className="mt-2 h-16 bg-muted-foreground rounded-t-lg flex items-center justify-center">
             <span className="text-2xl font-extrabold text-white">2</span>
           </div>
         </div>
@@ -141,7 +141,7 @@ function PodiumLayout({ rankings, shouldAnimate }: WinnerPodiumProps) {
         {/* 1st Place */}
         <div className={`flex-1 max-w-[120px] text-center ${getAnimClass("1st")}`}>
           <Crown className="h-6 w-6 text-amber-400 mx-auto mb-1" />
-          <p className="text-sm font-bold text-white truncate px-1">{first.player.name}</p>
+          <p className="text-sm font-bold text-foreground truncate px-1">{first.player.name}</p>
           <p className={`text-sm font-bold tabular-nums ${scoreColor(first.totalScore)}`}>
             {formatScore(first.totalScore)}
           </p>
@@ -152,7 +152,7 @@ function PodiumLayout({ rankings, shouldAnimate }: WinnerPodiumProps) {
 
         {/* 3rd Place */}
         <div className={`flex-1 max-w-[120px] text-center ${getAnimClass("3rd")}`}>
-          <p className="text-sm font-bold text-white truncate px-1">{third.player.name}</p>
+          <p className="text-sm font-bold text-foreground truncate px-1">{third.player.name}</p>
           <p className={`text-sm font-bold tabular-nums ${scoreColor(third.totalScore)}`}>
             {formatScore(third.totalScore)}
           </p>
@@ -168,13 +168,13 @@ function PodiumLayout({ rankings, shouldAnimate }: WinnerPodiumProps) {
           {rest.map((entry) => (
             <div
               key={entry.player.id}
-              className="flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/40"
+              className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/40"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-slate-500 tabular-nums w-5">
+                <span className="text-sm font-bold text-muted-foreground tabular-nums w-5">
                   {entry.rank}
                 </span>
-                <span className="text-sm font-medium text-slate-300 truncate">
+                <span className="text-sm font-medium text-muted-foreground truncate">
                   {entry.player.name}
                 </span>
               </div>

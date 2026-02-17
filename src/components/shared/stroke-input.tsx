@@ -19,7 +19,7 @@ export function StrokeInput({ playerName, value, onChange }: StrokeInputProps) {
     <div className="flex items-center gap-3">
       {/* Player name */}
       <div className="min-w-0 w-[80px] shrink-0">
-        <span className="block text-sm font-medium text-slate-200 truncate">
+        <span className="block text-sm font-medium text-foreground truncate">
           {playerName}
         </span>
         {!isPreset && (
@@ -35,8 +35,8 @@ export function StrokeInput({ playerName, value, onChange }: StrokeInputProps) {
         <button
           className={`min-h-[48px] min-w-[44px] rounded-xl flex items-center justify-center transition-all active:scale-95 ${
             value <= MIN_STROKES
-              ? "bg-slate-800/50 text-slate-600 cursor-not-allowed"
-              : "bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700 active:bg-slate-600"
+              ? "bg-muted/50 text-muted-foreground cursor-not-allowed"
+              : "bg-muted text-muted-foreground border border-border hover:bg-muted/80 active:bg-muted/60"
           }`}
           onClick={() => onChange(Math.max(MIN_STROKES, value - 1))}
           disabled={value <= MIN_STROKES}
@@ -52,7 +52,7 @@ export function StrokeInput({ playerName, value, onChange }: StrokeInputProps) {
             className={`min-h-[48px] min-w-[44px] rounded-xl text-lg font-bold transition-all active:scale-95 ${
               value === preset
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
-                : "bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700"
+                : "bg-muted text-muted-foreground border border-border hover:bg-muted/80"
             }`}
             onClick={() => onChange(preset)}
             aria-label={`Set ${playerName} strokes to ${preset}`}
@@ -65,8 +65,8 @@ export function StrokeInput({ playerName, value, onChange }: StrokeInputProps) {
         <button
           className={`min-h-[48px] min-w-[44px] rounded-xl flex items-center justify-center transition-all active:scale-95 ${
             value >= MAX_STROKES
-              ? "bg-slate-800/50 text-slate-600 cursor-not-allowed"
-              : "bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700 active:bg-slate-600"
+              ? "bg-muted/50 text-muted-foreground cursor-not-allowed"
+              : "bg-muted text-muted-foreground border border-border hover:bg-muted/80 active:bg-muted/60"
           }`}
           onClick={() => onChange(Math.min(MAX_STROKES, value + 1))}
           disabled={value >= MAX_STROKES}

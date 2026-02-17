@@ -15,17 +15,17 @@ export default function HistoryPage() {
   );
 
   return (
-    <div className="min-h-dvh bg-slate-950">
+    <div className="min-h-dvh bg-background">
       {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50">
+      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-lg mx-auto flex items-center gap-3 px-4 h-14">
           <button
             onClick={() => router.push("/")}
-            className="h-9 w-9 rounded-xl bg-slate-800/60 flex items-center justify-center active:scale-95 transition-transform"
+            className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center active:scale-95 transition-transform"
           >
-            <ArrowLeft className="h-4 w-4 text-slate-300" />
+            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
           </button>
-          <h1 className="text-lg font-bold text-white">Game History</h1>
+          <h1 className="text-lg font-bold text-foreground">Game History</h1>
         </div>
       </div>
 
@@ -40,8 +40,8 @@ export default function HistoryPage() {
                 <BarChart3 className="h-5 w-5 text-emerald-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-bold text-white">Player Stats</div>
-                <div className="text-xs text-slate-400">
+                <div className="text-sm font-bold text-foreground">Player Stats</div>
+                <div className="text-xs text-muted-foreground">
                   Win rates, averages, and trends
                 </div>
               </div>
@@ -53,7 +53,7 @@ export default function HistoryPage() {
           /* Empty state */
           <div className="glass-card p-8 text-center">
             <div className="text-5xl mb-4">&#9971;</div>
-            <p className="text-slate-400 text-sm mb-6">
+            <p className="text-muted-foreground text-sm mb-6">
               No games yet. Complete a round to see it here.
             </p>
             <button
@@ -81,15 +81,15 @@ export default function HistoryPage() {
             return (
               <div
                 key={game.id}
-                className="glass-card p-4 hover:bg-slate-700/30 transition-colors"
+                className="glass-card p-4 hover:bg-muted/30 transition-colors"
               >
                 {/* Date row */}
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="h-3.5 w-3.5 text-slate-500" />
-                  <span className="text-xs text-slate-400">
+                  <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
                     {dateStr} at {timeStr}
                   </span>
-                  <span className="ml-auto text-xs text-slate-500 bg-slate-800/60 px-2 py-0.5 rounded-full">
+                  <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                     {game.numberOfHoles} holes
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export default function HistoryPage() {
                     <span className="text-sm font-bold text-amber-400">
                       {winner.playerName}
                     </span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-muted-foreground">
                       ({winner.totalScore > 0 ? "+" : ""}
                       {winner.totalScore})
                     </span>
@@ -110,8 +110,8 @@ export default function HistoryPage() {
 
                 {/* Players row */}
                 <div className="flex items-center gap-2">
-                  <Users className="h-3.5 w-3.5 text-slate-500" />
-                  <span className="text-sm text-slate-300 truncate">
+                  <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground truncate">
                     {game.players.map((p) => p.name).join(", ")}
                   </span>
                 </div>

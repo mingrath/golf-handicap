@@ -77,25 +77,25 @@ export function ScoreTrendChart({
 
   return (
     <div className="glass-card p-4">
-      <h2 className="font-bold text-white mb-3">Score Trend</h2>
+      <h2 className="font-bold text-foreground mb-3">Score Trend</h2>
       <ChartContainer config={chartConfig} className="h-[200px] w-full">
         <LineChart data={chartData}>
           <CartesianGrid
             vertical={false}
             strokeDasharray="3 3"
-            stroke="rgba(148, 163, 184, 0.15)"
+            className="stroke-border"
           />
           <XAxis
             dataKey="hole"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "rgba(148, 163, 184, 0.7)", fontSize: 12 }}
+            tick={{ className: "fill-muted-foreground", fontSize: 12 }}
             tickFormatter={(v) => `H${v}`}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "rgba(148, 163, 184, 0.7)", fontSize: 12 }}
+            tick={{ className: "fill-muted-foreground", fontSize: 12 }}
             width={30}
           />
           <ChartTooltip

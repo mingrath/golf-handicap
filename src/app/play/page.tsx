@@ -165,23 +165,23 @@ export default function PlayPage() {
 
   return (
     <div
-      className="min-h-dvh bg-slate-950 flex flex-col"
+      className="min-h-dvh bg-background flex flex-col"
       {...swipeHandlers}
     >
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-xl border-b border-slate-700/50 px-4 py-3 flex items-center gap-3">
-        <h1 className="text-lg font-bold flex-1 truncate text-white">
+      <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border px-4 py-3 flex items-center gap-3">
+        <h1 className="text-lg font-bold flex-1 truncate text-foreground">
           Hole {currentHole}
-          <span className="text-slate-500 font-normal text-sm ml-1">
+          <span className="text-muted-foreground font-normal text-sm ml-1">
             / {config.numberOfHoles}
           </span>
         </h1>
       </header>
 
       {/* Hole navigator */}
-      <div className="bg-slate-900/50 border-b border-slate-800/50 px-2 py-2.5 flex items-center gap-1">
+      <div className="bg-card/50 border-b border-border px-2 py-2.5 flex items-center gap-1">
         <button
-          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors disabled:opacity-30"
+          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-30"
           onClick={() => goToHole(Math.max(1, currentHole - 1))}
           disabled={currentHole <= 1}
         >
@@ -204,7 +204,7 @@ export default function PlayPage() {
                         ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-110"
                         : scored
                         ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                        : "bg-slate-800/80 text-slate-500 hover:bg-slate-700 border border-slate-700/50"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
                     } ${holeTurbo && !isCurrent ? "ring-2 ring-amber-400/40" : ""}`}
                   >
                     {hole}
@@ -216,7 +216,7 @@ export default function PlayPage() {
         </div>
 
         <button
-          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors disabled:opacity-30"
+          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-30"
           onClick={() =>
             goToHole(Math.min(config.numberOfHoles, currentHole + 1))
           }
@@ -252,7 +252,7 @@ export default function PlayPage() {
       <div className="flex-1 px-4 pb-28 pt-4 space-y-4">
         {/* Stroke entry */}
         <div className="glass-card p-4">
-          <h2 className="font-bold text-white mb-4">Enter Strokes</h2>
+          <h2 className="font-bold text-foreground mb-4">Enter Strokes</h2>
           <div className="space-y-4">
             {config.players.map((player) => (
               <StrokeInput
@@ -277,7 +277,7 @@ export default function PlayPage() {
         {/* Pair results for this hole */}
         {holeAlreadyScored && currentPairResults.length > 0 && (
           <div className="glass-card p-4">
-            <h2 className="font-bold text-white mb-3">Hole Results</h2>
+            <h2 className="font-bold text-foreground mb-3">Hole Results</h2>
             <div className="space-y-2">
               {currentPairResults.map((result) => {
                 const aName = getPlayerName(
@@ -291,7 +291,7 @@ export default function PlayPage() {
                 return (
                   <div
                     key={result.pairKey}
-                    className="flex items-center justify-between text-sm bg-slate-800/50 rounded-xl px-3 py-2.5 border border-slate-700/30"
+                    className="flex items-center justify-between text-sm bg-muted/50 rounded-xl px-3 py-2.5 border border-border/50"
                   >
                     <div className="flex items-center gap-2">
                       <span
@@ -300,28 +300,28 @@ export default function PlayPage() {
                             ? "text-emerald-400"
                             : result.playerAScore < 0
                             ? "text-rose-400"
-                            : "text-slate-500"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {result.playerAScore > 0
                           ? `+${result.playerAScore}`
                           : result.playerAScore}
                       </span>
-                      <span className="text-slate-300">{aName}</span>
+                      <span className="text-muted-foreground">{aName}</span>
                     </div>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-muted-foreground">
                       {result.playerAAdjusted} vs {result.playerBAdjusted}
                       {result.isTurbo ? " x2" : ""}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-300">{bName}</span>
+                      <span className="text-muted-foreground">{bName}</span>
                       <span
                         className={`font-bold tabular-nums ${
                           result.playerBScore > 0
                             ? "text-emerald-400"
                             : result.playerBScore < 0
                             ? "text-rose-400"
-                            : "text-slate-500"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {result.playerBScore > 0
@@ -338,7 +338,7 @@ export default function PlayPage() {
       </div>
 
       {/* Bottom action bar - always visible */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border">
         {isLastHole && holeAlreadyScored ? (
           /* Last hole already scored: View Results */
           <button

@@ -61,7 +61,7 @@ export function PairBreakdown({ players, pairResults }: PairBreakdownProps) {
   return (
     <div>
       {showSectionHeader && (
-        <h2 className="font-bold text-white mb-3">Head to Head</h2>
+        <h2 className="font-bold text-foreground mb-3">Head to Head</h2>
       )}
       <div className="space-y-3">
         {pairData.map((pair) => (
@@ -82,18 +82,18 @@ function PairCard({ pair }: { pair: PairData }) {
     <div className="glass-card p-4">
       {/* Header: Player A vs Player B */}
       <div className="flex items-center justify-between mb-3">
-        <span className="font-semibold text-slate-200 truncate flex-1 text-left">
+        <span className="font-semibold text-foreground truncate flex-1 text-left">
           {pair.playerAName}
         </span>
-        <span className="text-xs text-slate-500 px-3 shrink-0">vs</span>
-        <span className="font-semibold text-slate-200 truncate flex-1 text-right">
+        <span className="text-xs text-muted-foreground px-3 shrink-0">vs</span>
+        <span className="font-semibold text-foreground truncate flex-1 text-right">
           {pair.playerBName}
         </span>
       </div>
 
       {/* Score bar */}
       {totalHoles > 0 && (
-        <div className="flex h-2 rounded-full overflow-hidden mb-3 bg-slate-800/50">
+        <div className="flex h-2 rounded-full overflow-hidden mb-3 bg-muted/50">
           {aPercent > 0 && (
             <div
               className="bg-emerald-500 transition-all"
@@ -102,7 +102,7 @@ function PairCard({ pair }: { pair: PairData }) {
           )}
           {tiePercent > 0 && (
             <div
-              className="bg-slate-600 transition-all"
+              className="bg-muted-foreground transition-all"
               style={{ width: `${tiePercent}%` }}
             />
           )}
@@ -124,10 +124,10 @@ function PairCard({ pair }: { pair: PairData }) {
           <span className="text-xs text-emerald-400/70 ml-1">wins</span>
         </div>
         <div className="text-center flex-1">
-          <span className="text-sm font-bold text-slate-500 tabular-nums">
+          <span className="text-sm font-bold text-muted-foreground tabular-nums">
             {pair.ties}
           </span>
-          <span className="text-xs text-slate-600 ml-1">ties</span>
+          <span className="text-xs text-muted-foreground/70 ml-1">ties</span>
         </div>
         <div className="text-center flex-1">
           <span className="text-sm font-bold text-rose-400 tabular-nums">
@@ -145,7 +145,7 @@ function PairCard({ pair }: { pair: PairData }) {
               ? "text-emerald-400"
               : pair.playerATotal < 0
               ? "text-rose-400"
-              : "text-slate-500"
+              : "text-muted-foreground"
           }`}
         >
           {pair.playerATotal > 0
@@ -158,7 +158,7 @@ function PairCard({ pair }: { pair: PairData }) {
               ? "text-emerald-400"
               : pair.playerBTotal < 0
               ? "text-rose-400"
-              : "text-slate-500"
+              : "text-muted-foreground"
           }`}
         >
           {pair.playerBTotal > 0
@@ -170,7 +170,7 @@ function PairCard({ pair }: { pair: PairData }) {
       {/* Hole details (collapsed) */}
       {pair.holeResults.length > 0 && (
         <details>
-          <summary className="text-xs text-slate-500 cursor-pointer py-2">
+          <summary className="text-xs text-muted-foreground cursor-pointer py-2">
             Hole details
           </summary>
           <div className="grid grid-cols-9 gap-1.5 pt-1">
@@ -182,7 +182,7 @@ function PairCard({ pair }: { pair: PairData }) {
                   key={result.holeNumber}
                   className="flex flex-col items-center gap-0.5"
                 >
-                  <span className="text-[10px] text-slate-600 tabular-nums">
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
                     {result.holeNumber}
                   </span>
                   <div
@@ -191,7 +191,7 @@ function PairCard({ pair }: { pair: PairData }) {
                         ? "bg-emerald-500"
                         : isBWin
                         ? "bg-rose-500"
-                        : "bg-slate-600"
+                        : "bg-muted-foreground"
                     }`}
                   />
                 </div>

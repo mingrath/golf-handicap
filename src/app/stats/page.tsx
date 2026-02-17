@@ -11,17 +11,17 @@ export default function StatsPage() {
   const stats = usePlayerStats();
 
   return (
-    <div className="min-h-dvh bg-slate-950">
+    <div className="min-h-dvh bg-background">
       {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50">
+      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-lg mx-auto flex items-center gap-3 px-4 h-14">
           <button
             onClick={() => router.push("/")}
-            className="h-9 w-9 rounded-xl bg-slate-800/60 flex items-center justify-center active:scale-95 transition-transform"
+            className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center active:scale-95 transition-transform"
           >
-            <ArrowLeft className="h-4 w-4 text-slate-300" />
+            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
           </button>
-          <h1 className="text-lg font-bold text-white">Player Stats</h1>
+          <h1 className="text-lg font-bold text-foreground">Player Stats</h1>
         </div>
       </div>
 
@@ -31,7 +31,7 @@ export default function StatsPage() {
           /* Empty state */
           <div className="glass-card p-8 text-center">
             <div className="text-5xl mb-4">&#9971;</div>
-            <p className="text-slate-400 text-sm mb-6">
+            <p className="text-muted-foreground text-sm mb-6">
               No games yet. Complete a round to see your stats.
             </p>
             <button

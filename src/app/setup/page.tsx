@@ -102,13 +102,13 @@ export default function SetupPage() {
   const pairs = config?.players?.length ? generatePairs(config.players) : [];
 
   return (
-    <div className="min-h-dvh bg-slate-950 flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       <GameHeader title="Game Setup" backHref="/" />
 
       <div className="flex-1 px-4 pb-28 space-y-4 pt-4">
         {/* Number of holes */}
         <div className="glass-card p-5">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+          <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
             Number of Holes
           </h2>
           <NumberStepper
@@ -123,7 +123,7 @@ export default function SetupPage() {
         {/* Players */}
         <div className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
               Players ({players.length})
             </h2>
             {players.length < 6 && (
@@ -140,7 +140,7 @@ export default function SetupPage() {
           <div className="space-y-3">
             {players.map((player, index) => (
               <div key={player.id} className="flex items-center gap-2">
-                <span className="text-sm text-slate-500 w-6 shrink-0 font-mono">
+                <span className="text-sm text-muted-foreground w-6 shrink-0 font-mono">
                   {index + 1}.
                 </span>
                 <input
@@ -148,7 +148,7 @@ export default function SetupPage() {
                   value={player.name}
                   onChange={(e) => updateName(player.id, e.target.value)}
                   placeholder={`Player ${index + 1}`}
-                  className="flex-1 h-12 px-4 rounded-xl bg-slate-800/80 border border-slate-700/50 text-white text-base placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                  className="flex-1 h-12 px-4 rounded-xl bg-muted border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   style={{ fontSize: "16px" }}
                 />
                 {players.length > 2 && (
@@ -175,8 +175,8 @@ export default function SetupPage() {
                 <Settings2 className="h-4 w-4 text-sky-400" />
               </div>
               <div className="text-left">
-                <h3 className="text-sm font-semibold text-white">Handicaps</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-sm font-semibold text-foreground">Handicaps</h3>
+                <p className="text-xs text-muted-foreground">
                   {configuredHandicaps > 0
                     ? `${configuredHandicaps} pair${configuredHandicaps > 1 ? "s" : ""} configured`
                     : "No handicaps \u2014 equal match"}
@@ -184,7 +184,7 @@ export default function SetupPage() {
               </div>
             </div>
             <ChevronDown
-              className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${showHandicaps ? "rotate-180" : ""}`}
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${showHandicaps ? "rotate-180" : ""}`}
             />
           </button>
 
@@ -194,7 +194,7 @@ export default function SetupPage() {
           >
             <div className="overflow-hidden">
               <div className="px-4 pb-4 space-y-3">
-                <p className="text-xs text-slate-400 text-center">
+                <p className="text-xs text-muted-foreground text-center">
                   Who gives strokes to whom?
                 </p>
 
@@ -218,14 +218,14 @@ export default function SetupPage() {
                   return (
                     <div
                       key={pair.pairKey}
-                      className={`rounded-xl bg-slate-800/40 p-3 ${isIncomplete ? "ring-1 ring-rose-500/50" : ""}`}
+                      className={`rounded-xl bg-muted/40 p-3 ${isIncomplete ? "ring-1 ring-rose-500/50" : ""}`}
                     >
                       {value === 0 ? (
                         <div className="text-center mb-2">
-                          <h4 className="font-semibold text-xs text-white mb-0.5">
+                          <h4 className="font-semibold text-xs text-foreground mb-0.5">
                             {playerAName} vs {playerBName}
                           </h4>
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-muted-foreground">
                             No handicap
                           </p>
                         </div>
@@ -237,22 +237,22 @@ export default function SetupPage() {
                             <div className="text-center">
                               <span
                                 className={
-                                  value > 0 ? "text-sky-400" : "text-white"
+                                  value > 0 ? "text-sky-400" : "text-foreground"
                                 }
                               >
                                 {value > 0 ? playerAName : playerBName}
                               </span>
-                              <span className="text-[9px] text-slate-500 block leading-tight">
+                              <span className="text-[9px] text-muted-foreground block leading-tight">
                                 (better)
                               </span>
                             </div>
-                            <span className="text-[10px] text-slate-400">
+                            <span className="text-[10px] text-muted-foreground">
                               gives {Math.abs(value)} stroke
                               {Math.abs(value) > 1 ? "s" : ""} to
                             </span>
                             <span
                               className={
-                                value > 0 ? "text-white" : "text-amber-400"
+                                value > 0 ? "text-foreground" : "text-amber-400"
                               }
                             >
                               {value > 0 ? playerBName : playerAName}
@@ -271,7 +271,7 @@ export default function SetupPage() {
 
                       {Math.abs(value) > 0 && (
                         <div className="mt-2">
-                          <p className="text-[10px] text-slate-500 mb-1.5">
+                          <p className="text-[10px] text-muted-foreground mb-1.5">
                             Handicap holes (tap to toggle):
                           </p>
                           <div className="flex flex-wrap gap-1">
@@ -306,8 +306,8 @@ export default function SetupPage() {
                                     isSelected
                                       ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
                                       : atMax
-                                        ? "bg-slate-800/30 text-slate-700"
-                                        : "bg-slate-800/80 text-slate-400 hover:bg-slate-700 border border-slate-700/50"
+                                        ? "bg-muted/30 text-muted-foreground/40"
+                                        : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
                                   }`}
                                 >
                                   {hole}
@@ -316,7 +316,7 @@ export default function SetupPage() {
                             })}
                           </div>
                           <p
-                            className={`text-[10px] mt-1 ${isIncomplete ? "text-rose-400 font-medium" : "text-slate-500"}`}
+                            className={`text-[10px] mt-1 ${isIncomplete ? "text-rose-400 font-medium" : "text-muted-foreground"}`}
                           >
                             {handicapHoles.length}/{Math.abs(value)} selected
                             {isIncomplete &&
@@ -343,10 +343,10 @@ export default function SetupPage() {
                 <Zap className="h-4 w-4 text-amber-400" />
               </div>
               <div className="text-left">
-                <h3 className="text-sm font-semibold text-white">
+                <h3 className="text-sm font-semibold text-foreground">
                   Turbo Holes
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   {turboCount > 0
                     ? `${turboCount} turbo hole${turboCount > 1 ? "s" : ""} selected`
                     : "No turbo holes"}
@@ -354,7 +354,7 @@ export default function SetupPage() {
               </div>
             </div>
             <ChevronDown
-              className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${showTurbo ? "rotate-180" : ""}`}
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${showTurbo ? "rotate-180" : ""}`}
             />
           </button>
 
@@ -364,7 +364,7 @@ export default function SetupPage() {
           >
             <div className="overflow-hidden">
               <div className="px-4 pb-4">
-                <p className="text-xs text-slate-400 mb-3">
+                <p className="text-xs text-muted-foreground mb-3">
                   Turbo holes score{" "}
                   <span className="text-amber-400 font-bold">x2</span>. Tap to
                   toggle.
@@ -382,7 +382,7 @@ export default function SetupPage() {
                           className={`h-11 rounded-xl text-xs font-bold transition-all active:scale-90 ${
                             isTurbo
                               ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 scale-105"
-                              : "bg-slate-800/80 text-slate-400 hover:bg-slate-700 border border-slate-700/50"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
                           }`}
                         >
                           {hole}
@@ -408,12 +408,12 @@ export default function SetupPage() {
       </div>
 
       {/* Fixed bottom button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border">
         <button
           className={`w-full h-14 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2 ${
             canContinue
               ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97]"
-              : "bg-slate-800/50 text-slate-600 cursor-not-allowed"
+              : "bg-muted/50 text-muted-foreground cursor-not-allowed"
           }`}
           onClick={handleStartGame}
           disabled={!canContinue}

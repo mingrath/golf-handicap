@@ -181,7 +181,7 @@ export function ShareResultsCard({ rankings, numberOfHoles }: ShareResultsCardPr
       {/* Visible share button */}
       <div className="glass-card p-4">
         <button
-          className="w-full h-12 rounded-xl text-base font-semibold bg-slate-800 border border-slate-700/50 text-slate-200 hover:bg-slate-700 active:scale-[0.97] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-12 rounded-xl text-base font-semibold bg-muted border border-border text-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleShare}
           disabled={isCapturing}
         >

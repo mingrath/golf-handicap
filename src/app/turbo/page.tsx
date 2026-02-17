@@ -25,7 +25,7 @@ export default function TurboPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-950 flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       <GameHeader title="Turbo Holes" backHref="/setup" />
 
       <div className="flex-1 px-4 pb-28 space-y-4 pt-4">
@@ -34,9 +34,9 @@ export default function TurboPage() {
             <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
               <Zap className="h-4 w-4 text-amber-400" />
             </div>
-            <h2 className="font-bold text-white">Select Turbo Holes</h2>
+            <h2 className="font-bold text-foreground">Select Turbo Holes</h2>
           </div>
-          <p className="text-sm text-slate-400 mb-5 ml-10">
+          <p className="text-sm text-muted-foreground mb-5 ml-10">
             Turbo holes score <span className="text-amber-400 font-bold">x2</span>. Tap to toggle.
           </p>
 
@@ -51,7 +51,7 @@ export default function TurboPage() {
                     className={`h-12 rounded-xl text-sm font-bold transition-all active:scale-90 ${
                       isTurbo
                         ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 scale-105"
-                        : "bg-slate-800/80 text-slate-400 hover:bg-slate-700 border border-slate-700/50"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
                     }`}
                   >
                     {hole}
@@ -73,9 +73,9 @@ export default function TurboPage() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border">
         <button
-          className="w-full h-14 rounded-xl text-lg font-bold bg-slate-800/80 border border-slate-700/50 text-slate-300 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          className="w-full h-14 rounded-xl text-lg font-bold bg-muted border border-border text-muted-foreground active:scale-[0.97] transition-all flex items-center justify-center gap-2"
           onClick={handleDone}
         >
           <ArrowLeft className="h-5 w-5" />

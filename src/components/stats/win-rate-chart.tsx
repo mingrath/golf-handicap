@@ -25,26 +25,26 @@ const chartConfig: ChartConfig = {
 export function WinRateChart({ data }: { data: WinRateData[] }) {
   return (
     <div className="glass-card p-4">
-      <h2 className="font-bold text-white mb-3">Win Rates</h2>
+      <h2 className="font-bold text-foreground mb-3">Win Rates</h2>
       <ChartContainer config={chartConfig} className="h-[200px] w-full">
         <BarChart data={data}>
           <CartesianGrid
             vertical={false}
             strokeDasharray="3 3"
-            stroke="rgba(148, 163, 184, 0.15)"
+            className="stroke-border"
           />
           <XAxis
             dataKey="name"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "rgba(148, 163, 184, 0.7)", fontSize: 12 }}
+            tick={{ className: "fill-muted-foreground", fontSize: 12 }}
           />
           <YAxis
             domain={[0, 1]}
             tickFormatter={(v: number) => `${Math.round(v * 100)}%`}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "rgba(148, 163, 184, 0.7)", fontSize: 12 }}
+            tick={{ className: "fill-muted-foreground", fontSize: 12 }}
             width={40}
           />
           <ChartTooltip

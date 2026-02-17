@@ -59,14 +59,14 @@ export function NumberStepper({
   return (
     <div className="flex flex-col items-center gap-1">
       {label && (
-        <span className="text-sm text-slate-400">{label}</span>
+        <span className="text-sm text-muted-foreground">{label}</span>
       )}
       <div className="flex items-center gap-3">
         <button
           className={`${s.button} rounded-full shrink-0 flex items-center justify-center transition-all active:scale-90 ${
             value <= min
-              ? "bg-slate-800/50 text-slate-600 cursor-not-allowed"
-              : "bg-slate-700/80 text-slate-200 hover:bg-slate-600 active:bg-slate-500 border border-slate-600/50"
+              ? "bg-muted/50 text-muted-foreground cursor-not-allowed"
+              : "bg-muted text-foreground hover:bg-muted/80 active:bg-muted/60 border border-border"
           }`}
           onClick={() => onChange(Math.max(min, value - step))}
           onPointerDown={() => startRepeat("down")}
@@ -77,14 +77,14 @@ export function NumberStepper({
           <Minus className={s.icon} />
         </button>
         <span
-          className={`${s.text} text-center tabular-nums font-semibold text-white transition-all`}
+          className={`${s.text} text-center tabular-nums font-semibold text-foreground transition-all`}
         >
           {value}
         </span>
         <button
           className={`${s.button} rounded-full shrink-0 flex items-center justify-center transition-all active:scale-90 ${
             value >= max
-              ? "bg-slate-800/50 text-slate-600 cursor-not-allowed"
+              ? "bg-muted/50 text-muted-foreground cursor-not-allowed"
               : "bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-400 shadow-lg shadow-emerald-600/20"
           }`}
           onClick={() => onChange(Math.min(max, value + step))}

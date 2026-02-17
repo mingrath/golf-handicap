@@ -58,10 +58,10 @@ export function MiniLeaderboard({
   if (players.length === 0) return null;
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
+    <div className="bg-foreground/5 border border-foreground/10 rounded-2xl p-3">
       <div className="flex items-center gap-1.5 mb-2">
         <Trophy className="h-3.5 w-3.5 text-amber-400" />
-        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Leaderboard
         </h3>
       </div>
@@ -80,14 +80,14 @@ export function MiniLeaderboard({
               {entry.rank === 1 ? (
                 <Trophy className="h-4 w-4 text-amber-400 inline-block" />
               ) : (
-                <span className="text-xs text-slate-500 font-medium">
+                <span className="text-xs text-muted-foreground font-medium">
                   #{entry.rank}
                 </span>
               )}
             </span>
 
             {/* Name */}
-            <span className="text-sm font-medium text-slate-200 truncate flex-1 min-w-0">
+            <span className="text-sm font-medium text-foreground truncate flex-1 min-w-0">
               {entry.player.name}
             </span>
 
@@ -104,7 +104,7 @@ export function MiniLeaderboard({
                   ? "text-emerald-400"
                   : entry.total < 0
                   ? "text-rose-400"
-                  : "text-slate-400"
+                  : "text-muted-foreground"
               }`}
             >
               {entry.total > 0 ? `+${entry.total}` : entry.total === 0 ? "E" : entry.total}

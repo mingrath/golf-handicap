@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Play, Plus, Download, RotateCcw, History, BarChart3 } from "lucide-react";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useGameStore } from "@/lib/game-store";
 import { historyDb } from "@/lib/history-db";
@@ -75,7 +76,12 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-950 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      {/* Theme toggle */}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
+
       {/* Ambient background glow */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-600/10 blur-[120px]" />
@@ -94,7 +100,7 @@ export default function HomePage() {
 
       <div className="text-center mb-12 relative z-10 animate-fade-up">
         <div className="text-8xl mb-6 drop-shadow-2xl">&#9971;</div>
-        <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">
+        <h1 className="text-4xl font-extrabold text-foreground mb-3 tracking-tight">
           Golf Handicap
         </h1>
         <p className="text-emerald-400/80 text-sm font-medium tracking-wide uppercase">
@@ -112,11 +118,11 @@ export default function HomePage() {
               </span>
             </div>
             <div className="text-sm mb-4">
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-foreground">
                 {config!.players.map((p) => p.name).join(", ")}
               </span>
               <br />
-              <span className="text-slate-400">
+              <span className="text-muted-foreground">
                 Hole {currentHole} of {config!.numberOfHoles} &middot;{" "}
                 {holeStrokes.length} hole{holeStrokes.length !== 1 ? "s" : ""}{" "}
                 scored
@@ -136,7 +142,7 @@ export default function HomePage() {
           className={`w-full h-14 rounded-xl text-lg font-bold active:scale-[0.97] transition-all flex items-center justify-center gap-2 ${
             !hasActiveGame
               ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25"
-              : "bg-slate-800/80 text-slate-200 border border-slate-600/50 hover:bg-slate-700/80"
+              : "bg-muted text-foreground border border-border hover:bg-muted/80"
           }`}
           onClick={handleNewGame}
         >
@@ -154,8 +160,8 @@ export default function HomePage() {
                 <RotateCcw className="h-5 w-5 text-emerald-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-bold text-white">Play Again</div>
-                <div className="text-xs text-slate-400 truncate">
+                <div className="text-sm font-bold text-foreground">Play Again</div>
+                <div className="text-xs text-muted-foreground truncate">
                   {latestGame.players.map((p) => p.name).join(", ")} &middot;{" "}
                   {latestGame.numberOfHoles} holes
                 </div>
@@ -166,7 +172,7 @@ export default function HomePage() {
 
         {latestGame && (
           <button
-            className="w-full h-12 rounded-xl text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2"
+            className="w-full h-12 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
             onClick={() => router.push("/history")}
           >
             <History className="h-4 w-4" />
@@ -176,7 +182,7 @@ export default function HomePage() {
 
         {latestGame && (
           <button
-            className="w-full h-12 rounded-xl text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2"
+            className="w-full h-12 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
             onClick={() => router.push("/stats")}
           >
             <BarChart3 className="h-4 w-4" />
@@ -186,7 +192,7 @@ export default function HomePage() {
 
         {installReady && (
           <button
-            className="w-full h-12 rounded-xl text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2"
+            className="w-full h-12 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
             onClick={handleInstall}
           >
             <Download className="h-4 w-4" />
