@@ -34,10 +34,10 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Results
 
-- [ ] **RSLT-01**: Results page shows line chart of each player's cumulative score across all holes
-- [ ] **RSLT-02**: Results page shows head-to-head breakdown for each pair with final score, hole-by-hole wins, and handicap-adjusted strokes
-- [ ] **RSLT-03**: Results page reveals winner with staggered animated podium (3rd -> 2nd -> 1st with celebration)
-- [ ] **RSLT-04**: User can export results as a styled image card via Web Share API (fallback: download PNG)
+- [x] **RSLT-01**: Results page shows line chart of each player's cumulative score across all holes
+- [x] **RSLT-02**: Results page shows head-to-head breakdown for each pair with final score, hole-by-hole wins, and handicap-adjusted strokes
+- [x] **RSLT-03**: Results page reveals winner with staggered animated podium (3rd -> 2nd -> 1st with celebration)
+- [x] **RSLT-04**: User can export results as a styled image card via Web Share API (fallback: download PNG)
 
 ### Game History
 
@@ -110,10 +110,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LIVE-02 | Phase 2 | Done |
 | SETP-01 | Phase 3 | Done |
 | SETP-02 | Phase 3 | Done |
-| RSLT-01 | Phase 4 | Pending |
-| RSLT-02 | Phase 4 | Pending |
-| RSLT-03 | Phase 4 | Pending |
-| RSLT-04 | Phase 4 | Pending |
+| RSLT-01 | Phase 4 | Done |
+| RSLT-02 | Phase 4 | Done |
+| RSLT-03 | Phase 4 | Done |
+| RSLT-04 | Phase 4 | Done |
 | HIST-01 | Phase 5 | Pending |
 | HIST-02 | Phase 5 | Pending |
 | HIST-04 | Phase 5 | Pending |
