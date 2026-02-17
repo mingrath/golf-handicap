@@ -11,6 +11,7 @@ import { ScoreTrendChart } from "@/components/results/score-trend-chart";
 import { PairBreakdown } from "@/components/results/pair-breakdown";
 import { WinnerPodium } from "@/components/results/winner-podium";
 import { ShareResultsCard } from "@/components/results/share-results-card";
+import { useSaveGame } from "@/hooks/use-save-game";
 
 const MEDAL_COLORS = ["text-amber-400", "text-slate-400", "text-amber-700"];
 const MEDAL_BG = [
@@ -29,6 +30,9 @@ export default function ResultsPage() {
   const router = useRouter();
   const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame, isComplete } =
     useGameStore();
+  // Auto-save completed game to history (IndexedDB)
+  useSaveGame();
+
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const hasAnimatedRef = useRef(false);
 
