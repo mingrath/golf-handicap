@@ -32,11 +32,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Navigating to the setup page while a game is in progress does NOT reset the active game
   4. All pure functions in scoring.ts and pairs.ts have passing Vitest tests covering normal cases and edge cases
   5. Persisted state includes a version number that survives app updates via cascading migration
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: Input validation and store hardening (FOUN-01, FOUN-02, FOUN-03, FOUN-04, FOUN-05, FOUN-06, FOUN-07, FOUN-10)
-- [ ] 01-02: Test infrastructure and coverage (FOUN-08, FOUN-09)
+- [ ] 01-01-PLAN.md — Store hardening: validation, versioning, crypto IDs, hydration gate, setup fix (FOUN-01 through FOUN-07, FOUN-10)
+- [ ] 01-02-PLAN.md — Test infrastructure: Vitest setup, scoring/pairs/store tests, pre-commit hook (FOUN-08, FOUN-09)
 
 ### Phase 2: Score Input & Live Play
 **Goal**: Users can enter strokes quickly on the course with minimal taps and always see who is winning at a glance
