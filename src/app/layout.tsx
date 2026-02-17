@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
+import { HydrationGate } from "@/components/shared/hydration-gate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,7 +46,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <HydrationGate>{children}</HydrationGate>
+        <Toaster position="top-center" richColors />
         <script
           dangerouslySetInnerHTML={{
             __html: `
