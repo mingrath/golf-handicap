@@ -7,6 +7,8 @@ import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { getFinalRankings } from "@/lib/scoring";
 import { HoleStrokes } from "@/lib/types";
+import { ScoreTrendChart } from "@/components/results/score-trend-chart";
+import { PairBreakdown } from "@/components/results/pair-breakdown";
 
 const MEDAL_COLORS = ["text-amber-400", "text-slate-400", "text-amber-700"];
 const MEDAL_BG = [
@@ -23,7 +25,7 @@ interface EditingCell {
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { config, playerScores, holeStrokes, submitHoleStrokes, resetGame } =
+  const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame } =
     useGameStore();
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
@@ -156,6 +158,19 @@ export default function ResultsPage() {
             ))}
           </div>
         </div>
+
+        {/* Score Trend Chart */}
+        <ScoreTrendChart
+          players={config.players}
+          playerScores={playerScores}
+          numberOfHoles={config.numberOfHoles}
+        />
+
+        {/* Head-to-Head Pair Breakdowns */}
+        <PairBreakdown
+          players={config.players}
+          pairResults={pairResults}
+        />
 
         {/* Editable Scorecard */}
         <div className="glass-card p-4 overflow-x-auto">
