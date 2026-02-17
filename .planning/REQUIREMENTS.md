@@ -1,0 +1,131 @@
+# Requirements: Golf Handicap Scorer v2
+
+**Defined:** 2026-02-17
+**Core Value:** Fast, clear scoring on the course — enter strokes quickly after each hole and always know who's winning at a glance.
+
+## v1 Requirements
+
+Requirements for the v2 rebuild. Each maps to roadmap phases.
+
+### Foundation
+
+- [ ] **FOUN-01**: Store validates stroke values (0-20 range) before persisting
+- [ ] **FOUN-02**: Store validates handicap values and hole numbers against game config
+- [ ] **FOUN-03**: Store validates player count (2-6) on setPlayers()
+- [ ] **FOUN-04**: Player IDs use crypto.randomUUID() instead of Math.random()
+- [ ] **FOUN-05**: verifyZeroSum() called after every score submission with warning on failure
+- [ ] **FOUN-06**: Persisted state includes version number with cascading migration support
+- [ ] **FOUN-07**: App shows loading skeleton until Zustand store is hydrated from storage
+- [ ] **FOUN-08**: Vitest configured with tests covering all pure functions in scoring.ts
+- [ ] **FOUN-09**: Vitest tests covering all pure functions in pairs.ts
+- [ ] **FOUN-10**: Setup page resetGame() only triggers on explicit "new game" action, not on mount
+
+### Score Input
+
+- [ ] **INPT-01**: User can enter strokes with a single tap per player using preset number row (3-7 range with +/- for outliers)
+- [ ] **INPT-02**: After submitting hole scores, app auto-advances to the next hole with brief confirmation flash
+- [ ] **INPT-03**: User can swipe left/right on the play screen to navigate between holes
+- [ ] **INPT-04**: Phone vibrates briefly on score submission (progressive enhancement, no-op if unsupported)
+
+### Live Display
+
+- [ ] **LIVE-01**: Mini-leaderboard showing ranked players with running totals is always visible below stroke input during play
+- [ ] **LIVE-02**: Each player's leaderboard entry shows inline sparkline of their last 5 holes' cumulative score trend
+
+### Results
+
+- [ ] **RSLT-01**: Results page shows line chart of each player's cumulative score across all holes
+- [ ] **RSLT-02**: Results page shows head-to-head breakdown for each pair with final score, hole-by-hole wins, and handicap-adjusted strokes
+- [ ] **RSLT-03**: Results page reveals winner with staggered animated podium (3rd → 2nd → 1st with celebration)
+- [ ] **RSLT-04**: User can export results as a styled image card via Web Share API (fallback: download PNG)
+
+### Game History
+
+- [ ] **HIST-01**: Completed games are automatically saved to persistent storage (IndexedDB via Dexie)
+- [ ] **HIST-02**: User can view list of past rounds showing date, players, and winner
+- [ ] **HIST-03**: User can view cross-round stats: win rate per player, average score, best/worst rounds
+- [ ] **HIST-04**: Home screen offers "Play again with same players" one-tap start using last-used player list
+
+### Theme & Polish
+
+- [ ] **THEM-01**: App supports dark and light theme with auto-detection of system preference and manual toggle
+- [ ] **THEM-02**: User can undo last score submission within 10 seconds via undo button that appears after submit
+
+### Setup Streamlining
+
+- [ ] **SETP-01**: Setup flow (players → handicaps → turbo → play) is streamlined for fewer total taps while keeping all features
+- [ ] **SETP-02**: Handicap and turbo steps use smart defaults (0 handicap, no turbo) so users can skip through quickly
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Advanced Results
+
+- **ADVR-01**: Score storytelling — generate narrative highlights ("biggest comeback", "longest winning streak")
+- **ADVR-02**: Player-vs-player lifetime head-to-head records across all saved rounds
+
+### Advanced Display
+
+- **ADVD-01**: Score trend sparklines in mini-leaderboard during play (upgraded from basic sparklines)
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| GPS course maps and distances | Different product category. Users have separate GPS apps/watches. |
+| Real-time multiplayer / cloud sync | Requires backend, auth, conflict resolution. One phone is the scorer. |
+| User accounts / authentication | Adds login friction. No backend to manage. |
+| Official USGA/R&A handicap calculation | Legally regulated, requires 20+ rounds + course ratings. App uses per-round strokes given. |
+| Tournament mode (brackets, flights) | Exponential complexity. Focus on single-round experience. |
+| Shot-by-shot tracking | Different input model. Slows down scoring, which is the core value. |
+| Social feed / comments | Requires backend + moderation. Share via image export instead. |
+| Betting / money tracking | Legal gray area. Pairwise scoring already implies "who owes whom." |
+| Apple Watch companion | Requires native app, not PWA. Different development stack. |
+| AI-powered analysis | Requires ML infrastructure. Rule-based highlights work fine. |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| FOUN-01 | — | Pending |
+| FOUN-02 | — | Pending |
+| FOUN-03 | — | Pending |
+| FOUN-04 | — | Pending |
+| FOUN-05 | — | Pending |
+| FOUN-06 | — | Pending |
+| FOUN-07 | — | Pending |
+| FOUN-08 | — | Pending |
+| FOUN-09 | — | Pending |
+| FOUN-10 | — | Pending |
+| INPT-01 | — | Pending |
+| INPT-02 | — | Pending |
+| INPT-03 | — | Pending |
+| INPT-04 | — | Pending |
+| LIVE-01 | — | Pending |
+| LIVE-02 | — | Pending |
+| RSLT-01 | — | Pending |
+| RSLT-02 | — | Pending |
+| RSLT-03 | — | Pending |
+| RSLT-04 | — | Pending |
+| HIST-01 | — | Pending |
+| HIST-02 | — | Pending |
+| HIST-03 | — | Pending |
+| HIST-04 | — | Pending |
+| THEM-01 | — | Pending |
+| THEM-02 | — | Pending |
+| SETP-01 | — | Pending |
+| SETP-02 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 28 total
+- Mapped to phases: 0
+- Unmapped: 28 ⚠️
+
+---
+*Requirements defined: 2026-02-17*
+*Last updated: 2026-02-17 after initial definition*
