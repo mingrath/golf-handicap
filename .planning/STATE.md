@@ -6,16 +6,16 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
 **Current focus:** Phase 6
-**Last completed:** Phase 5 - Game History
+**Last completed:** Phase 5 - Game History (2026-02-17)
 
 ## Current Position
 
-Phase: 5 of 7 (Game History) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 05-02 (History List & Play Again)
+Phase: 6 of 7 (Cross-Round Statistics)
+Plan: 0 of 1 in current phase
+Status: Ready to plan
+Last activity: 2026-02-17 -- Phase 5 verified and marked complete (7/7 must-haves passed)
 
-Progress: [█████████░░░] 73%
+Progress: [█████████░░░] 71%
 
 ## Performance Metrics
 
@@ -90,5 +90,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 05-02-PLAN.md (History List & Play Again) -- Phase 05 complete
+Stopped at: Phase 5 complete, Phase 6 ready to plan
 Resume file: None
