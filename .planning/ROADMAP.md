@@ -102,10 +102,10 @@ Plans:
   1. User can view per-player win rate across all saved rounds
   2. User can see average score, best round, and worst round for each player
   3. Stats update automatically as new rounds are completed and saved
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 06-01: Stats computation and dashboard (HIST-03)
+- [ ] 06-01-PLAN.md -- Stats computation module, reactive hook, dashboard page with stat cards and win rate chart, navigation links (HIST-03)
 
 ### Phase 7: Theme & Polish
 **Goal**: The app adapts to outdoor/indoor lighting conditions and provides a safety net for scoring mistakes
