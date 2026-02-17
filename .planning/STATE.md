@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 3 - Setup Streamlining
+**Current focus:** Phase 3 - Setup Streamlining (complete)
 
 ## Current Position
 
 Phase: 3 of 7 (Setup Streamlining)
-Plan: 0 of 1 in current phase
-Status: Ready to execute
-Last activity: 2026-02-17 -- Phase 3 planned (1 plan, verified by plan-checker)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-17 -- Phase 3 executed (1 plan, 2 tasks)
 
-Progress: [████░░░░░░░░] 29%
+Progress: [█████░░░░░░░] 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 4min
-- Total execution time: 0.27 hours
+- Total execution time: 0.33 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [████░░░░░░░░] 29%
 |-------|-------|-------|----------|
 | 01 | 2/2 | 9min | 4.5min |
 | 02 | 2/2 | 7min | 3.5min |
+| 03 | 1/1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (6min), 02-01 (4min), 02-02 (3min)
-- Trend: improving
+- Last 5 plans: 01-02 (6min), 02-01 (4min), 02-02 (3min), 03-01 (4min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -57,6 +58,9 @@ Recent decisions affecting current work:
 - [02-02]: Removed scoreboard toggle -- replaced by always-visible MiniLeaderboard
 - [02-02]: Removed Hole Rankings and Running Total cards as redundant with MiniLeaderboard
 - [02-02]: Sparkline color switches between emerald/rose based on player total sign
+- [03-01]: Removed StepIndicator from setup/handicap/turbo pages -- no longer a linear wizard
+- [03-01]: Start Game calls initializeHandicaps() to ensure zero-valued pair entries exist
+- [03-01]: Handicap/turbo sub-pages navigate back to /setup instead of continuing linear flow
 
 ### Pending Todos
 
@@ -69,5 +73,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 02-02-PLAN.md (Phase 2 complete)
+Stopped at: Completed 03-01-PLAN.md (Phase 3 complete)
 Resume file: None

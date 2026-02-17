@@ -31,16 +31,18 @@ Tests use Vitest with jsdom environment, React plugin, and path aliases. Pre-com
 
 `@/*` maps to `./src/*` (configured in tsconfig.json).
 
-### App Flow (4-step wizard)
+### App Flow (streamlined setup)
 
-| Route | Step | Purpose |
-|-------|------|---------|
-| `/` | — | Home: new game or resume |
-| `/setup` | 1 | Add 2–6 players, set 1–36 holes |
-| `/handicap` | 2 | Set handicap per pair, choose handicap holes |
-| `/turbo` | 3 | Select turbo holes (2x scoring) |
-| `/play` | 4 | Enter strokes per hole, view live results |
-| `/results` | — | Final rankings and scorecards |
+| Route | Purpose |
+|-------|---------|
+| `/` | Home: new game or resume |
+| `/setup` | Add 2-6 players, set 1-36 holes, optional collapsible handicap/turbo config, **Start Game** button |
+| `/handicap` | Standalone handicap config (accessible from setup, navigates back to /setup) |
+| `/turbo` | Standalone turbo config (accessible from setup, navigates back to /setup) |
+| `/play` | Enter strokes per hole, view live results |
+| `/results` | Final rankings and scorecards |
+
+**Fast path:** New Game -> enter names -> Start Game (3 steps). Handicap and turbo configuration are optional collapsible sections on the setup page.
 
 ### Key Modules (`src/lib/`)
 
@@ -52,7 +54,7 @@ Tests use Vitest with jsdom environment, React plugin, and path aliases. Pre-com
 ### Components (`src/components/`)
 
 - **`ui/`** — shadcn/ui primitives (button, card, dialog). Add new ones via `npx shadcn@latest add <component>`.
-- **`shared/`** — Reusable game UI: `game-header`, `step-indicator` (4-step progress), `number-stepper` (+/− control).
+- **`shared/`** — Reusable game UI: `game-header`, `step-indicator` (unused since setup streamlining), `number-stepper` (+/- control).
 
 ### Scoring Model
 
