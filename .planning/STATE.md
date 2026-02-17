@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 5
-**Last completed:** Phase 4 - Rich Results
+**Current focus:** Phase 6
+**Last completed:** Phase 5 - Game History
 
 ## Current Position
 
-Phase: 5 of 7 (Game History)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-17 -- Completed 05-01 (History Auto-Save)
+Phase: 5 of 7 (Game History) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-17 -- Completed 05-02 (History List & Play Again)
 
-Progress: [████████░░░░] 64%
+Progress: [█████████░░░] 73%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 4min
-- Total execution time: 0.48 hours
+- Total execution time: 0.51 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [████████░░░░] 64%
 | 02 | 2/2 | 7min | 3.5min |
 | 03 | 1/1 | 4min | 4min |
 | 04 | 2/2 | 7min | 3.5min |
-| 05 | 1/2 | 2min | 2min |
+| 05 | 2/2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4min), 04-01 (3min), 04-02 (4min), 05-01 (2min)
+- Last 5 plans: 03-01 (4min), 04-01 (3min), 04-02 (4min), 05-01 (2min), 05-02 (2min)
 - Trend: stable/improving
 
 *Updated after each plan completion*
@@ -75,6 +75,9 @@ Recent decisions affecting current work:
 - [05-01]: useRef guard + minimal deps array for exactly-once save (defense-in-depth)
 - [05-01]: Fire-and-forget save with .catch(console.error) -- failure does not block results UI
 - [05-01]: Full state snapshot stored in HistoryRecord for future detail view and stats
+- [05-02]: useLiveQuery with null default for progressive enhancement -- no loading spinners
+- [05-02]: Play Again hidden when hasActiveGame is true -- resume card takes priority
+- [05-02]: Fresh crypto.randomUUID() for play-again players -- never reuse old player IDs
 
 ### Pending Todos
 
@@ -87,5 +90,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 05-01-PLAN.md (History Auto-Save)
+Stopped at: Completed 05-02-PLAN.md (History List & Play Again) -- Phase 05 complete
 Resume file: None
