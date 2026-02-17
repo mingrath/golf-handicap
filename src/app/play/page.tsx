@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { StrokeInput } from "@/components/shared/stroke-input";
 import { MiniLeaderboard } from "@/components/shared/mini-leaderboard";
+import { UndoBanner } from "@/components/shared/undo-banner";
 import { useGameStore } from "@/lib/game-store";
 import { useSwipe } from "@/hooks/use-swipe";
 import { HoleStrokes } from "@/lib/types";
@@ -43,6 +44,9 @@ export default function PlayPage() {
     goToPreviousHole,
     submitHoleStrokes,
     completeGame,
+    _undoSnapshot,
+    undoLastSubmission,
+    clearUndoSnapshot,
   } = useGameStore();
 
   // Derive initial strokes from store state (replaces setState-in-effect)
@@ -76,6 +80,7 @@ export default function PlayPage() {
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const confirmationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [undoKey, setUndoKey] = useState(0);
 
   // Swipe navigation: left = next hole, right = previous hole
   const swipeHandlers = useSwipe(
@@ -112,6 +117,7 @@ export default function PlayPage() {
       strokes: { ...strokes },
     };
     submitHoleStrokes(holeData);
+    setUndoKey((k) => k + 1);
     vibrate(50);
     setShowConfirmation(true);
 
@@ -133,6 +139,7 @@ export default function PlayPage() {
       strokes: { ...strokes },
     };
     submitHoleStrokes(holeData);
+    setUndoKey((k) => k + 1);
     vibrate(50);
     setShowConfirmation(true);
 
@@ -150,6 +157,11 @@ export default function PlayPage() {
     completeGame();
     router.push("/results");
   }, [completeGame, router]);
+
+  const handleUndo = useCallback(() => {
+    undoLastSubmission();
+    vibrate(30);
+  }, [undoLastSubmission]);
 
   if (!config?.players?.length) return null;
 
@@ -367,6 +379,16 @@ export default function PlayPage() {
           </button>
         )}
       </div>
+
+      {/* Undo banner - appears after score submission for 10 seconds */}
+      {_undoSnapshot && (
+        <UndoBanner
+          key={undoKey}
+          onUndo={handleUndo}
+          onExpire={clearUndoSnapshot}
+          durationMs={10000}
+        />
+      )}
     </div>
   );
 }
