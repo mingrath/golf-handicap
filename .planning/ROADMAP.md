@@ -88,11 +88,11 @@ Plans:
   1. After finishing a round, the game is automatically saved to persistent storage that survives browser cache clearing (IndexedDB with storage persistence)
   2. User can view a list of past rounds showing date, players, and winner
   3. User can start a new game with the same players from their most recent round in one tap from the home screen
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 05-01: History storage and save flow (HIST-01)
-- [ ] 05-02: History list page and play-again shortcut (HIST-02, HIST-04)
+- [ ] 05-01-PLAN.md — Dexie database setup, HistoryRecord type, and auto-save hook on results page (HIST-01)
+- [ ] 05-02-PLAN.md — History list page at /history and play-again shortcut on home screen (HIST-02, HIST-04)
 
 ### Phase 6: Cross-Round Statistics
 **Goal**: Users can track performance over time with win rates, score trends, and round-over-round improvement
