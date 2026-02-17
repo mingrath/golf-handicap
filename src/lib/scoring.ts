@@ -69,7 +69,7 @@ export function calculatePairHoleResult(
     playerAAdjusted,
     playerBAdjusted,
     playerAScore: playerAScore * multiplier,
-    playerBScore: -playerAScore * multiplier,
+    playerBScore: -(playerAScore * multiplier) || 0,
     isTurbo,
   };
 }
