@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowRight } from "lucide-react";
 import { GameHeader } from "@/components/shared/game-header";
@@ -11,34 +11,25 @@ import { Player } from "@/lib/types";
 
 const STEPS = ["Setup", "Handicap", "Turbo", "Play"];
 
-function generateId() {
-  return Math.random().toString(36).substring(2, 9);
-}
-
 export default function SetupPage() {
   const router = useRouter();
-  const { config, setPlayers, setNumberOfHoles, resetGame } = useGameStore();
+  const { config, setPlayers, setNumberOfHoles } = useGameStore();
 
   const [players, setLocalPlayers] = useState<Player[]>(() =>
     config?.players?.length
       ? config.players
       : [
-          { id: generateId(), name: "" },
-          { id: generateId(), name: "" },
+          { id: crypto.randomUUID(), name: "" },
+          { id: crypto.randomUUID(), name: "" },
         ]
   );
   const [numberOfHoles, setLocalHoles] = useState(
     () => config?.numberOfHoles ?? 18
   );
 
-  useEffect(() => {
-    resetGame();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const addPlayer = () => {
     if (players.length < 6) {
-      setLocalPlayers([...players, { id: generateId(), name: "" }]);
+      setLocalPlayers([...players, { id: crypto.randomUUID(), name: "" }]);
     }
   };
 

@@ -88,8 +88,8 @@ export default function HandicapPage() {
               <NumberStepper
                 value={value}
                 onChange={(v) => setHandicap(pair.pairKey, v)}
-                min={-18}
-                max={18}
+                min={-config.numberOfHoles}
+                max={config.numberOfHoles}
                 size="sm"
               />
 
