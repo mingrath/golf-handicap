@@ -60,10 +60,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. A user who accepts all defaults (no handicaps, no turbo) can go from "New Game" to the play screen in 3 steps or fewer
   2. Handicap and turbo configuration steps pre-fill with sensible defaults (0 handicap, no turbo holes) so users can skip through without interaction
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 03-01: Setup flow redesign with smart defaults (SETP-01, SETP-02)
+- [ ] 03-01-PLAN.md — Setup page redesign with Start Game fast path and collapsible handicap/turbo sections (SETP-01, SETP-02)
 
 ### Phase 4: Rich Results
 **Goal**: After completing a round, users see a compelling results experience with animated winner reveal, score trend visualization, and detailed pair-by-pair breakdowns
