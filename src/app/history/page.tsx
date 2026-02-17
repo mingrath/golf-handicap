@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
-import { ArrowLeft, Trophy, Calendar, Users } from "lucide-react";
+import { ArrowLeft, Trophy, Calendar, Users, BarChart3 } from "lucide-react";
 import { historyDb, type HistoryRecord } from "@/lib/history-db";
 
 export default function HistoryPage() {
@@ -30,6 +30,25 @@ export default function HistoryPage() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-3">
+        {games.length > 0 && (
+          <button
+            onClick={() => router.push("/stats")}
+            className="w-full glass-card p-4 text-left active:scale-[0.97] transition-all group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-emerald-600/20 flex items-center justify-center">
+                <BarChart3 className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-white">Player Stats</div>
+                <div className="text-xs text-slate-400">
+                  Win rates, averages, and trends
+                </div>
+              </div>
+            </div>
+          </button>
+        )}
+
         {games.length === 0 ? (
           /* Empty state */
           <div className="glass-card p-8 text-center">

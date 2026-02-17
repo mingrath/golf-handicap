@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Play, Plus, Download, RotateCcw, History } from "lucide-react";
+import { Play, Plus, Download, RotateCcw, History, BarChart3 } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useGameStore } from "@/lib/game-store";
 import { historyDb } from "@/lib/history-db";
@@ -171,6 +171,16 @@ export default function HomePage() {
           >
             <History className="h-4 w-4" />
             View Game History
+          </button>
+        )}
+
+        {latestGame && (
+          <button
+            className="w-full h-12 rounded-xl text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2"
+            onClick={() => router.push("/stats")}
+          >
+            <BarChart3 className="h-4 w-4" />
+            View Stats
           </button>
         )}
 
