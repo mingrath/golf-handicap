@@ -2,12 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Rocket } from "lucide-react";
+import { Zap, ArrowLeft } from "lucide-react";
 import { GameHeader } from "@/components/shared/game-header";
-import { StepIndicator } from "@/components/shared/step-indicator";
 import { useGameStore } from "@/lib/game-store";
-
-const STEPS = ["Setup", "Handicap", "Turbo", "Play"];
 
 export default function TurboPage() {
   const router = useRouter();
@@ -23,14 +20,13 @@ export default function TurboPage() {
 
   const turboHoles = config.turboHoles;
 
-  const handleStart = () => {
-    router.push("/play");
+  const handleDone = () => {
+    router.push("/setup");
   };
 
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
-      <GameHeader title="Turbo Holes" backHref="/handicap" />
-      <StepIndicator steps={STEPS} currentStep={2} />
+      <GameHeader title="Turbo Holes" backHref="/setup" />
 
       <div className="flex-1 px-4 pb-28 space-y-4 pt-4">
         <div className="glass-card p-5">
@@ -79,11 +75,11 @@ export default function TurboPage() {
 
       <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
         <button
-          className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-          onClick={handleStart}
+          className="w-full h-14 rounded-xl text-lg font-bold bg-slate-800/80 border border-slate-700/50 text-slate-300 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          onClick={handleDone}
         >
-          <Rocket className="h-5 w-5" />
-          Start Game
+          <ArrowLeft className="h-5 w-5" />
+          Done — Back to Setup
         </button>
       </div>
     </div>

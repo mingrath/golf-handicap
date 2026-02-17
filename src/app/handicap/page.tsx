@@ -2,14 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { GameHeader } from "@/components/shared/game-header";
-import { StepIndicator } from "@/components/shared/step-indicator";
 import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { generatePairs, getPlayerName } from "@/lib/pairs";
-
-const STEPS = ["Setup", "Handicap", "Turbo", "Play"];
 
 export default function HandicapPage() {
   const router = useRouter();
@@ -38,15 +35,14 @@ export default function HandicapPage() {
 
   const allComplete = incompletePairs.length === 0;
 
-  const handleNext = () => {
+  const handleDone = () => {
     if (!allComplete) return;
-    router.push("/turbo");
+    router.push("/setup");
   };
 
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
       <GameHeader title="Handicaps" backHref="/setup" />
-      <StepIndicator steps={STEPS} currentStep={1} />
 
       <div className="flex-1 px-4 pb-28 space-y-4 pt-4">
         <p className="text-sm text-slate-400 text-center">
@@ -153,16 +149,16 @@ export default function HandicapPage() {
         <button
           className={`w-full h-14 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2 ${
             allComplete
-              ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97]"
+              ? "bg-slate-800/80 border border-slate-700/50 text-slate-300 active:scale-[0.97]"
               : "bg-slate-800/50 text-slate-600 cursor-not-allowed"
           }`}
-          onClick={handleNext}
+          onClick={handleDone}
           disabled={!allComplete}
         >
           {allComplete ? (
             <>
-              Next: Turbo Holes
-              <ArrowRight className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5" />
+              Done — Back to Setup
             </>
           ) : (
             `Select handicap holes (${incompletePairs.length} pair${incompletePairs.length > 1 ? "s" : ""} incomplete)`
