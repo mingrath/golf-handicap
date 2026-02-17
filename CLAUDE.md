@@ -5,12 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev      # Start dev server (localhost:3000)
-npm run build    # Production build
-npm run lint     # ESLint with Next.js + TypeScript rules
+npm run dev        # Start dev server (localhost:3000)
+npm run build      # Production build
+npm run lint       # ESLint with Next.js + TypeScript rules
+npm test           # Run all tests (vitest run)
+npm run test:watch # Run tests in watch mode (vitest)
 ```
 
-No test framework is configured.
+Tests use Vitest with jsdom environment, React plugin, and path aliases. Pre-commit hook runs `vitest run --bail 1` via simple-git-hooks. Set `SKIP_SIMPLE_GIT_HOOKS=1` to bypass.
 
 ## Architecture
 
