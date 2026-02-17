@@ -48,8 +48,8 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Theme & Polish
 
-- [ ] **THEM-01**: App supports dark and light theme with auto-detection of system preference and manual toggle
-- [ ] **THEM-02**: User can undo last score submission within 10 seconds via undo button that appears after submit
+- [x] **THEM-01**: App supports dark and light theme with auto-detection of system preference and manual toggle
+- [x] **THEM-02**: User can undo last score submission within 10 seconds via undo button that appears after submit
 
 ### Setup Streamlining
 
@@ -118,8 +118,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HIST-02 | Phase 5 | Done |
 | HIST-04 | Phase 5 | Done |
 | HIST-03 | Phase 6 | Done |
-| THEM-01 | Phase 7 | Pending |
-| THEM-02 | Phase 7 | Pending |
+| THEM-01 | Phase 7 | Done |
+| THEM-02 | Phase 7 | Done |
 
 **Coverage:**
 - v1 requirements: 28 total
