@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Check,
@@ -8,13 +8,26 @@ import {
   ChevronRight,
   Zap,
   Trophy,
-  RotateCcw,
 } from "lucide-react";
-import { NumberStepper } from "@/components/shared/number-stepper";
+import { StrokeInput } from "@/components/shared/stroke-input";
 import { useGameStore } from "@/lib/game-store";
 import { HoleStrokes } from "@/lib/types";
 import { getRunningTotals } from "@/lib/scoring";
-import { generatePairs, getPlayerName } from "@/lib/pairs";
+import { getPlayerName } from "@/lib/pairs";
+import { vibrate } from "@/lib/vibrate";
+
+function getInitialStrokes(
+  config: { players: { id: string }[] } | null,
+  holeStrokes: HoleStrokes[],
+  currentHole: number
+): Record<string, number> {
+  if (!config) return {};
+  const existing = holeStrokes.find((s) => s.holeNumber === currentHole);
+  if (existing) return existing.strokes;
+  const initial: Record<string, number> = {};
+  config.players.forEach((p) => (initial[p.id] = 4));
+  return initial;
+}
 
 export default function PlayPage() {
   const router = useRouter();
@@ -25,13 +38,43 @@ export default function PlayPage() {
     pairResults,
     playerScores,
     goToHole,
+    goToNextHole,
     submitHoleStrokes,
     completeGame,
   } = useGameStore();
 
-  const [strokes, setStrokes] = useState<Record<string, number>>({});
+  // Derive initial strokes from store state (replaces setState-in-effect)
+  const initialStrokes = useMemo(
+    () => getInitialStrokes(config, holeStrokes, currentHole),
+    [config, holeStrokes, currentHole]
+  );
+  const [strokeOverrides, setStrokeOverrides] = useState<Record<string, number>>({});
+  const [overrideHole, setOverrideHole] = useState(currentHole);
+
+  // Reset overrides when hole changes
+  if (overrideHole !== currentHole) {
+    setStrokeOverrides({});
+    setOverrideHole(currentHole);
+  }
+
+  const strokes = useMemo(
+    () => ({ ...initialStrokes, ...strokeOverrides }),
+    [initialStrokes, strokeOverrides]
+  );
+  const setStrokes = useCallback(
+    (updater: (prev: Record<string, number>) => Record<string, number>) => {
+      setStrokeOverrides((prev) => {
+        const merged = { ...initialStrokes, ...prev };
+        const next = updater(merged);
+        return next;
+      });
+    },
+    [initialStrokes]
+  );
+
   const [showScoreboard, setShowScoreboard] = useState(false);
-  const [showSubmitFlash, setShowSubmitFlash] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const confirmationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!config?.players?.length) {
@@ -40,39 +83,60 @@ export default function PlayPage() {
     }
   }, [config, router]);
 
+  // Clean up confirmation timer on unmount
   useEffect(() => {
-    if (!config) return;
-    const existing = holeStrokes.find((s) => s.holeNumber === currentHole);
-    if (existing) {
-      setStrokes(existing.strokes);
-    } else {
-      const initial: Record<string, number> = {};
-      config.players.forEach((p) => (initial[p.id] = 4));
-      setStrokes(initial);
-    }
-  }, [currentHole, config, holeStrokes]);
+    return () => {
+      if (confirmationTimerRef.current) {
+        clearTimeout(confirmationTimerRef.current);
+      }
+    };
+  }, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmitAndAdvance = useCallback(() => {
     if (!config) return;
     const holeData: HoleStrokes = {
       holeNumber: currentHole,
       strokes: { ...strokes },
     };
     submitHoleStrokes(holeData);
-    setShowSubmitFlash(true);
-    setTimeout(() => setShowSubmitFlash(false), 1200);
+    vibrate(50);
+    setShowConfirmation(true);
+
+    if (confirmationTimerRef.current) {
+      clearTimeout(confirmationTimerRef.current);
+    }
+
+    confirmationTimerRef.current = setTimeout(() => {
+      setShowConfirmation(false);
+      goToNextHole();
+      confirmationTimerRef.current = null;
+    }, 1000);
+  }, [config, currentHole, strokes, submitHoleStrokes, goToNextHole]);
+
+  const handleSubmitLastHole = useCallback(() => {
+    if (!config) return;
+    const holeData: HoleStrokes = {
+      holeNumber: currentHole,
+      strokes: { ...strokes },
+    };
+    submitHoleStrokes(holeData);
+    vibrate(50);
+    setShowConfirmation(true);
+
+    if (confirmationTimerRef.current) {
+      clearTimeout(confirmationTimerRef.current);
+    }
+
+    confirmationTimerRef.current = setTimeout(() => {
+      setShowConfirmation(false);
+      confirmationTimerRef.current = null;
+    }, 1000);
   }, [config, currentHole, strokes, submitHoleStrokes]);
 
-  const handleFinish = () => {
-    if (!config) return;
-    const holeData: HoleStrokes = {
-      holeNumber: currentHole,
-      strokes: { ...strokes },
-    };
-    submitHoleStrokes(holeData);
+  const handleViewResults = useCallback(() => {
     completeGame();
     router.push("/results");
-  };
+  }, [completeGame, router]);
 
   if (!config?.players?.length) return null;
 
@@ -83,8 +147,6 @@ export default function PlayPage() {
   const isLastHole = currentHole === config.numberOfHoles;
   const allHolesScored = holeStrokes.length === config.numberOfHoles;
 
-  const runningTotals = getRunningTotals(playerScores, currentHole - 1);
-
   const currentPairResults = pairResults.filter(
     (r) => r.holeNumber === currentHole
   );
@@ -94,8 +156,6 @@ export default function PlayPage() {
   );
 
   const totalUpToCurrent = getRunningTotals(playerScores, currentHole);
-
-  const pairs = generatePairs(config.players);
 
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
@@ -178,11 +238,15 @@ export default function PlayPage() {
         </div>
       )}
 
-      {/* Submit feedback flash */}
-      {showSubmitFlash && (
-        <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-2 flex items-center justify-center gap-2 animate-fade-up">
-          <Check className="h-4 w-4 text-emerald-400" />
-          <span className="text-sm font-medium text-emerald-400">Scores saved!</span>
+      {/* Confirmation flash overlay */}
+      {showConfirmation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="animate-in fade-in zoom-in duration-200 bg-emerald-500/20 backdrop-blur-sm rounded-3xl px-8 py-6 flex flex-col items-center gap-2">
+            <Check className="h-10 w-10 text-emerald-400" />
+            <span className="text-lg font-bold text-emerald-400">
+              Hole {currentHole} saved
+            </span>
+          </div>
         </div>
       )}
 
@@ -274,23 +338,14 @@ export default function PlayPage() {
               <h2 className="font-bold text-white mb-4">Enter Strokes</h2>
               <div className="space-y-4">
                 {config.players.map((player) => (
-                  <div
+                  <StrokeInput
                     key={player.id}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="font-medium text-sm text-slate-200 truncate max-w-[100px]">
-                      {player.name}
-                    </span>
-                    <NumberStepper
-                      value={strokes[player.id] ?? 0}
-                      onChange={(v) =>
-                        setStrokes((prev) => ({ ...prev, [player.id]: v }))
-                      }
-                      min={0}
-                      max={20}
-                      size="md"
-                    />
-                  </div>
+                    playerName={player.name}
+                    value={strokes[player.id] ?? 4}
+                    onChange={(v) =>
+                      setStrokes((prev) => ({ ...prev, [player.id]: v }))
+                    }
+                  />
                 ))}
               </div>
             </div>
@@ -478,44 +533,32 @@ export default function PlayPage() {
 
       {/* Bottom action bar */}
       {!showScoreboard && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50 flex gap-2">
-          {holeAlreadyScored && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
+          {isLastHole && holeAlreadyScored ? (
+            /* Last hole already scored: View Results */
             <button
-              className="h-14 w-14 rounded-xl flex items-center justify-center bg-slate-800 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all active:scale-95"
-              onClick={() => {
-                const holeData: HoleStrokes = {
-                  holeNumber: currentHole,
-                  strokes: { ...strokes },
-                };
-                submitHoleStrokes(holeData);
-              }}
-            >
-              <RotateCcw className="h-5 w-5" />
-            </button>
-          )}
-
-          {isLastHole ? (
-            <button
-              className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-              onClick={handleFinish}
+              className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+              onClick={handleViewResults}
             >
               <Trophy className="h-5 w-5" />
-              Finish Game
+              View Results
             </button>
-          ) : holeAlreadyScored ? (
+          ) : isLastHole ? (
+            /* Last hole not yet scored: Submit & Finish */
             <button
-              className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-              onClick={() => goToHole(currentHole + 1)}
+              className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+              onClick={handleSubmitLastHole}
             >
-              Next Hole
-              <ChevronRight className="h-5 w-5" />
+              <Trophy className="h-5 w-5" />
+              Submit &amp; Finish
             </button>
           ) : (
+            /* Non-last hole: Submit (or Update) + auto-advance */
             <button
-              className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-              onClick={handleSubmit}
+              className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+              onClick={handleSubmitAndAdvance}
             >
-              Submit Scores
+              {holeAlreadyScored ? "Update Scores" : "Submit Scores"}
             </button>
           )}
         </div>
@@ -526,10 +569,7 @@ export default function PlayPage() {
         <div className="fixed bottom-0 left-0 right-0 p-4 pb-safe bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/50">
           <button
             className="w-full h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-            onClick={() => {
-              completeGame();
-              router.push("/results");
-            }}
+            onClick={handleViewResults}
           >
             <Trophy className="h-5 w-5" />
             View Results
