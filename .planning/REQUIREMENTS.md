@@ -9,16 +9,16 @@ Requirements for the v2 rebuild. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUN-01**: Store validates stroke values (0-20 range) before persisting
-- [ ] **FOUN-02**: Store validates handicap values and hole numbers against game config
-- [ ] **FOUN-03**: Store validates player count (2-6) on setPlayers()
-- [ ] **FOUN-04**: Player IDs use crypto.randomUUID() instead of Math.random()
-- [ ] **FOUN-05**: verifyZeroSum() called after every score submission with warning on failure
-- [ ] **FOUN-06**: Persisted state includes version number with cascading migration support
-- [ ] **FOUN-07**: App shows loading skeleton until Zustand store is hydrated from storage
-- [ ] **FOUN-08**: Vitest configured with tests covering all pure functions in scoring.ts
-- [ ] **FOUN-09**: Vitest tests covering all pure functions in pairs.ts
-- [ ] **FOUN-10**: Setup page resetGame() only triggers on explicit "new game" action, not on mount
+- [x] **FOUN-01**: Store validates stroke values (0-20 range) before persisting
+- [x] **FOUN-02**: Store validates handicap values and hole numbers against game config
+- [x] **FOUN-03**: Store validates player count (2-6) on setPlayers()
+- [x] **FOUN-04**: Player IDs use crypto.randomUUID() instead of Math.random()
+- [x] **FOUN-05**: verifyZeroSum() called after every score submission with warning on failure
+- [x] **FOUN-06**: Persisted state includes version number with cascading migration support
+- [x] **FOUN-07**: App shows loading skeleton until Zustand store is hydrated from storage
+- [x] **FOUN-08**: Vitest configured with tests covering all pure functions in scoring.ts
+- [x] **FOUN-09**: Vitest tests covering all pure functions in pairs.ts
+- [x] **FOUN-10**: Setup page resetGame() only triggers on explicit "new game" action, not on mount
 
 ### Score Input
 
@@ -92,16 +92,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUN-01 | Phase 1 | Pending |
-| FOUN-02 | Phase 1 | Pending |
-| FOUN-03 | Phase 1 | Pending |
-| FOUN-04 | Phase 1 | Pending |
-| FOUN-05 | Phase 1 | Pending |
-| FOUN-06 | Phase 1 | Pending |
-| FOUN-07 | Phase 1 | Pending |
-| FOUN-08 | Phase 1 | Pending |
-| FOUN-09 | Phase 1 | Pending |
-| FOUN-10 | Phase 1 | Pending |
+| FOUN-01 | Phase 1 | Done |
+| FOUN-02 | Phase 1 | Done |
+| FOUN-03 | Phase 1 | Done |
+| FOUN-04 | Phase 1 | Done |
+| FOUN-05 | Phase 1 | Done |
+| FOUN-06 | Phase 1 | Done |
+| FOUN-07 | Phase 1 | Done |
+| FOUN-08 | Phase 1 | Done |
+| FOUN-09 | Phase 1 | Done |
+| FOUN-10 | Phase 1 | Done |
 | INPT-01 | Phase 2 | Pending |
 | INPT-02 | Phase 2 | Pending |
 | INPT-03 | Phase 2 | Pending |

@@ -12,7 +12,7 @@ Rebuild the golf handicap scorer from a working but rough v1 into a polished v2 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Store Hardening & Test Foundation** - Validate inputs, version state, fix ID generation, wire zero-sum checks, add test coverage
+- [x] **Phase 1: Store Hardening & Test Foundation** - Validate inputs, version state, fix ID generation, wire zero-sum checks, add test coverage *(completed 2026-02-17)*
 - [ ] **Phase 2: Score Input & Live Play** - Redesign play screen for fast stroke entry and always-visible leaderboard
 - [ ] **Phase 3: Setup Streamlining** - Reduce taps in setup wizard with smart defaults and flow optimization
 - [ ] **Phase 4: Rich Results** - Winner spotlight, score trend chart, head-to-head pair breakdowns, shareable results
@@ -139,7 +139,7 @@ Phase 1 (Foundation)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Store Hardening & Test Foundation | 0/2 | Not started | - |
+| 1. Store Hardening & Test Foundation | 2/2 | ✓ Complete | 2026-02-17 |
 | 2. Score Input & Live Play | 0/2 | Not started | - |
 | 3. Setup Streamlining | 0/1 | Not started | - |
 | 4. Rich Results | 0/2 | Not started | - |
