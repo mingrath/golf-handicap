@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 6
-**Last completed:** Phase 5 - Game History (2026-02-17)
+**Current focus:** Phase 7
+**Last completed:** Phase 6 - Cross-Round Statistics (2026-02-17)
 
 ## Current Position
 
-Phase: 6 of 7 (Cross-Round Statistics)
-Plan: 0 of 1 in current phase
-Status: Ready to execute
-Last activity: 2026-02-17 -- Phase 6 planned (1 plan, verified by plan-checker)
+Phase: 6 of 7 (Cross-Round Statistics) -- COMPLETE
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-17 -- Completed 06-01-PLAN.md (stats dashboard)
 
-Progress: [█████████░░░] 71%
+Progress: [██████████░░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 4min
-- Total execution time: 0.51 hours
+- Total execution time: 0.56 hours
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: [█████████░░░] 71%
 | 03 | 1/1 | 4min | 4min |
 | 04 | 2/2 | 7min | 3.5min |
 | 05 | 2/2 | 4min | 2min |
+| 06 | 1/1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4min), 04-01 (3min), 04-02 (4min), 05-01 (2min), 05-02 (2min)
+- Last 5 plans: 04-01 (3min), 04-02 (4min), 05-01 (2min), 05-02 (2min), 06-01 (3min)
 - Trend: stable/improving
 
 *Updated after each plan completion*
@@ -78,6 +79,10 @@ Recent decisions affecting current work:
 - [05-02]: useLiveQuery with null default for progressive enhancement -- no loading spinners
 - [05-02]: Play Again hidden when hasActiveGame is true -- resume card takes priority
 - [05-02]: Fresh crypto.randomUUID() for play-again players -- never reuse old player IDs
+- [06-01]: Case-insensitive player matching via normalize (trim + lowercase) with first-occurrence display name
+- [06-01]: Ties at rank 1 count as wins for all tied players
+- [06-01]: WinRateChart uses same ChartContainer + Recharts pattern as ScoreTrendChart
+- [06-01]: Stats sorted by winRate desc then gamesPlayed desc
 
 ### Pending Todos
 
@@ -90,5 +95,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 6 planned, ready to execute
+Stopped at: Completed 06-01-PLAN.md -- Phase 6 complete, ready for Phase 7
 Resume file: None
