@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 1 of 7 (Store Hardening & Test Foundation)
-Plan: 0 of 2 in current phase
-Status: Ready to execute
-Last activity: 2026-02-17 -- Phase 1 planned (2 plans, verified by plan-checker)
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-17 -- Completed 01-01-PLAN.md (store hardening)
 
-Progress: [░░░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░░░] 7%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 3min
+- Total execution time: 0.05 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 1/2 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 01-01 (3min)
+- Trend: baseline
 
 *Updated after each plan completion*
 
@@ -45,6 +45,9 @@ Recent decisions affecting current work:
 - [Roadmap]: Data integrity first -- foundation phase before any feature work to prevent corrupted historical data
 - [Roadmap]: Two-store separation -- game store and history store with independent versioning
 - [Roadmap]: IndexedDB via Dexie for history storage (localStorage 5 MB limit insufficient)
+- [01-01]: Simplified sonner component to hardcoded dark theme (removed next-themes dependency)
+- [01-01]: Zero-sum verification warns but does not block gameplay
+- [01-01]: Unversioned state (version 0) migrates to clean initialState
 
 ### Pending Todos
 
@@ -57,5 +60,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 1 planned and verified, ready to execute
+Stopped at: Completed 01-01-PLAN.md (store hardening)
 Resume file: None
