@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 7
-**Last completed:** Phase 6 - Cross-Round Statistics
+**Current focus:** Complete
+**Last completed:** Phase 7 - Theme & Polish
 
 ## Current Position
 
 Phase: 7 of 7 (Theme & Polish)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-17 -- Completed 07-01 (Theme infrastructure + color migration)
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-17 -- Completed 07-02 (Undo last submission)
 
-Progress: [███████████░] 93%
+Progress: [████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 5min
-- Total execution time: 0.80 hours
+- Total execution time: 0.87 hours
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [███████████░] 93%
 | 04 | 2/2 | 7min | 3.5min |
 | 05 | 2/2 | 4min | 2min |
 | 06 | 1/1 | 3min | 3min |
-| 07 | 1/2 | 14min | 14min |
+| 07 | 2/2 | 18min | 9min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (4min), 05-01 (2min), 05-02 (2min), 06-01 (3min), 07-01 (14min)
-- Trend: 07-01 larger due to 19-file color migration
+- Last 5 plans: 05-01 (2min), 05-02 (2min), 06-01 (3min), 07-01 (14min), 07-02 (4min)
+- Trend: 07-02 back to normal pace (store + component work)
 
 *Updated after each plan completion*
 
@@ -88,6 +88,9 @@ Recent decisions affecting current work:
 - [07-01]: Glass-card uses two-block CSS approach (.glass-card + .dark .glass-card) for browser compatibility
 - [07-01]: Chart tick/grid colors use Tailwind CSS classes instead of hardcoded rgba for theme adaptability
 - [07-01]: Podium numbers and gradient button text stay text-white (always on colored backgrounds)
+- [07-02]: Undo snapshot is store-only ephemeral state, excluded from localStorage via partialize
+- [07-02]: UndoBanner uses key prop reset pattern for fresh countdown on each submission
+- [07-02]: onExpire callback cleans up snapshot when timer runs out
 
 ### Pending Todos
 
@@ -100,5 +103,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 07-01-PLAN.md (theme infrastructure + color migration)
+Stopped at: Completed 07-02-PLAN.md (undo last submission) -- All phases complete
 Resume file: None
