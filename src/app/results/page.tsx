@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Home, RotateCcw, Crown, Pencil, X } from "lucide-react";
+import { Home, RotateCcw, Pencil, X } from "lucide-react";
 import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { getFinalRankings } from "@/lib/scoring";
 import { HoleStrokes } from "@/lib/types";
 import { ScoreTrendChart } from "@/components/results/score-trend-chart";
 import { PairBreakdown } from "@/components/results/pair-breakdown";
+import { WinnerPodium } from "@/components/results/winner-podium";
+import { ShareResultsCard } from "@/components/results/share-results-card";
 
 const MEDAL_COLORS = ["text-amber-400", "text-slate-400", "text-amber-700"];
 const MEDAL_BG = [
@@ -25,9 +27,10 @@ interface EditingCell {
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame } =
+  const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame, isComplete } =
     useGameStore();
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
     if (!config?.players?.length) {
@@ -38,6 +41,12 @@ export default function ResultsPage() {
   if (!config?.players?.length) return null;
 
   const rankings = getFinalRankings(config.players, playerScores);
+
+  // Animation plays only once per component mount after game completion
+  const shouldAnimate = isComplete && !hasAnimatedRef.current;
+  if (isComplete && !hasAnimatedRef.current) {
+    hasAnimatedRef.current = true;
+  }
 
   const handleNewGame = () => {
     resetGame();
@@ -84,34 +93,12 @@ export default function ResultsPage() {
       </header>
 
       <div className="flex-1 px-4 py-6 space-y-5">
-        {/* Winner celebration */}
+        {/* Winner Podium */}
         {rankings.length > 0 && (
-          <div className="text-center py-10 relative">
-            {/* Ambient glow */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-48 h-48 rounded-full bg-amber-400/10 blur-[60px]" />
-            </div>
-
-            <div className="relative z-10">
-              <div className="animate-bounce-slow mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 mx-auto flex items-center justify-center shadow-xl shadow-amber-500/30">
-                  <Crown className="h-10 w-10 text-white" />
-                </div>
-              </div>
-              <h2 className="text-3xl font-extrabold text-white tracking-tight">
-                {rankings[0].player.name}
-              </h2>
-              <p className="text-2xl font-bold text-emerald-400 mt-2 tabular-nums">
-                {rankings[0].totalScore > 0
-                  ? `+${rankings[0].totalScore}`
-                  : rankings[0].totalScore}{" "}
-                points
-              </p>
-              <p className="text-sm text-amber-400/80 mt-1 font-semibold uppercase tracking-wider">
-                Champion
-              </p>
-            </div>
-          </div>
+          <WinnerPodium
+            rankings={rankings}
+            shouldAnimate={shouldAnimate}
+          />
         )}
 
         {/* Rankings */}
@@ -245,6 +232,12 @@ export default function ResultsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Share / Save Results */}
+        <ShareResultsCard
+          rankings={rankings}
+          numberOfHoles={config.numberOfHoles}
+        />
       </div>
 
       {/* Bottom actions */}
