@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** Phase 4 - Rich Results
-**Last completed:** Phase 3 - Setup Streamlining
+**Current focus:** Phase 5
+**Last completed:** Phase 4 - Rich Results
 
 ## Current Position
 
-Phase: 4 of 7 (Rich Results)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-17 -- Completed 04-01 (score trend chart + pair breakdowns)
+Phase: 5 of 7
+Plan: 0 of ? in current phase
+Status: Phase 4 complete
+Last activity: 2026-02-17 -- Completed 04-02 (animated podium + share card)
 
-Progress: [██████░░░░░░] 50%
+Progress: [███████░░░░░] 57%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 4min
-- Total execution time: 0.38 hours
+- Total execution time: 0.45 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████░░░░░░] 50%
 | 01 | 2/2 | 9min | 4.5min |
 | 02 | 2/2 | 7min | 3.5min |
 | 03 | 1/1 | 4min | 4min |
-| 04 | 1/2 | 3min | 3min |
+| 04 | 2/2 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (4min), 02-02 (3min), 03-01 (4min), 04-01 (3min)
+- Last 5 plans: 02-02 (3min), 03-01 (4min), 04-01 (3min), 04-02 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -66,6 +66,10 @@ Recent decisions affecting current work:
 - [04-01]: 2-player chart uses emerald/rose; 3+ players cycle chart-1 through chart-5
 - [04-01]: PairBreakdown uses native <details> for collapsible hole-by-hole dot grid
 - [04-01]: Single-pair games skip "Head to Head" section header
+- [04-02]: Share card uses inline styles with explicit hex colors for reliable html-to-image capture
+- [04-02]: Off-screen capture card uses position:fixed left:-9999px (not display:none) for browser layout
+- [04-02]: Unicode crown emoji in share card instead of Lucide icon for reliable PNG rendering
+- [04-02]: Podium animation gated by useRef -- replays on refresh but not on in-session navigation
 
 ### Pending Todos
 
@@ -78,5 +82,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 04-01-PLAN.md
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
