@@ -9,7 +9,7 @@ import {
   Zap,
   Trophy,
 } from "lucide-react";
-import { StrokeInput } from "@/components/shared/stroke-input";
+import { StrokeInput, DEFAULT_STROKES } from "@/components/shared/stroke-input";
 import { MiniLeaderboard } from "@/components/shared/mini-leaderboard";
 import { UndoBanner } from "@/components/shared/undo-banner";
 import { useGameStore } from "@/lib/game-store";
@@ -27,7 +27,7 @@ function getInitialStrokes(
   const existing = holeStrokes.find((s) => s.holeNumber === currentHole);
   if (existing) return existing.strokes;
   const initial: Record<string, number> = {};
-  config.players.forEach((p) => (initial[p.id] = 4));
+  config.players.forEach((p) => (initial[p.id] = DEFAULT_STROKES));
   return initial;
 }
 
@@ -270,7 +270,7 @@ export default function PlayPage() {
               <StrokeInput
                 key={player.id}
                 playerName={player.name}
-                value={strokes[player.id] ?? 4}
+                value={strokes[player.id] ?? DEFAULT_STROKES}
                 onChange={(v) =>
                   setStrokes((prev) => ({ ...prev, [player.id]: v }))
                 }

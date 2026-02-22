@@ -6,6 +6,8 @@ import {
   verifyZeroSum,
   getRunningTotals,
   getFinalRankings,
+  rebuildRunningTotals,
+  recalculateAllResults,
 } from "@/lib/scoring";
 import type {
   PairHandicap,
@@ -528,5 +530,177 @@ describe("getFinalRankings", () => {
     expect(ranked[0].totalScore).toBe(-1);
     expect(ranked[2].player.id).toBe("b");
     expect(ranked[2].totalScore).toBe(-5);
+  });
+});
+
+// ── rebuildRunningTotals ─────────────────────────────────────────────
+describe("rebuildRunningTotals", () => {
+  it("recalculates running totals from holeScores in order", () => {
+    const scores: PlayerHoleScore[] = [
+      { playerId: "a", holeNumber: 1, holeScore: 1, runningTotal: 999 },
+      { playerId: "a", holeNumber: 2, holeScore: -1, runningTotal: 999 },
+      { playerId: "a", holeNumber: 3, holeScore: 2, runningTotal: 999 },
+      { playerId: "b", holeNumber: 1, holeScore: -1, runningTotal: 999 },
+      { playerId: "b", holeNumber: 2, holeScore: 1, runningTotal: 999 },
+      { playerId: "b", holeNumber: 3, holeScore: -2, runningTotal: 999 },
+    ];
+    const rebuilt = rebuildRunningTotals(scores);
+    const aScores = rebuilt.filter((s) => s.playerId === "a").sort((a, b) => a.holeNumber - b.holeNumber);
+    expect(aScores[0].runningTotal).toBe(1);
+    expect(aScores[1].runningTotal).toBe(0);
+    expect(aScores[2].runningTotal).toBe(2);
+
+    const bScores = rebuilt.filter((s) => s.playerId === "b").sort((a, b) => a.holeNumber - b.holeNumber);
+    expect(bScores[0].runningTotal).toBe(-1);
+    expect(bScores[1].runningTotal).toBe(0);
+    expect(bScores[2].runningTotal).toBe(-2);
+  });
+
+  it("handles empty array", () => {
+    expect(rebuildRunningTotals([])).toEqual([]);
+  });
+
+  it("handles single hole", () => {
+    const scores: PlayerHoleScore[] = [
+      { playerId: "a", holeNumber: 1, holeScore: 3, runningTotal: 0 },
+    ];
+    const rebuilt = rebuildRunningTotals(scores);
+    expect(rebuilt[0].runningTotal).toBe(3);
+  });
+});
+
+// ── recalculateAllResults ────────────────────────────────────────────
+describe("recalculateAllResults", () => {
+  const players: Player[] = [
+    { id: "a", name: "Alice" },
+    { id: "b", name: "Bob" },
+  ];
+  const pairs = generatePairs(players);
+  const pairKey = makePairKey("a", "b");
+
+  it("replays a 3-hole game from strokes correctly", () => {
+    const holeStrokes: HoleStrokes[] = [
+      makeStrokes(1, { a: 3, b: 5 }),
+      makeStrokes(2, { a: 5, b: 3 }),
+      makeStrokes(3, { a: 4, b: 4 }),
+    ];
+    const handicaps = {
+      [pairKey]: makeHandicap(0),
+    };
+
+    const { pairResults, playerScores } = recalculateAllResults(
+      players,
+      holeStrokes,
+      handicaps,
+      [],
+      pairs
+    );
+
+    expect(pairResults.length).toBe(3); // 1 pair * 3 holes
+    expect(playerScores.length).toBe(6); // 2 players * 3 holes
+
+    // Hole 1: A wins (+1), B loses (-1)
+    const h1a = playerScores.find((s) => s.playerId === "a" && s.holeNumber === 1)!;
+    expect(h1a.holeScore).toBe(1);
+    expect(h1a.runningTotal).toBe(1);
+
+    // Hole 2: B wins, A loses
+    const h2a = playerScores.find((s) => s.playerId === "a" && s.holeNumber === 2)!;
+    expect(h2a.holeScore).toBe(-1);
+    expect(h2a.runningTotal).toBe(0);
+
+    // Hole 3: tie
+    const h3a = playerScores.find((s) => s.playerId === "a" && s.holeNumber === 3)!;
+    expect(h3a.holeScore).toBe(0);
+    expect(h3a.runningTotal).toBe(0);
+  });
+
+  it("respects handicap adjustments", () => {
+    const holeStrokes: HoleStrokes[] = [
+      makeStrokes(1, { a: 4, b: 5 }),
+    ];
+    const handicaps = {
+      [pairKey]: makeHandicap(1, [1]), // B gets -1 adjustment on hole 1
+    };
+
+    const { pairResults } = recalculateAllResults(
+      players,
+      holeStrokes,
+      handicaps,
+      [],
+      pairs
+    );
+
+    // A: 4, B: 5-1=4 -> tie
+    expect(pairResults[0].playerAScore).toBe(0);
+    expect(pairResults[0].playerBScore).toBe(0);
+  });
+
+  it("respects turbo holes", () => {
+    const holeStrokes: HoleStrokes[] = [
+      makeStrokes(1, { a: 3, b: 5 }),
+    ];
+    const handicaps = { [pairKey]: makeHandicap(0) };
+
+    const { pairResults } = recalculateAllResults(
+      players,
+      holeStrokes,
+      handicaps,
+      [1], // hole 1 is turbo
+      pairs
+    );
+
+    expect(pairResults[0].playerAScore).toBe(2); // doubled
+    expect(pairResults[0].playerBScore).toBe(-2);
+  });
+
+  it("zero-sum holds for all holes with 3 players", () => {
+    const threePlayers: Player[] = [
+      { id: "a", name: "A" },
+      { id: "b", name: "B" },
+      { id: "c", name: "C" },
+    ];
+    const threePairs = generatePairs(threePlayers);
+    const holeStrokes: HoleStrokes[] = [
+      makeStrokes(1, { a: 3, b: 4, c: 5 }),
+      makeStrokes(2, { a: 5, b: 3, c: 4 }),
+    ];
+    const handicaps: Record<string, PairHandicap> = {};
+    for (const pair of threePairs) {
+      handicaps[pair.pairKey] = {
+        pairKey: pair.pairKey,
+        playerAId: pair.playerAId,
+        playerBId: pair.playerBId,
+        value: 0,
+        handicapHoles: [],
+      };
+    }
+
+    const { playerScores } = recalculateAllResults(
+      threePlayers,
+      holeStrokes,
+      handicaps,
+      [],
+      threePairs
+    );
+
+    // Zero-sum per hole
+    for (const holeNum of [1, 2]) {
+      const holeScores = playerScores.filter((s) => s.holeNumber === holeNum);
+      const total = holeScores.reduce((sum, s) => sum + s.holeScore, 0);
+      expect(total).toBe(0);
+    }
+  });
+
+  it("handles empty strokes array", () => {
+    const { pairResults, playerScores } = recalculateAllResults(
+      players,
+      [],
+      {},
+      [],
+      pairs
+    );
+    expect(pairResults).toEqual([]);
+    expect(playerScores).toEqual([]);
   });
 });

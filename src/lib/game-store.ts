@@ -19,6 +19,8 @@ import {
   calculatePlayerHoleScores,
   getRunningTotals,
   verifyZeroSum,
+  recalculateAllResults,
+  rebuildRunningTotals,
 } from "./scoring";
 
 type UndoSnapshot = Pick<
@@ -40,6 +42,7 @@ interface GameStore extends GameState {
 
   // Gameplay actions
   submitHoleStrokes: (strokes: HoleStrokes) => void;
+  recalculateFromStrokes: () => void;
   goToHole: (holeNumber: number) => void;
   goToNextHole: () => void;
   goToPreviousHole: () => void;
@@ -289,8 +292,12 @@ export const useGameStore = create<GameStore>()(
             );
           }
 
-          // Recalculate all subsequent holes' running totals
-          const allPlayerScores = [...existingPlayerScores, ...newPlayerScores];
+          // Merge and rebuild running totals for all holes
+          const mergedPlayerScores = [
+            ...existingPlayerScores,
+            ...newPlayerScores,
+          ];
+          const allPlayerScores = rebuildRunningTotals(mergedPlayerScores);
 
           return {
             holeStrokes: [...existingStrokes, strokes],
@@ -298,6 +305,20 @@ export const useGameStore = create<GameStore>()(
             playerScores: allPlayerScores,
             _undoSnapshot: snapshot,
           };
+        }),
+
+      recalculateFromStrokes: () =>
+        set((state) => {
+          if (!state.config || state.holeStrokes.length === 0) return {};
+          const pairs = generatePairs(state.config.players);
+          const { pairResults, playerScores } = recalculateAllResults(
+            state.config.players,
+            state.holeStrokes,
+            state.config.handicaps,
+            state.config.turboHoles,
+            pairs
+          );
+          return { pairResults, playerScores };
         }),
 
       goToHole: (holeNumber) => set({ currentHole: holeNumber }),

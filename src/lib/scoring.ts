@@ -130,6 +130,99 @@ export function getRunningTotals(
 }
 
 /**
+ * Rebuild running totals for all player scores from scratch.
+ * Re-derives runningTotal for each hole based on holeScore sums.
+ * Used after editing a non-latest hole to fix stale intermediate values.
+ */
+export function rebuildRunningTotals(
+  playerScores: PlayerHoleScore[]
+): PlayerHoleScore[] {
+  // Group by player
+  const byPlayer: Record<string, PlayerHoleScore[]> = {};
+  for (const score of playerScores) {
+    if (!byPlayer[score.playerId]) byPlayer[score.playerId] = [];
+    byPlayer[score.playerId].push(score);
+  }
+
+  const result: PlayerHoleScore[] = [];
+  for (const playerId of Object.keys(byPlayer)) {
+    // Sort by hole number
+    const sorted = byPlayer[playerId].sort(
+      (a, b) => a.holeNumber - b.holeNumber
+    );
+    let total = 0;
+    for (const score of sorted) {
+      total += score.holeScore;
+      result.push({ ...score, runningTotal: total });
+    }
+  }
+  return result;
+}
+
+/**
+ * Recalculate ALL pair results and player scores from raw strokes.
+ * This replays the entire scoring engine from scratch — use after editing
+ * any hole's strokes or after changing handicap/turbo settings.
+ */
+export function recalculateAllResults(
+  players: Player[],
+  holeStrokes: HoleStrokes[],
+  handicaps: Record<string, PairHandicap>,
+  turboHoles: number[],
+  pairs: { pairKey: PairKey; playerAId: string; playerBId: string }[]
+): { pairResults: PairHoleResult[]; playerScores: PlayerHoleScore[] } {
+  const allPairResults: PairHoleResult[] = [];
+  const allPlayerScores: PlayerHoleScore[] = [];
+
+  // Sort strokes by hole number to process in order
+  const sortedStrokes = [...holeStrokes].sort(
+    (a, b) => a.holeNumber - b.holeNumber
+  );
+
+  for (const strokes of sortedStrokes) {
+    const holeNumber = strokes.holeNumber;
+    const isTurbo = turboHoles.includes(holeNumber);
+
+    // Calculate pair results for this hole
+    const holePairResults: PairHoleResult[] = pairs.map((pair) => {
+      const handicap = handicaps[pair.pairKey] ?? {
+        pairKey: pair.pairKey,
+        playerAId: pair.playerAId,
+        playerBId: pair.playerBId,
+        value: 0,
+        handicapHoles: [],
+      };
+      return calculatePairHoleResult(
+        pair.pairKey,
+        pair.playerAId,
+        pair.playerBId,
+        holeNumber,
+        strokes,
+        handicap,
+        isTurbo
+      );
+    });
+
+    allPairResults.push(...holePairResults);
+
+    // Get running totals from previously processed holes
+    const previousTotals = getRunningTotals(allPlayerScores, holeNumber - 1);
+
+    // Calculate player scores for this hole
+    const holePlayerScores = calculatePlayerHoleScores(
+      players,
+      allPairResults,
+      holeNumber,
+      previousTotals
+    );
+
+    allPlayerScores.push(...holePlayerScores);
+  }
+
+  return { pairResults: allPairResults, playerScores: allPlayerScores };
+}
+
+/**
  * Get final rankings sorted by total score (highest first).
  */
 export function getFinalRankings(
