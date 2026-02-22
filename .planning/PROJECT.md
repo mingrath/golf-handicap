@@ -40,8 +40,11 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 
 ### Active
 
-<!-- v2 backlog -- not yet scheduled -->
+<!-- v1.1 milestone scope -->
 
+- [ ] Extended stroke input supporting scores > 7 (users often score higher than preset row allows)
+- [ ] Editable scorecard and handicap on final results page (fix keying mistakes after round)
+- [ ] Editable scores and handicap during play for cross-check (two scorers verify after each hole)
 - [ ] Score storytelling: narrative highlights ("biggest comeback", "longest winning streak")
 - [ ] Player-vs-player lifetime head-to-head records across saved rounds
 
@@ -55,9 +58,22 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - Apple Watch companion -- requires native app, not PWA
 - AI-powered analysis -- rule-based highlights work fine
 
+## Current Milestone: v1.1 UX Fixes & Insights
+
+**Goal:** Address real user feedback (stroke input, editability) and add round insight features (storytelling, head-to-head).
+
+**Target features:**
+- Extended stroke input for scores > 7
+- Editable scorecard + handicap on results page
+- Editable scores + handicap during play (cross-check)
+- Score storytelling with narrative highlights
+- Lifetime player-vs-player head-to-head records
+
 ## Context
 
 Shipped v1.0 on 2026-02-17 with 6,289 LOC TypeScript/CSS across 7 phases and 12 plans.
+
+**v1.1 user feedback (2026-02-22):** Real users reported: (1) preset stroke row caps at 6, need higher numbers since many score >7; (2) can't edit scorecard or handicap on results page if mistakes made; (3) can't edit scores during play — two people record and cross-check each hole, need immediate correction ability.
 
 **Tech stack:** Next.js 16 (App Router, static prerendered), React 19, TypeScript 5, Zustand 5 (persist/localStorage), Dexie 4 (IndexedDB), Tailwind CSS 4, shadcn/ui (New York), next-themes 0.4.6, Recharts, Vitest 4.
 
@@ -90,4 +106,4 @@ Existing codebase analysis in `.planning/codebase/` (7 documents).
 | Glass-card two-block CSS approach | oklch(from ...) not well-supported; explicit light/dark blocks are reliable | ✓ Good |
 
 ---
-*Last updated: 2026-02-17 after v1.0 milestone*
+*Last updated: 2026-02-22 after v1.1 milestone start*
