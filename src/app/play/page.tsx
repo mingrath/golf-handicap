@@ -12,6 +12,7 @@ import {
 import { StrokeInput, DEFAULT_STROKES } from "@/components/shared/stroke-input";
 import { MiniLeaderboard } from "@/components/shared/mini-leaderboard";
 import { UndoBanner } from "@/components/shared/undo-banner";
+import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
 import { useGameStore } from "@/lib/game-store";
 import { useSwipe } from "@/hooks/use-swipe";
 import { HoleStrokes } from "@/lib/types";
@@ -188,6 +189,7 @@ export default function PlayPage() {
             / {config.numberOfHoles}
           </span>
         </h1>
+        <HandicapEditDialog />
       </header>
 
       {/* Hole navigator */}
