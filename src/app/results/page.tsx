@@ -12,6 +12,7 @@ import { PairBreakdown } from "@/components/results/pair-breakdown";
 import { WinnerPodium } from "@/components/results/winner-podium";
 import { ShareResultsCard } from "@/components/results/share-results-card";
 import { useSaveGame } from "@/hooks/use-save-game";
+import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
 
 const MEDAL_COLORS = ["text-amber-400", "text-muted-foreground", "text-amber-700"];
 const MEDAL_BG = [
@@ -93,7 +94,8 @@ export default function ResultsPage() {
     <div className="min-h-dvh bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border px-4 py-4 flex items-center">
-        <h1 className="text-lg font-bold text-foreground">Final Results</h1>
+        <h1 className="text-lg font-bold text-foreground flex-1">Final Results</h1>
+        <HandicapEditDialog />
       </header>
 
       <div className="flex-1 px-4 py-6 space-y-5">

@@ -6,22 +6,22 @@ import { historyDb, type HistoryRecord } from "@/lib/history-db";
 import { getFinalRankings } from "@/lib/scoring";
 
 /**
- * Saves the completed game to IndexedDB exactly once when isComplete becomes true.
- * Uses a ref guard to prevent double-save on React strict-mode double-mount or re-renders.
- * Fire-and-forget — failure does not block the results page.
+ * Saves the completed game to IndexedDB when isComplete becomes true.
+ * On subsequent edits (score/HC changes on results page), updates the saved record.
  */
 export function useSaveGame() {
-  const savedRef = useRef(false);
+  const savedIdRef = useRef<number | null>(null);
   const { isComplete, config, holeStrokes, pairResults, playerScores } =
     useGameStore();
 
   useEffect(() => {
-    if (!isComplete || !config || savedRef.current) return;
-    savedRef.current = true;
+    if (!isComplete || !config) return;
 
     const rankings = getFinalRankings(config.players, playerScores);
-    const record: HistoryRecord = {
-      completedAt: new Date().toISOString(),
+    const record: Omit<HistoryRecord, "id"> = {
+      completedAt: savedIdRef.current
+        ? undefined as unknown as string // preserve original timestamp on update
+        : new Date().toISOString(),
       players: config.players.map((p) => ({ id: p.id, name: p.name })),
       numberOfHoles: config.numberOfHoles,
       rankings: rankings.map((r) => ({
@@ -38,10 +38,23 @@ export function useSaveGame() {
       playerScores,
     };
 
-    historyDb.games.add(record).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only depend on isComplete.
-    // Do NOT add config/holeStrokes/pairResults/playerScores to deps — they change
-    // on score edits, which would re-trigger the save. The useRef guard provides the
-    // primary protection, but keeping deps minimal is defense-in-depth.
-  }, [isComplete]);
+    if (savedIdRef.current) {
+      // Update existing record (preserving completedAt and id)
+      historyDb.games
+        .update(savedIdRef.current, {
+          ...record,
+          completedAt: undefined, // don't overwrite original timestamp
+        })
+        .catch(console.error);
+    } else {
+      // First save
+      record.completedAt = new Date().toISOString();
+      historyDb.games
+        .add(record as HistoryRecord)
+        .then((id) => {
+          savedIdRef.current = id as number;
+        })
+        .catch(console.error);
+    }
+  }, [isComplete, config, holeStrokes, pairResults, playerScores]);
 }
