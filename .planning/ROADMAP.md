@@ -3,7 +3,7 @@
 ## Milestones
 
 - **v1.0 Golf Handicap Scorer v2** -- Phases 1-7 (shipped 2026-02-17)
-- **v1.1 UX Fixes & Insights** -- Phases 8-12 (in progress)
+- **v1.1 UX Fixes & Insights** -- Phases 8-12 (shipped 2026-02-22)
 
 ## Phases
 
@@ -26,11 +26,11 @@ Full details: `milestones/v1.0-ROADMAP.md`
 
 **Milestone Goal:** Address real user feedback (stroke input limits, score editability) and add round insight features (storytelling narratives, lifetime head-to-head records).
 
-- [ ] **Phase 8: Foundation** - Replay engine, running total fix, and extended stroke input
-- [ ] **Phase 9: Edit During Play** - Tap-to-edit holes, handicap editing, and cross-check during play
-- [ ] **Phase 10: Edit on Results** - Stroke and handicap editing on results page with history update
-- [ ] **Phase 11: Storytelling** - Narrative highlight engine and results page display
-- [ ] **Phase 12: Head-to-Head** - Lifetime player-vs-player records across saved games
+- [x] **Phase 8: Foundation** - Replay engine, running total fix, and extended stroke input
+- [x] **Phase 9: Edit During Play** - Tap-to-edit holes, handicap editing, and cross-check during play
+- [x] **Phase 10: Edit on Results** - Stroke and handicap editing on results page with history update
+- [x] **Phase 11: Storytelling** - Narrative highlight engine and results page display
+- [x] **Phase 12: Head-to-Head** - Lifetime player-vs-player records across saved games
 
 ## Phase Details
 
@@ -120,11 +120,11 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12
 | 5. Game History | v1.0 | 2/2 | Complete | 2026-02-17 |
 | 6. Cross-Round Statistics | v1.0 | 1/1 | Complete | 2026-02-17 |
 | 7. Theme & Polish | v1.0 | 2/2 | Complete | 2026-02-17 |
-| 8. Foundation | v1.1 | 0/TBD | Not started | - |
-| 9. Edit During Play | v1.1 | 0/TBD | Not started | - |
-| 10. Edit on Results | v1.1 | 0/TBD | Not started | - |
-| 11. Storytelling | v1.1 | 0/TBD | Not started | - |
-| 12. Head-to-Head | v1.1 | 0/TBD | Not started | - |
+| 8. Foundation | v1.1 | 1/1 | Complete | 2026-02-22 |
+| 9. Edit During Play | v1.1 | 1/1 | Complete | 2026-02-22 |
+| 10. Edit on Results | v1.1 | 1/1 | Complete | 2026-02-22 |
+| 11. Storytelling | v1.1 | 1/1 | Complete | 2026-02-22 |
+| 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
 
 ---
 *Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1)*

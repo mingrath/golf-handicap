@@ -9,32 +9,32 @@ Requirements for v1.1 UX Fixes & Insights milestone. Each maps to roadmap phases
 
 ### Stroke Input
 
-- [ ] **INPUT-01**: User can type any stroke number directly via numeric keypad (replacing preset button row)
-- [ ] **INPUT-02**: Stroke input defaults to 4 for each player on each hole
+- [x] **INPUT-01**: User can type any stroke number directly via numeric keypad (replacing preset button row)
+- [x] **INPUT-02**: Stroke input defaults to 4 for each player on each hole
 
 ### Play Editing
 
-- [ ] **EDIT-01**: User can tap any previous hole to go back and edit strokes during play
-- [ ] **EDIT-02**: Editing a hole's strokes automatically recalculates all pair results and running totals
-- [ ] **EDIT-03**: User can edit handicap settings during play with full score replay
-- [ ] **EDIT-04**: Cross-check: two scorers can compare and correct scores immediately after each hole
+- [x] **EDIT-01**: User can tap any previous hole to go back and edit strokes during play
+- [x] **EDIT-02**: Editing a hole's strokes automatically recalculates all pair results and running totals
+- [x] **EDIT-03**: User can edit handicap settings during play with full score replay
+- [x] **EDIT-04**: Cross-check: two scorers can compare and correct scores immediately after each hole
 
 ### Results Editing
 
-- [ ] **REDT-01**: User can edit individual stroke entries on the final results scorecard
-- [ ] **REDT-02**: User can edit handicap settings on the final results page
-- [ ] **REDT-03**: Editing on results page recalculates all scores, rankings, and updates saved history
+- [x] **REDT-01**: User can edit individual stroke entries on the final results scorecard
+- [x] **REDT-02**: User can edit handicap settings on the final results page
+- [x] **REDT-03**: Editing on results page recalculates all scores, rankings, and updates saved history
 
 ### Storytelling
 
-- [ ] **STORY-01**: App generates narrative highlights after each round (e.g., "biggest comeback", "longest winning streak", "clutch finish")
-- [ ] **STORY-02**: Storytelling highlights display on the results page
+- [x] **STORY-01**: App generates narrative highlights after each round (e.g., "biggest comeback", "longest winning streak", "clutch finish")
+- [x] **STORY-02**: Storytelling highlights display on the results page
 
 ### Head-to-Head
 
-- [ ] **H2H-01**: App computes lifetime win/loss/tie records for each player pair across all saved games
-- [ ] **H2H-02**: Head-to-head records display on the results page (current matchup context)
-- [ ] **H2H-03**: Head-to-head records display on the stats page (full history view)
+- [x] **H2H-01**: App computes lifetime win/loss/tie records for each player pair across all saved games
+- [x] **H2H-02**: Head-to-head records display on the results page (current matchup context)
+- [x] **H2H-03**: Head-to-head records display on the stats page (full history view)
 
 ## Future Requirements
 
@@ -61,20 +61,20 @@ Deferred beyond v1.1. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | Phase 8 | Pending |
-| INPUT-02 | Phase 8 | Pending |
-| EDIT-01 | Phase 9 | Pending |
-| EDIT-02 | Phase 8 | Pending |
-| EDIT-03 | Phase 9 | Pending |
-| EDIT-04 | Phase 9 | Pending |
-| REDT-01 | Phase 10 | Pending |
-| REDT-02 | Phase 10 | Pending |
-| REDT-03 | Phase 10 | Pending |
-| STORY-01 | Phase 11 | Pending |
-| STORY-02 | Phase 11 | Pending |
-| H2H-01 | Phase 12 | Pending |
-| H2H-02 | Phase 12 | Pending |
-| H2H-03 | Phase 12 | Pending |
+| INPUT-01 | Phase 8 | Done |
+| INPUT-02 | Phase 8 | Done |
+| EDIT-01 | Phase 9 | Done |
+| EDIT-02 | Phase 8 | Done |
+| EDIT-03 | Phase 9 | Done |
+| EDIT-04 | Phase 9 | Done |
+| REDT-01 | Phase 10 | Done |
+| REDT-02 | Phase 10 | Done |
+| REDT-03 | Phase 10 | Done |
+| STORY-01 | Phase 11 | Done |
+| STORY-02 | Phase 11 | Done |
+| H2H-01 | Phase 12 | Done |
+| H2H-02 | Phase 12 | Done |
+| H2H-03 | Phase 12 | Done |
 
 **Coverage:**
 - v1.1 requirements: 14 total
