@@ -1,245 +1,325 @@
-# Feature Research
+# Feature Landscape
 
-**Domain:** Mobile pairwise handicap golf scoring (match play variant, group format)
-**Researched:** 2026-02-17
-**Confidence:** MEDIUM — based on analysis of 15+ golf scoring apps (Golf GameBook, VPAR, PlayThru, Skins App, Beezer Golf, Kodiak Golf, Golf Pad, 18Birdies, mScorecard, TheGrint, Hole19, Arccos, Squabbit, GolfStatus, BlueGolf), NN/g input stepper guidelines, and mobile UX research. Confidence is MEDIUM (not HIGH) because most competitor analysis is from marketing pages and app store listings, not hands-on testing of each app.
+**Domain:** Golf scoring PWA -- v1.1 UX fixes and insight features
+**Researched:** 2026-02-22
+**Overall confidence:** HIGH (features derived from real user feedback + codebase analysis + competitive research)
 
 ---
 
-## Feature Landscape
+## Table Stakes
 
-### Table Stakes (Users Expect These)
+Features that v1.1 users explicitly requested or that are standard expectations for a golf scoring app at this maturity level. Missing = users will remain frustrated.
 
-Features users assume exist. Missing these = product feels incomplete.
+### 1. Extended Stroke Input for High Scores (>7)
 
-| # | Feature | Why Expected | Complexity | Notes |
-|---|---------|--------------|------------|-------|
-| T1 | **Fast stroke input (< 3 taps per player per hole)** | Every golf app competitor achieves this. Golf Pad Quick Score does it in 2 taps. Current v1 uses +/- stepper which is slow for values far from default. | MEDIUM | Replace NumberStepper with direct-tap number row (3-7 as presets, tap to select). One tap per player. Par-based default (tap "4", done) is the gold standard. |
-| T2 | **Auto-advance to next hole after submit** | Golf GameBook, PlayThru, Beezer all auto-advance. Users expect flow: enter scores -> submit -> land on next hole. Current v1 requires manual "Next Hole" tap. | LOW | Submit action should auto-navigate to hole+1. Add a brief flash confirmation (already exists) then advance. |
-| T3 | **Clear "who's winning" leaderboard during play** | Every live scoring app (VPAR, PlayThru, Squabbit) shows rankings prominently. Current v1 hides scoreboard behind a toggle. | MEDIUM | Show mini-leaderboard (ranked list with running totals) directly below stroke input, always visible. No toggle needed. Use color coding (green = leading, red = trailing). |
-| T4 | **Winner spotlight on results** | Current v1 already has this (Crown icon, glowing animation). Standard across Golf GameBook, VPAR. | DONE | Already implemented. Enhance with richer animation or confetti. |
-| T5 | **Score editing with live recalculation** | Current v1 has this on results page. Standard across mScorecard, TheGrint. | DONE | Already implemented. Consider adding edit capability during play (tap any previous hole to re-enter). |
-| T6 | **Offline operation (PWA)** | Golf courses have spotty signal. All serious golf apps work offline. | DONE | Already implemented via service worker. Needs testing verification (noted in CONCERNS.md). |
-| T7 | **Game resume after app close** | LocalStorage persistence. Standard expectation. | DONE | Already implemented via Zustand persist. Needs hydration guard and state versioning. |
-| T8 | **Hole-by-hole score trend visualization** | 18Birdies, mScorecard, Beezer Golf all show score-over-holes line charts. Users want to see momentum swings. | MEDIUM | Line chart showing each player's cumulative score across holes. Use Recharts (lightweight, SVG-based, ~45KB gzipped). Canvas not needed for 6-player x 36-hole datasets. |
-| T9 | **Head-to-head pair breakdowns** | Core to this app's pairwise scoring model. VPAR Matchplay shows hole-by-hole timelines. Skins App shows per-match results. | MEDIUM | For each pair: show final score, who won which holes, handicap-adjusted strokes side-by-side. Collapsible accordion per pair on results page. |
-| T10 | **Game history (list of past rounds)** | mScorecard, 18Birdies, TheGrint all store unlimited round history. Users expect to look back at past games. | MEDIUM | Save completed games to localStorage (or IndexedDB if storage grows). Show list with date, players, winner, course name (optional). |
-| T11 | **Basic stats across rounds** | Golf GameBook tracks scoring averages, birdie counts. Beezer Golf tracks games won/lost. 18Birdies shows improvement over time. | MEDIUM | Win rate per player, average score per round, best/worst rounds. Depends on T10 (game history). |
-| T12 | **Input validation at store level** | Not visible to users but prevents corrupt state. All production apps validate. Current v1 has zero validation (CONCERNS.md). | MEDIUM | Validate strokes (0-20), handicaps, hole numbers, player count (2-6) at Zustand action level. Return errors. |
-| T13 | **State versioning with migration** | Required for safe upgrades. Current v1 has none. | LOW | Add `version: number` to persisted state. Implement migration map. Standard Zustand persist pattern. |
-| T14 | **Hydration guard (loading state)** | Prevents flash of wrong state on page load. Current v1 redirects on missing config but has no loading state. | LOW | Add `isHydrated` flag to store. Show skeleton/spinner until hydrated. Prevents layout shift. |
+| Attribute | Detail |
+|-----------|--------|
+| **Why expected** | Real users reported the preset row caps at visible 3-7 range. Thai social golfers frequently score 8-12+ per hole. Having to repeatedly tap + to reach 10 is painful. |
+| **Complexity** | Low |
+| **Depends on** | Existing `StrokeInput` component (`src/components/shared/stroke-input.tsx`) |
 
-### Differentiators (Competitive Advantage)
+**How it works in other apps:**
 
-Features that set the product apart. Not required, but valued.
+- **Beezer Golf:** Uses a scoring module that pops up with all relevant inputs. The key insight is that the number input adapts to context -- most strokes cluster around par +/- 2, so the visible presets should center on likely values, with outliers reachable in one additional tap.
+- **TheGrint / 18Birdies:** Tap-to-score with a single row of numbers. High scores are entered by tapping a "..." or scrolling to reveal more options. Some apps show a full 1-12 number pad on demand.
+- **EasyScore Golf:** Simple numpad overlay for any score entry.
 
-| # | Feature | Value Proposition | Complexity | Notes |
-|---|---------|-------------------|------------|-------|
-| D1 | **Swipe-based hole navigation** | Golf Pad and Beezer Golf use swipe left/right for hole navigation. More natural than tapping numbered circles. Current v1 has a scrollable hole navigator bar. | LOW | Add swipe gesture detection on the stroke input card. Swipe left = next hole, swipe right = previous. Keep numbered circles as secondary nav. |
-| D2 | **Quick-setup with player presets** | No competitor focuses on this. Setup is always from scratch. For a friend group that plays weekly, re-entering names is annoying. | LOW | "Play again with same players" button on home screen. Store last-used player list. One tap to start same group. |
-| D3 | **Score storytelling on results (narrative results)** | Most apps show flat tables. No competitor generates narrative summaries like "Ohm dominated holes 10-14 to overtake Mingrath." This is the biggest UX gap in the market. | HIGH | Generate text highlights: biggest comeback, longest winning streak, closest matchup, turbo hole drama. Requires post-game analysis algorithm. |
-| D4 | **Results share as image** | Golf GameBook, mScorecard, 9Holes all support sharing. 9Holes even generates video scorecards. Most use screenshot or built-in share. | MEDIUM | Generate a styled results card (canvas-to-image or html2canvas). Use Web Share API for native sharing. Fallback to download PNG. |
-| D5 | **Player-vs-player historical stats** | Beezer Golf tracks "games won and lost." No app shows lifetime head-to-head records between specific players. This is unique to pairwise scoring. | MEDIUM | "You vs Mingrath: 12 wins, 8 losses, 3 draws across 23 rounds." Requires T10 (game history) and player identity persistence across rounds. |
-| D6 | **Animated results podium** | Kahoot!-style podium reveal is engaging and memorable. No golf app does this. Current v1 has a static winner display. | LOW | Staggered animation: 3rd place slides in, then 2nd, then 1st with celebration. CSS animations only, no heavy library needed. |
-| D7 | **Haptic feedback on score submission** | Native feel on mobile. Subtle vibration on submit confirms action without looking at screen. Standard in iOS/Android native apps but rare in PWAs. | LOW | Use `navigator.vibrate()` API on score submit and game finish. Progressive enhancement (no-op if unsupported). |
-| D8 | **Dark/light theme toggle** | Current v1 is dark-only. Golf is played in bright sunlight where dark themes can be hard to read. High-contrast light theme improves outdoor readability. | MEDIUM | Add light theme variant with high-contrast colors. Auto-detect system preference. Toggle in settings. Tailwind dark mode support makes this straightforward. |
-| D9 | **Score trend sparklines in mini-leaderboard** | During play, show tiny inline trend lines next to each player's running total. At a glance: is this player trending up or down? No competitor does this during play. | MEDIUM | Tiny SVG sparklines (no library needed, 20-30 lines of code for basic path). Show last 5 holes of cumulative score. |
-| D10 | **Undo last submission** | No golf scoring app has undo during play. Current v1 allows re-editing but not reverting. | LOW | Store previous hole state before submit. "Undo" button appears for 10 seconds after submit. Reverts to pre-submit state. |
+**Expected UX pattern for this app:**
 
-### Anti-Features (Deliberately NOT Building)
+The current implementation has `PRESETS = [3, 4, 5, 6, 7]` with +/- buttons on the ends. The problem: reaching 8, 9, 10+ requires multiple taps on +. Two viable patterns:
 
-Features that seem good but create problems for this specific product.
+1. **Expand preset range** -- Change presets to `[3, 4, 5, 6, 7, 8, 9, 10]` in a horizontally scrollable row. The + button still handles edge cases (11-20). Simplest fix, matches existing interaction model.
+2. **Tap-to-expand numpad** -- Tapping + once opens a small numpad (7-12) overlay. More discoverable for high scores but adds an extra tap.
 
-| # | Feature | Why Requested | Why Problematic | Alternative |
-|---|---------|---------------|-----------------|-------------|
-| A1 | **GPS course maps and distances** | Every major golf app has GPS. Seems like table stakes for "golf apps." | Completely different product category. Adds massive complexity (course database, map rendering, location services). This app is a scoring tool, not a rangefinder. Users already have a separate GPS app or watch. | Stay focused on scoring. Link to external GPS apps if needed. |
-| A2 | **Real-time multiplayer / cloud sync** | Users might want to score from separate phones. | Requires backend, authentication, conflict resolution, real-time infrastructure. Massively increases complexity for a local friend-group tool. One phone is always the scorer in practice. | Keep single-device. If needed later, export/import game state as JSON for manual sync. |
-| A3 | **User accounts and authentication** | Needed for cloud features. | Adds login friction to a tool that should launch in 2 seconds. No backend to manage. Privacy concerns for a casual scoring app. | Use device-local player profiles. Identify players by name, not accounts. |
-| A4 | **Official USGA/R&A handicap calculation** | Users might expect "real" handicap tracking. | USGA Handicap Index requires 20+ round history, slope/course ratings, and is legally regulated. Implementing it incorrectly creates liability. This app uses per-round pairwise handicaps (strokes given), not official handicaps. | Clearly label handicaps as "strokes given for this round." Link to official handicap apps (TheGrint, GHIN) for official tracking. |
-| A5 | **Tournament mode (brackets, flights, multiple rounds)** | Natural extension of group scoring. Golf GameBook, Golfify, Unknown Golf all support tournaments. | Exponential complexity increase. Bracket management, tee time scheduling, multi-round aggregation, elimination logic. Completely different UX flow. | Focus on single-round experience. If tournament demand is real, build as separate product/mode after v2 stabilizes. |
-| A6 | **Shot-by-shot tracking (fairways, greens, putts)** | Arccos, Shot Scope, 18Birdies all track detailed shot data. | Completely different input model (per-shot vs per-hole). Slows down the scoring flow which is this app's core value. Users who want shot tracking already use dedicated apps. | Keep input as strokes-per-hole only. This is the app's speed advantage. |
-| A7 | **Social feed / comments / likes** | Golf GameBook has a social feed with likes and comments. | Requires backend, moderation, user accounts. Distracts from the core on-course scoring experience. This is a utility, not a social network. | Share results via image export (D4) to existing social platforms (iMessage, LINE, WhatsApp). |
-| A8 | **Betting / money tracking** | Skins App and GolfApp track bets and settle wagers. Popular feature request. | Legal gray area in many jurisdictions. Adds complexity to results display. Distracts from scoring clarity. | The pairwise scoring already maps to "who owes whom." Add optional "points value" per point in settings if users want to calculate payouts manually. |
-| A9 | **Apple Watch / wearable companion** | Squabbit and Golf Pad have Watch apps. Convenient for on-course use. | Requires native app (not PWA). Different development stack. Small screen limits input options. Maintenance burden. | Optimize the phone PWA for maximum speed. The phone is already in the cart or pocket. |
-| A10 | **AI-powered game analysis** | Emerging trend (Arccos AI caddie, Circles AI analysis). | Requires ML infrastructure, large datasets, backend processing. Overkill for a local pairwise scoring tool. | Simple rule-based highlights work fine (D3). "Player X won 5 straight holes" doesn't need AI. |
+**Recommendation:** Option 1 (expanded scrollable presets) because the app already uses horizontal scrolling for the hole navigator. Users understand the pattern. Extend `PRESETS` to `[3, 4, 5, 6, 7, 8, 9, 10]` and make the row scrollable with the current value auto-scrolled into view. Keep +/- for 1-2 and 11-20. This is a ~30-line change to `stroke-input.tsx`.
+
+**Validation note:** The store already validates strokes 0-20 (`game-store.ts` line 218-228), so the backend supports it. This is purely a UI fix.
+
+---
+
+### 2. Editable Scorecard on Results Page (Post-Round Corrections)
+
+| Attribute | Detail |
+|-----------|--------|
+| **Why expected** | Users discovered keying mistakes after finishing the round. The results page already has tap-to-edit via a bottom sheet (`NumberStepper` modal), but it only supports stroke editing -- no handicap editing. Users need to fix handicap values after seeing results too. |
+| **Complexity** | Low-Medium |
+| **Depends on** | Existing edit modal in `results/page.tsx`, existing `submitHoleStrokes` store action |
+
+**How it works in other apps:**
+
+- **PlayThru:** After the round, golfers can review and edit their scorecard before officially submitting. Once submitted to the leaderboard, editing locks. Since this app has no server/leaderboard, there is no lock point -- edits should always be possible.
+- **Squabbit:** Users can edit their own scorecard and scores for anyone on their scorecard. No permission gating for casual use.
+- **Golf Genius / ScoreboardLive:** Tournament apps require attestation before score finalization. Overkill for a casual app.
+
+**Expected UX pattern for this app:**
+
+The results page ALREADY has a working tap-to-edit scorecard (lines 166-238 of `results/page.tsx`). The edit modal uses `NumberStepper` with min 0, max 20. What is MISSING:
+
+1. **Handicap editing on results page** -- Currently handicap can only be set during `/setup` or `/handicap`. After a round, if users realize the handicap was wrong, they must start a new game. The results page needs a way to adjust pair handicaps and have scores automatically recalculate.
+2. **Auto-recalculation cascade** -- When a stroke or handicap is edited on results, ALL pair results and player scores must recompute. The existing `submitHoleStrokes` already handles stroke edits with full recalculation. Handicap edits need a similar action that triggers recalc across all holes.
+3. **Re-save to history** -- After edits on the results page, the updated game should re-persist to IndexedDB so the history record reflects corrections.
+4. **Improved stroke edit input** -- The current bottom-sheet edit uses `NumberStepper` (+/- buttons) which is slow for large changes. Should use the same expanded preset row from Feature 1 for consistency and speed.
+
+**Recommendation:** Add a "Edit Handicaps" button/section to the results page that opens the same handicap configuration UI used in setup, wired to trigger full game recalculation. Add a new store action `recalculateAllResults()` that iterates all `holeStrokes` and recomputes `pairResults` and `playerScores` from scratch. Replace the `NumberStepper` in the edit modal with the improved `StrokeInput` presets.
+
+---
+
+### 3. Editable Scores During Play (Cross-Check Workflow)
+
+| Attribute | Detail |
+|-----------|--------|
+| **Why expected** | Real-world workflow: two people in the group each record scores on their phones. After each hole, they compare verbally. If scores differ, they need to immediately correct on the "official" phone. |
+| **Complexity** | Medium |
+| **Depends on** | Existing play page (`/play`), existing `submitHoleStrokes` (already supports re-scoring a hole) |
+
+**How it works in other apps:**
+
+- **MyEG (England Golf):** Each player submits their own scorecard independently. An attester/marker receives a notification to verify. This is a multi-device, server-based workflow -- NOT applicable here (single device, no backend).
+- **ScoreboardLive:** Digital card swap with attestation between player and marker. Tournament-grade multi-device -- not relevant.
+- **Golf GameBook:** Enter scores for your whole group on one phone. Scores can be edited before final submission. ANY hole is editable at ANY time during the round.
+
+**Expected UX pattern for this app:**
+
+The cross-check workflow for this app is NOT a multi-device sync problem (explicitly out of scope: "one phone is the scorer, no backend"). Instead, it is:
+
+1. Person A enters scores on the app
+2. Person B reads their written scorecard / second phone
+3. They compare verbally
+4. If a discrepancy is found, Person A taps the hole to correct it
+
+The play page ALREADY supports this partially:
+- Navigate to any scored hole via the hole navigator bubbles
+- Re-submitting strokes on a scored hole triggers `submitHoleStrokes` which replaces existing data and recalculates
+- The button label already changes to "Update Scores" for previously-scored holes
+
+What is MISSING:
+1. **Edit affordance on scored holes** -- When navigating back to a scored hole, the UI shows the saved values but there is no obvious "this is editable" signal. An "Editing Hole X" header state or pencil icon would help.
+2. **Handicap adjustment during play** -- Same gap as results page. If mid-round they realize handicap is wrong, they should be able to fix it without restarting.
+3. **Quick score summary for verbal comparison** -- When on a scored hole, show a compact summary of all players' strokes for that hole (already shown via preset buttons, but could be clearer with a dedicated "Scores for this hole" section showing name: strokes in a simple list).
+
+**Recommendation:** The play page mostly works for cross-check already. The key changes are:
+- Add a visual "editing" state indicator when viewing a previously-scored hole (e.g., amber banner "Editing Hole X -- tap Submit to update")
+- Add handicap editing accessible from play page (gear icon in header opens handicap config sheet)
+- Ensure recalculation cascade works for mid-round handicap changes (reuses `recalculateAllResults()` from Feature 2)
+
+---
+
+## Differentiators
+
+Features that set the app apart from basic scoring apps. Not expected, but create delight and stickiness.
+
+### 4. Score Storytelling / Narrative Highlights
+
+| Attribute | Detail |
+|-----------|--------|
+| **Value proposition** | Transforms dry scorecard data into memorable moments. Drives screenshot-sharing and re-engagement. The "Spotify Wrapped for golf rounds" pattern. |
+| **Complexity** | Medium |
+| **Depends on** | Existing `pairResults`, `playerScores`, `holeStrokes` data; results page |
+
+**How it works in other apps and domains:**
+
+- **PGA TOUR App:** Auto-generated "Player Stories" clip highlights from a round. A "Hot Streak" indicator appears on leaderboards when a player has consecutive good holes. Closest parallel to what we want.
+- **Spotify Wrapped:** Transforms annual listening data into a narrative slide deck with superlatives ("Your top artist", "You listened to X hours"). Key insight: people LOVE being told stories about their own data.
+- **Yahoo Fantasy Sports:** Uses NLG (natural language generation) via Automated Insights' Wordsmith to produce personalized match recaps with snarky tone. The narrative is rule-based templates filled with data, NOT AI-generated.
+- **Golf GameBook:** Sums up scores, statistics, and "memories" from a round. Lets users share highlights on social media.
+
+**Expected UX pattern for this app:**
+
+Score storytelling should appear on the results page as a "Round Highlights" card, positioned prominently (above the scorecard table, below the rankings/podium). It should:
+
+1. **Use rule-based templates, not AI** (explicitly out of scope per PROJECT.md: "AI-powered analysis -- rule-based highlights work fine")
+2. **Detect notable patterns** from the existing computed data
+3. **Present them as short, punchy text cards** with emoji-style icons and visual emphasis
+
+**Highlight categories to implement (ordered by impact):**
+
+| Highlight | Detection Logic | Template Example | Data Source |
+|-----------|----------------|------------------|-------------|
+| **Biggest comeback** | Player had lowest `runningTotal` at some hole but finished rank 1 or 2 | "[Player] was dead last after hole [X] but clawed back to finish [rank]!" | `playerScores[].runningTotal` |
+| **Biggest choke** | Player had highest `runningTotal` at some hole but finished below that position | "[Player] was leading after hole [X] but dropped to [rank]." | `playerScores[].runningTotal` |
+| **Dominant pair victory** | One player won the pair matchup on 70%+ of holes | "[Player] dominated [Player], winning [X] of [Y] holes." | `pairResults[]` per pair |
+| **Turbo hero** | Player scored the most total points on turbo holes | "[Player] thrived under pressure, scoring [+X] on turbo holes alone." | `pairResults[].isTurbo` + `playerScores[]` |
+| **Closest matchup** | Pair where final total score difference is 0-2 | "[Player] vs [Player]: neck and neck, decided by just [X] point(s)." | `pairResults[]` summed per pair |
+| **Hot streak** | Player had positive `holeScore` for 3+ consecutive holes | "[Player] was on fire from hole [X] to [Y] with [N] straight winning holes." | `playerScores[].holeScore` |
+| **Cold streak** | Player had negative `holeScore` for 3+ consecutive holes | "[Player] had a rough patch from hole [X] to [Y]." | `playerScores[].holeScore` |
+| **Biggest swing** | Largest single-hole point gain for any player | "[Player] swung +[N] on hole [X] -- the biggest single-hole move of the round." | `playerScores[].holeScore` |
+| **Consistent player** | Lowest standard deviation in `holeScore` across the round | "[Player] was Mr. Consistent -- steady scoring all round." | `playerScores[].holeScore` |
+
+**Data requirements:** All detection can be done with existing `playerScores` (has `holeScore` and `runningTotal` per hole), `pairResults` (has per-pair per-hole scores and `isTurbo`), and `config.turboHoles`. No new data collection needed.
+
+**Tone:** Light, fun, slightly competitive. Not snarky (inappropriate for Thai golf culture). Think friendly sports commentary, not roast.
+
+**Recommendation:** Implement as a pure function `generateHighlights(playerScores, pairResults, config): Highlight[]` in a new `src/lib/highlights.ts`. Each highlight has `type`, `title`, `description`, `priority` (for ordering/deduplication -- show top 3-5). The results page renders them in a styled card with icons. Entirely computed, no state changes, no persistence needed. Estimated ~200 lines of logic + ~80 lines of UI.
+
+---
+
+### 5. Lifetime Player-vs-Player Head-to-Head Records
+
+| Attribute | Detail |
+|-----------|--------|
+| **Value proposition** | Creates long-term engagement and friendly rivalry. "I've beaten you 7 out of 10 times" is the stat casual golfers love to brag about. |
+| **Complexity** | Medium |
+| **Depends on** | Existing `HistoryRecord` in IndexedDB (already stores full `pairResults`), existing `stats.ts` and `normalizePlayerName()` |
+
+**How it works in other apps:**
+
+- **GolfStats.com:** Head-to-head comparison tool where you pick two PGA TOUR players and view their statistics over specific time periods. Shows win counts and performance metrics.
+- **Data Golf:** Player comparison tool with historical performance data.
+- **Birdie (Thailand):** Find friends and other golfers, check out their stats, and see how you all stack up against each other. Closest competitor for Thai golfers.
+- **TheGrint:** Leaderboards and competitions with head-to-head scoring.
+
+**Expected UX pattern for this app:**
+
+The app already has:
+- Per-round H2H pair breakdowns on the results page (`pair-breakdown.tsx`) with win/loss/tie counts and a visual bar
+- Cross-round player stats on the stats page (`/stats`) with win rates, averages, best/worst
+- Full `pairResults` stored in every `HistoryRecord` in IndexedDB
+- `normalizePlayerName()` for cross-game identity matching
+
+What is MISSING: aggregating pair results ACROSS games to show lifetime H2H records.
+
+**Two entry points for lifetime H2H:**
+
+1. **Stats page** (`/stats`): Below the existing player stat cards, add a "Head-to-Head Records" section showing all player pairs that have played together across multiple games, with lifetime win/loss/tie tallies and a win percentage bar (reusing the `PairCard` visual pattern from `pair-breakdown.tsx`).
+
+2. **Results page** (`/results`): Enhance the existing per-round pair breakdown cards to show "Lifetime: 5-3-1" annotation below the current-round stats. This contextualizes the current game within the rivalry.
+
+**Data model:**
+
+```typescript
+interface LifetimeH2H {
+  playerAName: string;  // display name
+  playerBName: string;
+  gamesPlayed: number;
+  playerAGameWins: number;   // games where A won the pair matchup
+  playerBGameWins: number;
+  gamesTied: number;
+  playerATotalPoints: number;  // lifetime aggregate points
+  playerBTotalPoints: number;
+  history: {
+    date: string;
+    playerAScore: number;  // pair score for that game
+    playerBScore: number;
+    winner: 'A' | 'B' | 'tie';
+  }[];
+}
+```
+
+This can be computed from existing `HistoryRecord.pairResults` by:
+1. Iterating all games from IndexedDB
+2. For each game, grouping `pairResults` by pair
+3. Matching player names across games via `normalizePlayerName()`
+4. Summing pair-level outcomes per game (who won each pair matchup overall)
+5. Aggregating across games for lifetime totals
+
+**Recommendation:** Add `computeLifetimeH2H(games: HistoryRecord[]): LifetimeH2H[]` to `stats.ts`. Create a `H2HCard` component reusing the visual language of `PairCard` (the emerald/rose color bar, win counts) but with lifetime data and a mini history list. Place it on both the stats page (full view with expandable game-by-game history) and the results page (compact inline "Lifetime: X-Y-Z" annotation on each pair breakdown card). Estimated ~150 lines of logic + ~100 lines of UI.
+
+---
+
+## Anti-Features
+
+Features to explicitly NOT build for v1.1. Including them would add complexity without proportional value, or would conflict with the app's core identity.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Multi-device score sync / real-time cross-check** | Requires a backend, authentication, WebSocket infrastructure. Explicitly out of scope. Would fundamentally change the app's architecture from single-device PWA to client-server. | Keep the verbal cross-check workflow: two phones record independently, compare verbally, one phone is the "official" scorecard. The improved edit affordances in Feature 3 make correction fast enough. |
+| **Attestation / digital signature workflow** | Tournament-grade feature (MyEG, ScoreboardLive, Golf Genius). Overkill for casual social golf. Adds friction to every hole submission. | Trust the group -- they are friends, not tournament competitors. |
+| **AI-generated narrative text** | PROJECT.md explicitly rules this out. Would require an API call (breaks offline PWA), adds cost, and rule-based highlights are more predictable and debuggable. | Use template-based highlight generation with fixed, well-crafted copy. |
+| **Net Double Bogey / max score capping** | Official handicap calculation feature. The app does NOT calculate official handicaps -- it uses pairwise custom handicaps. Capping scores would confuse the scoring model and conflict with recording actual strokes. | Let players enter actual strokes. The pairwise system (+1/-1/0) naturally limits the impact of blow-up holes. |
+| **Full score history replay (hole-by-hole animation)** | Cool but high effort for low payoff. The score trend chart already shows progression visually. | Keep the existing score trend chart. The narrative highlights (Feature 4) capture memorable moments in text. |
+| **Player profile pages / avatars** | Adds complexity to a no-auth single-device app. Identity is just a name string matched case-insensitively. | Rely on name-based identity. The stats page and H2H records serve as the de facto "player profile." |
+| **Notification to other player's device** | Requires push notification infrastructure, service worker changes, and a backend. | Keep the verbal/in-person comparison workflow. |
+| **Season/tournament/league tracking** | Out of scope per PROJECT.md. Would require a new data model layer above individual games with bracket logic, multi-round aggregation, and scheduling. | Lifetime stats and H2H records provide enough cross-game context for casual play. |
+| **Score comparison overlay (split-screen two devices)** | Sounds useful for the cross-check scenario but requires multi-device networking, which is out of scope. | The verbal comparison after each hole works well enough. The edit affordances in Feature 3 make corrections fast when discrepancies are found. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-[T10] Game History
-    |
-    +--requires--> [T12] Input Validation (clean data for history)
-    +--requires--> [T13] State Versioning (safe schema evolution)
-    |
-    +--enables--> [T11] Basic Stats Across Rounds
-    |                 |
-    |                 +--enables--> [D5] Player-vs-Player Historical Stats
-    |
-    +--enables--> [D4] Results Share as Image
+Extended Stroke Input (1) -----> standalone, no dependencies
+                                     |
+                                     v
+                            Edit modal in Results (2) -- should use same improved preset input
+                            Edit during Play (3) -- benefits from improved input UX
 
-[T1] Fast Stroke Input
-    +--enhances--> [T2] Auto-advance After Submit
-    +--enhances--> [D1] Swipe-based Hole Navigation
-    +--enhances--> [D7] Haptic Feedback
+Editable Results (2) ---------> requires new store action: recalculateAllResults()
+                                     |
+                                     v
+                            Editable During Play (3) -- reuses same recalculation logic
+                            Re-save to IndexedDB -- requires useSaveGame hook enhancement
 
-[T3] Clear Live Leaderboard
-    +--enhances--> [D9] Score Trend Sparklines
+Score Storytelling (4) -------> standalone pure computation, no store changes
+                                     |
+                                     v
+                            Results page integration (renders highlight cards)
+                            Needs playerScores + pairResults (already computed)
 
-[T8] Score Trend Chart
-    +--requires--> chart library (Recharts recommended)
-    +--enhances--> [T9] Head-to-Head Pair Breakdowns
-
-[T14] Hydration Guard
-    +--requires--> [T13] State Versioning
-
-[D2] Quick-setup Presets
-    +--requires--> [T10] Game History (to remember players)
-
-[D3] Score Storytelling
-    +--requires--> [T9] Head-to-Head Pair Breakdowns (data source)
-    +--requires--> [T8] Score Trend Chart (momentum data)
-
-[D6] Animated Results Podium
-    +--independent (CSS-only, no deps)
-
-[D8] Dark/Light Theme
-    +--independent (Tailwind config, no deps)
-
-[D10] Undo Last Submission
-    +--independent (store-level state snapshot)
+Lifetime H2H (5) ------------> depends on existing IndexedDB history data
+                                     |
+                                     v
+                            Stats page integration (new H2H section)
+                            Results page annotation (compact lifetime line on pair cards)
+                            Reuses normalizePlayerName() from stats.ts
 ```
 
-### Dependency Notes
-
-- **T10 (Game History) requires T12 + T13:** Saving games to history with bad data or no migration path creates permanent corruption. Validation and versioning must come first.
-- **T11 (Stats) requires T10:** Can't compute cross-round stats without stored history.
-- **D5 (Player-vs-Player History) requires T10 + T11:** Needs both history storage and stats computation to compare players across rounds.
-- **D2 (Quick Presets) requires T10:** Remembering "last used players" requires game history storage.
-- **D3 (Storytelling) requires T8 + T9:** Narrative generation needs both trend data and pair breakdown data as input.
-- **T14 (Hydration Guard) requires T13:** Migration must run before the app can determine if state is valid.
+**Key dependency chain:**
+- Features 1, 2, 3 share overlapping concerns (input UX, recalculation). Build 1 first (quickest win, unblocks better testing of 2 and 3). Build 2 next (adds `recalculateAllResults()` action that 3 also needs). Build 3 last (reuses recalculation from 2, benefits from input improvements from 1).
+- Features 4 and 5 are independent of 1-3 and of each other. They can be built in parallel or in either order after the core editing features.
 
 ---
 
-## MVP Definition
+## MVP Recommendation
 
-### Launch With (v2.0)
+**Prioritize (in order):**
 
-Minimum viable improvement over v1 -- what justifies calling it v2.
+1. **Extended Stroke Input (Feature 1)** -- Highest user pain, lowest complexity. A ~30-line change to `stroke-input.tsx`. Ship immediately as the quickest win.
+2. **Editable Results with Handicap Editing (Feature 2)** -- Second-highest user pain. Requires a new store action (`recalculateAllResults`) but reuses existing UI patterns. ~200 lines.
+3. **Editable Scores During Play (Feature 3)** -- Third-highest pain. Mostly UX polish on existing functionality (play page already supports re-scoring). ~100 lines for edit affordances + handicap access during play.
+4. **Score Storytelling (Feature 4)** -- Differentiator with highest delight potential. Pure computation, no state changes needed. ~280 lines total (logic + UI).
+5. **Lifetime H2H (Feature 5)** -- Differentiator that builds long-term engagement. Depends on having enough game history to be meaningful. ~250 lines total (logic + UI).
 
-- [x] **T1 — Fast stroke input** — Core value prop is speed. This is the #1 pain point.
-- [x] **T2 — Auto-advance after submit** — Removes unnecessary tap, compounds speed gain.
-- [x] **T3 — Clear live leaderboard** — Answers "who's winning?" without toggling views.
-- [x] **T8 — Score trend chart** — Most requested visualization. Shows momentum.
-- [x] **T9 — Head-to-head pair breakdowns** — Core to the pairwise model. Without this, pair results are invisible.
-- [x] **T12 — Input validation** — Foundation for data integrity. Must ship before game history.
-- [x] **T13 — State versioning** — Required for all future upgrades. Must ship early.
-- [x] **T14 — Hydration guard** — Prevents confusing flash states.
-- [x] **D6 — Animated results podium** — Low cost, high delight. Makes results memorable.
-- [x] **D7 — Haptic feedback** — One line of code, noticeable improvement.
+**Total estimated scope:** ~860 lines of new/modified code across all 5 features.
 
-### Add After Validation (v2.x)
-
-Features to add once core v2 is working and being used on the course.
-
-- [ ] **T10 — Game history** — Add when v2 scoring is stable. Trigger: users ask "what was last week's score?"
-- [ ] **T11 — Basic stats** — Add alongside game history. Trigger: 5+ games stored.
-- [ ] **D1 — Swipe navigation** — Add when fast input is validated. Trigger: users still find hole-switching slow.
-- [ ] **D2 — Quick-setup presets** — Add when game history exists. Trigger: same group plays 3+ times.
-- [ ] **D4 — Results share as image** — Add when results page is finalized. Trigger: users screenshot results manually.
-- [ ] **D8 — Dark/light theme** — Add when outdoor usability is tested. Trigger: sunlight readability complaints.
-- [ ] **D10 — Undo last submission** — Add when scoring flow is validated. Trigger: users report accidental submissions.
-
-### Future Consideration (v3+)
-
-Features to defer until product-market fit is established.
-
-- [ ] **D3 — Score storytelling** — Complex algorithm. Defer until results page design is mature and user expectations are understood.
-- [ ] **D5 — Player-vs-player historical stats** — Requires player identity persistence across rounds (name matching or player profiles). Defer until game history has 20+ entries in real usage.
-- [ ] **D9 — Score trend sparklines** — Nice polish but not critical. Defer until mini-leaderboard design is finalized.
-
----
-
-## Feature Prioritization Matrix
-
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| T1 Fast stroke input | HIGH | MEDIUM | **P1** |
-| T2 Auto-advance | HIGH | LOW | **P1** |
-| T3 Clear live leaderboard | HIGH | MEDIUM | **P1** |
-| T12 Input validation | HIGH | MEDIUM | **P1** |
-| T13 State versioning | HIGH | LOW | **P1** |
-| T14 Hydration guard | MEDIUM | LOW | **P1** |
-| T8 Score trend chart | HIGH | MEDIUM | **P1** |
-| T9 Head-to-head breakdowns | HIGH | MEDIUM | **P1** |
-| D6 Animated podium | MEDIUM | LOW | **P1** |
-| D7 Haptic feedback | LOW | LOW | **P1** |
-| T10 Game history | HIGH | MEDIUM | **P2** |
-| T11 Basic stats | MEDIUM | MEDIUM | **P2** |
-| D1 Swipe navigation | MEDIUM | LOW | **P2** |
-| D2 Quick-setup presets | MEDIUM | LOW | **P2** |
-| D4 Results share image | MEDIUM | MEDIUM | **P2** |
-| D8 Dark/light theme | MEDIUM | MEDIUM | **P2** |
-| D10 Undo submission | LOW | LOW | **P2** |
-| D3 Score storytelling | HIGH | HIGH | **P3** |
-| D5 Player history stats | HIGH | MEDIUM | **P3** |
-| D9 Sparklines | LOW | MEDIUM | **P3** |
-
-**Priority key:**
-- **P1:** Must have for v2 launch
-- **P2:** Should have, add in v2.x iterations
-- **P3:** Nice to have, future consideration
-
----
-
-## Competitor Feature Analysis
-
-| Feature | Golf GameBook | VPAR | Skins App | Beezer Golf | This App (v2) |
-|---------|--------------|------|-----------|-------------|---------------|
-| Score input speed | 2-3 taps/player | 2-3 taps/player | 2-3 taps/player | 1-2 taps/player (swipe) | **1 tap/player** (preset row) |
-| Match play support | Yes (20+ formats) | Yes (matchplay mode) | Yes (13 game types) | Yes (20 side games) | **Pairwise only** (all C(n,2) pairs) |
-| Live leaderboard | Yes | Yes (dynamic) | Yes | Yes | **Yes, always visible** |
-| Head-to-head breakdown | Limited | Hole-by-hole timeline | Per-match results | Win/loss tracking | **Full pair analysis with adjusted strokes** |
-| Score trend chart | Basic | No | No | "Eye-pleasing graphics" | **Per-player cumulative line chart** |
-| Game history | Yes (unlimited) | Yes | Yes | Yes | **Yes (localStorage)** |
-| Cross-round stats | Scoring averages | Basic | Basic (money won) | Games won/lost | **Win rates, avg score, trends** |
-| Results sharing | Social feed + share | Share via app | Share | Share | **Image export + Web Share API** |
-| Handicap model | USGA/WHS | Official | Per-game | Per-game | **Per-pair strokes given** |
-| Setup speed | Moderate (course selection required) | Slow (GPS/course) | Moderate | Moderate | **Fast (no course needed)** |
-| Offline support | Partial | Partial | Yes | Yes | **Full PWA offline** |
-| Unique strength | Social features, format variety | GPS + live events | Money game tracking | Game format breadth | **Pairwise scoring depth, speed, pair breakdowns** |
-
-### Competitive Position
-
-This app occupies a niche that no major competitor serves well: **pairwise group scoring with handicaps, optimized for speed**. The big apps (GameBook, VPAR, 18Birdies) focus on GPS, official handicaps, and social features. The betting apps (Skins, Beezer) focus on game format variety. None of them prioritize the "enter scores as fast as possible and see pairwise results" workflow.
-
-The differentiation strategy should be:
-1. **Fastest input** -- beat every competitor on taps-per-hole
-2. **Deepest pairwise analysis** -- no one else shows all C(n,2) pair breakdowns
-3. **Most engaging results** -- storytelling and animation make results worth discussing
+**Defer to v1.2:** None of these features should be deferred. All five are well-scoped and address either real user pain (1-3) or clear engagement opportunities (4-5). The total scope is manageable for a single milestone.
 
 ---
 
 ## Sources
 
-- [Golf GameBook](https://www.golfgamebook.com/) — Feature list, scorecard format, social features, 20+ game formats
-- [VPAR](https://vpar.com/) — GPS, matchplay mode, dynamic leaderboards, live scoring
-- [PlayThru](https://www.golfplaythru.com/) — Live leaderboards, tournament scoring, mobile scorecard
-- [Skins App](https://skinsapp.com/) — Nassau rules, 13 game types, money game tracking
-- [Beezer Golf](https://www.beezergolf.com/) — 20 side games, stat tracking, trend visualization
-- [Kodiak Golf](https://kodiakgolf.app/) — Scoring, games, GPS, stat tracking, head-to-head
-- [Golf Pad Quick Score](https://support.golfpadgps.com/support/solutions/articles/6000225549-keeping-score-in-quick-score) — Score input UX: 2-tap flow, swipe navigation
-- [18Birdies](https://18birdies.com/) — Stat analysis charts, score-over-time visualization, social competitions
-- [mScorecard](https://www.mscorecard.com/) — Full round history, advanced statistics, cross-platform sharing
-- [TheGrint](https://thegrint.com/) — USGA handicap tracking, detailed scorecard, improvement tracking
-- [Hole19](https://www.hole19golf.com/) — Clean UX, accurate yardages, fast scorekeeping, minimal distractions
-- [8 Top Golf Scoring Apps Compared](https://www.golfplaythru.com/blog/8-of-the-top-golf-scoring-apps-compared) — Feature comparison across PlayThru, Golfify, Squabbit, GameBook, VPAR, GolfStatus, BlueGolf, Golf Genius
-- [NN/g Input Stepper Guidelines](https://www.nngroup.com/articles/input-steppers/) — Min 1cm x 1cm targets, hold-to-increment, text-field stepper hybrid, Fitts' Law considerations
-- [Golf App UX Best Practices 2025](https://www.golfcoursetechnologyreviews.org/buying-guide/comprehensive-buying-guide-to-golf-course-mobile-apps-in-2025) — One-handed use, battery life, rhythm-preserving UX
-- [PWA Offline Storage Patterns](https://web.dev/learn/pwa/offline-data) — IndexedDB for structured data, localStorage for small key-value, storage quotas
-- [React Chart Libraries 2026](https://blog.logrocket.com/best-react-chart-libraries-2025/) — Recharts (lightweight, SVG), Chart.js (Canvas), performance comparison
+### Golf Scoring Apps (competitive research)
+- [Golf GameBook Scorecard](https://www.golfgamebook.com/golf-scorecard) -- social scoring, photo memories, round summaries (MEDIUM confidence)
+- [Beezer Golf Interface Design](https://www.beezergolf.com/blogs/golf-scorecard-app) -- haptic-first scorecard UX, validation patterns (MEDIUM confidence)
+- [PlayThru Live Scoring](https://www.golfplaythru.com/mobile-scorecards) -- edit-before-submit, organizer overrides (MEDIUM confidence)
+- [Squabbit Tournament Software](https://squabbitgolf.com/) -- permission-based scorecard editing (MEDIUM confidence)
+- [TheGrint Handicap & Scorecard](https://thegrint.com/) -- social features, 50+ stats, multiple game formats (MEDIUM confidence)
+- [18Birdies](https://18birdies.com/) -- social leaderboard, course-based stats (MEDIUM confidence)
+- [Birdie Thailand](https://birdie.in.th/) -- Thailand-specific golf app with stats and social features (MEDIUM confidence)
+- [GolfStats Head-to-Head](https://www.golfstats.com/headtohead/) -- PGA player comparison tool (HIGH confidence, verified via direct fetch)
+- [ScoreboardLive](https://scoreboard.clippd.com/articles/scoreboardlive-scoring-app) -- digital card swap with attestation (MEDIUM confidence)
+- [Best Golf Apps 2026](https://www.todays-golfer.com/equipment/best/golf-apps/) -- current market landscape (MEDIUM confidence)
+
+### Score Verification / Attestation
+- [MyEG Score Verification](https://englandgolf.freshdesk.com/support/solutions/articles/80000972978-how-to-add-and-verify-a-score-on-myeg-app) -- attester/marker workflow for England Golf (HIGH confidence, verified via direct fetch)
+- [Golf Genius Digital Scorecards](https://docs.golfgenius.com/article/show/113400-digital-scorecards-setup-and-management) -- tournament-grade digital scorecard management (MEDIUM confidence)
+
+### Narrative / Storytelling Patterns
+- [PGA TOUR App Features](https://www.pgatour.com/pages/whats-new) -- Player Stories, Hot Streak indicator (MEDIUM confidence)
+- [Spotify Wrapped UX Case Study](https://medium.com/@yvonneanyaokei8/ux-case-study-spotify-wrapped-experience-af57111dd042) -- data-as-narrative design pattern (MEDIUM confidence)
+- [How to Build a Wrapped Feature](https://trophy.so/blog/how-to-build-wrapped-feature) -- gamification and personal data storytelling (MEDIUM confidence)
+- [Yahoo Fantasy Sports NLG](https://emerj.com/ai-case-studies/yahoo-uses-nlp-deliver-personal-fantasy-sports-recaps-updates/) -- rule-based narrative generation for sports (MEDIUM confidence)
+
+### Codebase Analysis (HIGH confidence -- verified by reading source code)
+- `src/components/shared/stroke-input.tsx` -- Current PRESETS = [3,4,5,6,7], +/- buttons, min 1 / max 20
+- `src/app/play/page.tsx` -- Play page with hole navigation, re-scoring support, undo banner
+- `src/app/results/page.tsx` -- Results page with existing tap-to-edit scorecard (NumberStepper modal)
+- `src/lib/game-store.ts` -- Zustand store with submitHoleStrokes (handles re-scoring + recalculation)
+- `src/lib/types.ts` -- GameState, PlayerHoleScore (has runningTotal), PairHoleResult
+- `src/lib/stats.ts` -- normalizePlayerName(), computePlayerStats(), computeAllPlayerStats()
+- `src/lib/history-db.ts` -- HistoryRecord with full pairResults snapshot in IndexedDB
+- `src/components/results/pair-breakdown.tsx` -- PairCard component with win/loss bar visual
+- `src/hooks/use-player-stats.ts` -- Reactive hook querying IndexedDB for cross-game stats
 
 ---
-*Feature research for: Golf Handicap Scorer v2 — mobile pairwise handicap scoring PWA*
-*Researched: 2026-02-17*
+*Feature research for: Golf Handicap Scorer v1.1 -- UX fixes and insight features*
+*Researched: 2026-02-22*

@@ -1,291 +1,339 @@
-# Pitfalls Research
+# Domain Pitfalls
 
-**Domain:** Golf scoring PWA rebuild (v1 to v2 with history, stats, charting, redesigned UX)
-**Researched:** 2026-02-17
-**Confidence:** HIGH (codebase-verified issues combined with documented ecosystem pitfalls)
+**Domain:** Golf scoring PWA -- v1.1 feature additions (editable scores, cascading recalculation, score storytelling, lifetime head-to-head)
+**Researched:** 2026-02-22
+**Scope:** Integration pitfalls when adding these features to the existing v1.0 codebase
+**Overall confidence:** HIGH (most pitfalls verified against actual codebase)
+
+---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Setup Page `resetGame()` on Mount Destroys In-Progress Games
+Mistakes that cause rewrites, data corruption, or broken existing functionality.
 
-**What goes wrong:**
-The current `/setup` page calls `resetGame()` in a `useEffect([], [])` on mount. If a user navigates to setup while an active game exists (to check config, or via browser back), all strokes, pair results, and player scores are wiped. In v2 with game history, this pattern will also prevent saving completed games because the reset fires before any save-to-history logic could run.
+### Pitfall 1: Running Total Cascade Failure on Mid-Game Edit
 
-**Why it happens:**
-v1 assumed setup always means "new game." The `useEffect` has an eslint-disable comment hiding the dependency warning, indicating this was a known shortcut.
+**What goes wrong:** Editing strokes for hole 3 in a completed 18-hole game recalculates pair results and player scores for hole 3, but does NOT recalculate `runningTotal` values for holes 4-18. Every subsequent hole's `runningTotal` is now wrong because it was computed from the old hole 3 total.
 
-**How to avoid:**
-- Remove the unconditional `resetGame()` from setup mount
-- Gate reset behind explicit user action ("New Game" button on home page)
-- In v2, wire the reset through a "finalize and archive" flow: save completed game to IndexedDB before clearing the active store
-- Add a `gamePhase` field to the store (`setup | playing | complete`) so components know whether to reset or resume
+**Why it happens:** The current `submitHoleStrokes` (game-store.ts:194-301) filters out the edited hole's data and recalculates it, but only computes `previousTotals` from `existingPlayerScores` for `holeNumber - 1`. It does not propagate the delta to all subsequent holes. The `playerScores` array stores pre-computed `runningTotal` per hole (types.ts:43), so stale values persist for holes after the edited one.
 
-**Warning signs:**
-- Users report "my game disappeared" after navigating back to check settings
-- During development: visiting `/setup` while a game is in progress silently zeros out `holeStrokes`
+**Consequences:**
+- Leaderboard shows wrong standings for all holes after the edit
+- Final rankings are actually correct (uses `getRunningTotals(playerScores, Infinity)` which sums `holeScore` values independently), but all intermediate `runningTotal` values shown in sparklines, mini-leaderboard, and score trend charts will be inconsistent
+- Score trend chart shows an impossible discontinuity at the edited hole
+- Zero-sum verification passes per-hole but running totals look broken to the user
 
-**Phase to address:**
-Phase 1 (Store Hardening) -- fix before any history/persistence work begins, since the bug will silently destroy data that should be archived.
+**Prevention:**
+- After any hole edit, rebuild ALL `playerScores` entries from hole 1 to `numberOfHoles` sequentially. The `holeScore` values per hole are independent (derived from pair results), but `runningTotal` must chain forward.
+- Create a `recalculateAllRunningTotals(playerScores, players)` function that takes the flat `holeScore` entries and recomputes `runningTotal` in order.
+- Alternatively (and better), stop storing `runningTotal` and derive it at render time via `useMemo`. This is the cleaner solution -- `runningTotal` is derived state that should not be persisted. This eliminates the entire class of cascade bugs.
 
----
+**Detection:** Add a test: edit hole 3 of an 18-hole game, verify that `playerScores[hole=10].runningTotal` equals the sum of holeScores for holes 1-10 (not just the old cached value).
 
-### Pitfall 2: `Math.random()` Player IDs Will Cause Collisions Across Saved Games
-
-**What goes wrong:**
-`generateId()` in setup uses `Math.random().toString(36).substring(2, 9)` producing ~7 alphanumeric characters (~36 bits of entropy). With a game history containing hundreds of saved games across months, ID collisions between players in different games become statistically non-trivial. Worse, `Math.random()` is a PRNG that some engines seed identically on cold start (e.g., GoogleBot), and on mobile Safari the entropy pool can be weak after fresh app launch. A collision means IndexedDB lookups by player ID return wrong data, corrupting stats aggregation.
-
-**Why it happens:**
-For a single game in v1, collisions are astronomically unlikely. But v2 accumulates IDs over time across many games, and the birthday problem means collision probability rises faster than intuition suggests. With 7 base-36 chars (~36^7 = ~78 billion possibilities), you need ~280,000 IDs for a 50% collision chance, but with weak PRNG seeding, the effective keyspace can be much smaller.
-
-**How to avoid:**
-- Replace `Math.random()` with `crypto.randomUUID()` (supported in all modern browsers, returns 128-bit UUIDs)
-- Add a migration that preserves existing player IDs in saved games (don't regenerate historical IDs)
-- Add uniqueness validation at the store level when creating players
-
-**Warning signs:**
-- Two players with the same `id` in different games
-- Stats aggregation returns unexpected numbers for a player name
-
-**Phase to address:**
-Phase 1 (Store Hardening) -- must be fixed before game history is introduced, as historical IDs become permanent.
+**Confidence:** HIGH -- verified by reading game-store.ts lines 268-293. The current `submitHoleStrokes` only recalculates the edited hole's running total from its predecessors, not subsequent holes' running totals.
 
 ---
 
-### Pitfall 3: localStorage-to-IndexedDB Migration Loses Active Games
+### Pitfall 2: History Record Becomes Stale After Post-Submission Score Edit
 
-**What goes wrong:**
-v1 persists via Zustand's `persist` middleware with `localStorage` (key: `"golf-handicap-game"`). When v2 switches to IndexedDB as the storage backend, users who update the app mid-game will lose their in-progress game because the new storage layer is empty. The old localStorage data still exists but the app no longer reads it.
+**What goes wrong:** When a game completes, `useSaveGame` (use-save-game.ts) fires once and writes the full game state to IndexedDB. If the user then edits a score on the results page (which already works via results/page.tsx:64-89), the IndexedDB record retains the old, pre-edit data. The `savedRef` guard (line 19) explicitly prevents re-saving. The user sees corrected scores on-screen but history/stats pages show the original uncorrected data forever.
 
-**Why it happens:**
-Zustand's `persist` middleware reads from whichever storage engine is configured. Changing the storage engine doesn't trigger migration of the old data -- it just starts fresh. Developers focus on the new storage layer and forget that existing users have data in the old one.
+**Why it happens:** The `useSaveGame` hook was intentionally designed to fire-and-forget once. The comment at lines 42-46 explicitly warns against adding more deps because "they change on score edits, which would re-trigger the save." The existing code chose "save once" to avoid duplicate records, but this means edits are lost.
 
-**How to avoid:**
-- Write a one-time migration utility that runs on app boot: check if `localStorage.getItem("golf-handicap-game")` exists, parse it, write it to IndexedDB, then remove the localStorage entry
-- Run this migration before Zustand hydration (in a layout-level effect or a migration gate component)
-- Add a `migrationVersion` field to IndexedDB to track which migrations have run
-- Test the migration path by seeding localStorage in dev and verifying the app picks up the data after switching backends
+**Consequences:**
+- Lifetime stats (win rates, averages, H2H records) computed from IndexedDB are based on incorrect scores
+- User sees different results on the results page vs. the history page
+- If the edit changes who won, the history page shows the wrong winner
+- Cross-round statistics become unreliable, undermining the entire stats feature
 
-**Warning signs:**
-- "Resume Game" button disappears after a deploy
-- localStorage still has data but the app shows empty state
+**Prevention:**
+- After any score edit on the results page, update the existing IndexedDB record using `historyDb.games.put(updatedRecord)` instead of `add()`. This requires knowing the record's `id`.
+- Store the history record ID in component state after the initial save, then use it for subsequent updates.
+- Add a `useUpdateSavedGame` hook (or extend `useSaveGame`) that watches for score changes after the initial save and debounces updates to IndexedDB.
+- Be careful with Dexie's `put()` vs `update()`: `put()` requires the full record (overwrites entirely), `update()` does partial updates. For score edits, reconstruct the full record and use `put()`.
 
-**Phase to address:**
-Phase 2 (Game History / IndexedDB) -- this migration must ship in the same deploy that switches storage backends.
+**Detection:** Test: complete a game, verify history record, edit a score on results page, re-read history record from IndexedDB, verify it reflects the edit.
 
----
-
-### Pitfall 4: Zustand Store Schema Evolution Without Version Cascading
-
-**What goes wrong:**
-Zustand's `persist` middleware supports a `version` number and a `migrate(persistedState, version)` function, but the migrate function only receives the stored version -- not intermediate versions. If v2 ships version 1, v3 ships version 2, and a user skips v2 entirely, the migration function receives version 0 and must handle the jump from 0 to 2. Without cascading migration logic, the store silently resets to defaults (Zustand's fallback when migration returns incomplete state).
-
-**Why it happens:**
-The current store has no `version` field at all (defaults to 0). Developers write migrations that only handle `version === N-1 -> N` and don't account for users jumping multiple versions. Zustand's shallow merge also drops nested object fields that aren't explicitly preserved during migration.
-
-**How to avoid:**
-- Add `version: 1` to the persist config immediately (even before any schema changes, to establish the baseline)
-- Write migrations as a chain of sequential transforms: `if (version < 1) { /* v0->v1 */ } if (version < 2) { /* v1->v2 */ }` -- never use `===`, always use `<`
-- Use `merge: (persistedState, currentState) => deepMerge(currentState, persistedState)` instead of the default shallow merge to prevent nested field loss
-- Write unit tests for each migration step with fixtures of old state shapes
-
-**Warning signs:**
-- After a deploy, users see empty config/scores despite having data in storage
-- Console shows Zustand hydration completing but state is all defaults
-- `onRehydrateStorage` callback fires with no error but state doesn't match expectations
-
-**Phase to address:**
-Phase 1 (Store Hardening) -- version and migration infrastructure must exist before any schema changes. Every subsequent phase that adds fields to the store must increment the version and add a migration step.
+**Confidence:** HIGH -- verified by reading use-save-game.ts:19-46 and results/page.tsx:64-89. The gap is clearly visible in the code.
 
 ---
 
-### Pitfall 5: `verifyZeroSum()` Exists But Is Never Called -- Silent Scoring Corruption
+### Pitfall 3: Undo System Breaks When Editability Enters
 
-**What goes wrong:**
-The codebase has a `verifyZeroSum()` function in `scoring.ts` that validates the zero-sum invariant (all player scores for a hole must sum to zero). It is never called anywhere. In v1 this is merely a latent bug. In v2, corrupted scores would be persisted to game history and pollute lifetime stats, making the corruption permanent and retroactive.
+**What goes wrong:** The current undo is a single-snapshot system (`_undoSnapshot` in game-store.ts:24-27). It captures the state before `submitHoleStrokes` and restores it on undo. When the user edits a score on the results page, `submitHoleStrokes` is called again (results/page.tsx:89), which overwrites `_undoSnapshot` with the current (already complete) game state. If the user then goes back to `/play` and undoes, they get the results-page edit state, not the actual last gameplay submission.
 
-**Why it happens:**
-The function was written as a safety check but never wired into `submitHoleStrokes`. Without tests, there is no CI enforcement that the invariant holds. The scoring model is zero-sum by construction (for each pair, `playerAScore = -playerBScore`), so in theory violations can't happen. In practice, bugs in handicap adjustment, turbo multiplication, or future features (e.g., partial holes, DNF handling) can break the invariant.
+**Why it happens:** The undo system was designed for linear gameplay flow: submit hole, undo within 10 seconds, move on. It assumes `submitHoleStrokes` is only called during sequential play. Post-game edits reuse the same function, creating snapshot confusion.
 
-**How to avoid:**
-- Call `verifyZeroSum()` inside `submitHoleStrokes` after computing `newPlayerScores`
-- If verification fails, throw an error or log a warning rather than silently persisting bad data
-- Add unit tests that verify zero-sum across varied game configurations (2-6 players, with/without handicaps, with/without turbo)
-- Before saving a completed game to history, run a full-game zero-sum audit
+**Consequences:**
+- Undo after a results-page edit could revert to a nonsensical state
+- The undo banner does not appear on the results page (UndoBanner is not rendered there), but `_undoSnapshot` is still mutated silently
+- If the user navigates back to `/play` after editing on results, the stale undo snapshot persists in memory
 
-**Warning signs:**
-- Player totals across all players for a hole do not sum to zero
-- Running totals diverge from recalculated-from-scratch totals
-- Lifetime stats show impossible score distributions
+**Prevention:**
+- Create a dedicated `editHoleStrokes(holeNumber, playerId, newStrokes)` store action that does NOT touch `_undoSnapshot`. This cleanly separates the edit pathway from the gameplay submission pathway.
+- For a richer edit experience, consider replacing the single snapshot with a proper undo stack. The `zundo` library (https://github.com/charkour/zundo) provides this for Zustand with <700 bytes and supports `diff`-based storage to minimize memory.
+- If inline editing is added to `/play` during a game, the single-snapshot undo becomes even more fragile -- an undo stack becomes necessary.
 
-**Phase to address:**
-Phase 1 (Store Hardening / Test Coverage) -- wire the check and add tests before building stats on top of potentially corrupt data.
+**Detection:** Test: complete a game, edit a score on results, navigate to `/play`, verify `_undoSnapshot` is null or irrelevant. Test: during gameplay, submit hole 5, then edit hole 3, then undo -- verify undo reverts the hole 3 edit, not hole 5.
+
+**Confidence:** HIGH -- verified by reading game-store.ts:198-204 and results/page.tsx:86-89.
 
 ---
 
-### Pitfall 6: Charting Library Bloats PWA Bundle and Breaks Offline
+### Pitfall 4: Auto-Advance Timer Fires During Score Editing on /play
 
-**What goes wrong:**
-Adding a charting library (Recharts, Chart.js, Victory, etc.) can add 100-300KB gzipped to the JavaScript bundle. For a PWA that should load instantly and work offline, this defeats the purpose. SVG-based libraries like Recharts also render poorly on low-end phones with many data points. If the chart library loads from a CDN or dynamically imports from a URL, it fails offline entirely.
+**What goes wrong:** The current play page uses a 1-second `setTimeout` after submission that auto-advances to the next hole (play/page.tsx:128-132). If the user navigates to an already-scored hole and taps "Update Scores" to correct it, the auto-advance timer fires after 1 second and yanks the view to the next hole. The user is pulled away from the hole they just edited. In outdoor/sunlight mobile use, they may not even notice.
 
-**Why it happens:**
-Developers pick the most popular library without measuring bundle impact. Recharts pulls in significant D3 submodules. Chart.js is lighter but react-chartjs-2 adds its own overhead. Neither is designed for the "needs to work offline on a phone in a golf cart" use case.
+**Why it happens:** The `handleSubmitAndAdvance` function (line 113-133) always calls `goToNextHole()` after the timer, regardless of whether this was a first submission or an edit. The `holeAlreadyScored` check (line 169-171) changes the button text to "Update Scores" but still calls the same `handleSubmitAndAdvance` handler.
 
-**How to avoid:**
-- Measure bundle size before and after adding any chart library using `next build` + bundle analyzer
-- Prefer lightweight options: `@nivo/line` (tree-shakeable), raw SVG with React, or `uplot` (~35KB total)
-- Alternatively, build simple bar/sparkline charts with raw SVG elements -- the stats views in a golf app are simple enough (bar charts of scores, line charts of running totals) that a full charting library may be unnecessary
-- Ensure the chart library is included in the service worker precache, not loaded from a CDN
-- Use `next/dynamic` with `ssr: false` to code-split chart components so they only load on the stats/results pages
+**Consequences:**
+- User edits hole 5, gets auto-advanced to hole 6, loses context
+- If the user was reviewing and editing multiple holes in sequence, auto-advance disrupts the review workflow every time
+- Frustration compounds outdoors where the app is used in challenging conditions (glare, one-handed use)
+- User might think the edit did not register because they were moved away
 
-**Warning signs:**
-- `next build` output shows a route exceeding 200KB JS
-- First load on mobile takes more than 3 seconds on 3G
-- Charts fail to render when offline
+**Prevention:**
+- Do NOT auto-advance when updating an already-scored hole. Check `holeAlreadyScored` before calling `goToNextHole()`:
+  ```typescript
+  if (!holeAlreadyScored) {
+    confirmationTimerRef.current = setTimeout(() => {
+      setShowConfirmation(false);
+      goToNextHole();
+    }, 1000);
+  } else {
+    confirmationTimerRef.current = setTimeout(() => {
+      setShowConfirmation(false);
+    }, 1000);
+  }
+  ```
+- Show "Updated" confirmation flash instead of "Saved" to make edits feel distinct from first entries.
+- Consider showing a brief diff ("4 -> 5 strokes") so the user has clear feedback the edit registered.
 
-**Phase to address:**
-Phase 3 (Stats & Charting) -- evaluate bundle impact during spike/research before committing to a library. Set a hard budget (e.g., max 50KB gzipped for chart code).
+**Detection:** Manual test: score hole 5, navigate back to hole 5, change a value, tap "Update Scores", verify the view stays on hole 5.
 
----
-
-### Pitfall 7: IndexedDB Data Eviction Deletes Game History Without Warning
-
-**What goes wrong:**
-Browsers can evict IndexedDB data when storage pressure is high. On Safari/iOS, data stored by a PWA that hasn't been used recently can be purged after 7 days of inactivity. A golfer who plays once a month could lose their entire game history between rounds.
-
-**Why it happens:**
-By default, web storage is "best-effort" -- the browser can delete it at any time. Only data marked as "persistent" via `navigator.storage.persist()` is protected from eviction. Most developers assume IndexedDB data is permanent (like a native app's database) and never request persistent storage.
-
-**How to avoid:**
-- Call `navigator.storage.persist()` on first app launch and on PWA install
-- Check `navigator.storage.persisted()` on boot and show a warning if persistence was denied
-- On Safari/iOS, prompt users to add the app to their home screen (installed PWAs get more lenient storage treatment)
-- Implement an export-to-JSON feature as a manual backup option
-- Display storage usage via `navigator.storage.estimate()` in settings
-
-**Warning signs:**
-- Users report "all my games disappeared" after not using the app for a few weeks
-- `navigator.storage.persisted()` returns `false` in production
-
-**Phase to address:**
-Phase 2 (Game History / IndexedDB) -- request persistent storage at the same time as introducing IndexedDB. The export feature can be deferred to a later phase.
+**Confidence:** HIGH -- verified by reading play/page.tsx:113-133 and 169-171.
 
 ---
 
-## Technical Debt Patterns
+## Moderate Pitfalls
 
-Shortcuts that seem reasonable but create long-term problems.
+### Pitfall 5: Player Name Fragmentation in Head-to-Head Records
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| No input validation at store level (e.g., negative strokes, strokes > 20 silently accepted) | Faster development, simpler store code | Corrupted game history, impossible stats, bugs hard to trace to source | Never in v2 -- validate before persisting to history |
-| Single Zustand store for everything (config + gameplay + UI state) | Simple architecture, one persist call | Store grows large, migrations become complex, UI re-renders on unrelated state changes | Acceptable for v1 scope; split in v2 when adding history |
-| No `gameId` on active game (game identity is implicit "whatever is in the store") | Works for single-game model | Cannot save multiple games, cannot reference a game in history, cannot share results | Never in v2 -- every game needs a unique ID from creation |
-| PairKey as untyped `string` instead of branded type | Simpler TypeScript, fewer generics | Easy to pass wrong string format, no compile-time safety for pair operations | Acceptable for now; consider branded types when adding stats |
-| Computed state (runningTotals) mixed into persisted state | Avoid recomputation on load | Persisted data can drift from derived values, migration must handle computed fields | Refactor in v2 -- store only source data, derive on read |
+**What goes wrong:** Cross-round stats use `normalizePlayerName()` (stats.ts:15-17) which does `name.trim().toLowerCase()`. This handles "Om" vs "om" but NOT:
+- Non-breaking spaces, tabs, or multiple spaces (common from mobile keyboard autocomplete)
+- Thai characters with different Unicode normalization forms (NFC vs NFD)
+- Nicknames vs full names across games ("Om" in one game, "Ohm" in another)
+- Leading/trailing emoji or special characters from keyboard suggestions
 
-## Integration Gotchas
+For H2H records, two separate name variants create two separate player identities. A user who plays 5 games as "Om" and 3 as "Ohm" has two incomplete H2H records instead of one consolidated record.
 
-Common mistakes when connecting to external services or browser APIs.
+**Prevention:**
+- Improve normalization: `name.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()`
+- Build a "player picker" component that suggests previously used names (autocomplete from IndexedDB history) during game setup. This prevents fragmentation at the source rather than trying to fix it after the fact.
+- For the H2H display, consider a "merge players" option in stats settings for manual correction of past games.
+- Do NOT attempt automatic fuzzy matching -- the risk of over-merging ("John" and "Jon" might be different people) is worse than under-merging in a small friend group where the user can correct it.
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| IndexedDB (via idb-keyval or Dexie) | Using multiple Zustand stores with `idb-keyval` that share a database name causes key collisions | Use a single IDB database with separate object stores, or use unique store names in `idb-keyval` |
-| Service Worker cache | Updating precache list but not changing `CACHE_NAME` version string, so old cache persists | Automate cache versioning with build hash, or use Workbox for cache management |
-| `navigator.storage.persist()` | Calling it and assuming it succeeds -- Safari often denies it silently | Always check the return value; design for the case where persistence is denied |
-| PWA manifest updates | Changing `manifest.json` but users see stale version because SW serves cached manifest | Include manifest in network-first caching strategy, not cache-first |
+**Detection:** Test: create games with players "Om " (trailing space), " Om" (leading space), and "Om", verify all three resolve to the same player in stats. Test with Thai names containing combining characters.
 
-## Performance Traps
+**Confidence:** MEDIUM -- the `normalizePlayerName` function is verifiably basic (stats.ts:16). Whether this actually affects users depends on how carefully they type names.
 
-Patterns that work at small scale but fail as usage grows.
+---
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Recalculating all pair results on every `submitHoleStrokes` call | UI jank when entering scores | Cache pair results per hole; only recompute the current hole | 6 players (15 pairs) x 36 holes -- noticeable at max config |
-| Rendering full scoreboard table with all holes in the DOM | Scroll jank on `/play` page, especially 36-hole games | Virtualize or paginate the scoreboard; show 9-hole chunks | 6 players x 36 holes = 216 cells, all re-rendering on state change |
-| Loading entire game history into memory for stats computation | Memory spikes, slow page load for stats page | Use IndexedDB cursors or pagination; compute stats incrementally or in a web worker | After 50+ saved games with 4+ players each |
-| `generatePairs()` called on every render in `/play` | Redundant O(n^2) computation on every React render cycle | Memoize with `useMemo` or compute once and store in state | Not a performance crisis but wasteful; becomes habit if unchecked |
+### Pitfall 6: Storytelling Generates Nonsense for Degenerate Game States
 
-## Security Mistakes
+**What goes wrong:** Narrative generation ("Player X dominated the back nine", "A dramatic comeback") fails or produces absurd output for edge cases:
+- **2-player game:** Only 1 pair exists. Phrases like "X beat Y in 3 out of 5 pairs" are wrong.
+- **All ties:** Every hole is 0-0 across all pairs. "The dominant player was..." has no answer.
+- **1-hole game:** No "momentum shift" or "back nine" exists to describe.
+- **All identical strokes:** Every player scores 4 on every hole. Zero drama, narrative has nothing to say.
+- **6-player game with turbo holes:** 15 pairs per hole, scores range from -10 to +10. Narrative templates assuming small numbers look wrong ("Player X scored +10 on a single hole").
+- **Game abandoned mid-round:** Only 5 of 18 holes played. "Front nine summary" references holes that were never played.
 
-Domain-specific security issues beyond general web security.
+**Why it happens:** Narrative templates are typically written for the "happy path" (4 players, 18 holes, clear winner, some drama). Edge cases are forgotten because developers test with normal-looking games.
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Player names stored without sanitization | XSS if names are rendered with `dangerouslySetInnerHTML` (not currently used, but could be introduced in share/export features) | Sanitize on input; never use `dangerouslySetInnerHTML` for user-provided content |
-| Game data in localStorage readable by any script on the same origin | If a third-party script is added (analytics, ads), it can read all game data | Move to IndexedDB (not accessible via simple `localStorage.getItem`); minimize third-party scripts |
-| Export/share feature could leak player contact info if names contain phone numbers or emails | Privacy concern if shared URLs include full game data | Strip or hash player identifiers in shared content; only include first names |
+**Consequences:**
+- Empty or generic fallback text that adds no value ("Great game everyone!")
+- Factually incorrect statements ("Player X led from start to finish" when they actually lost the last 3 holes)
+- UI layout breaks when narrative text is unexpectedly empty or excessively long
+- Users lose trust in the feature if the narrative is wrong even once
 
-## UX Pitfalls
+**Prevention:**
+- Define a `GameShape` classifier first: categorize the game (2-player duel, multi-player, short round, full round, blowout, close match, all-ties, comeback, wire-to-wire). Select narrative templates by shape.
+- Write explicit empty/fallback handling: if no interesting patterns detected, show nothing rather than a bad narrative. A missing narrative is better than a wrong one.
+- Build the feature as a set of independent "insight detectors" that each check for a specific pattern (comeback, blowout, streak, rivalry, turbo drama). Only surface insights whose preconditions are met.
+- Test with at minimum: 2 players / 1 hole, 6 players / 18 holes with all ties, lead-change-every-hole game, blowout (one player wins every hole), and partial game (only half the holes scored).
+- Set character limits on generated text and test that the UI handles both empty (no insights found) and maximum-length (all detectors fire) cases.
 
-Common user experience mistakes in this domain.
+**Detection:** Unit tests for each game shape with snapshot assertions on output text. Verify no narrative contains player names that don't exist in the game.
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| NumberStepper requires precise tapping of small +/- buttons in bright sunlight while walking | Mis-taps, frustration, slows down play, phone overheats if screen brightness is maxed | Use large touch targets (min 48x48px, ideally 56px+), high-contrast colors, consider swipe-to-increment gesture or direct numeric keypad input |
-| Scoreboard table in `/play` tries to show all 36 holes horizontally | Unreadable on phone screens, requires scroll-hunting to find current hole | Show current 9-hole chunk (Front/Back/C), highlight current hole, auto-scroll to current position |
-| No "undo last hole" -- only "re-score current hole" exists | If user submits wrong scores and moves to next hole, they must manually navigate back and remember what to fix | Add explicit undo action that reverts the last submission, with confirmation |
-| Default stroke value of 4 for every player on every hole | Forces 2 taps per player per hole minimum (most golfers score 3-6); wastes time | Remember each player's most common stroke count from recent holes, or use par as default with quick-select buttons for common values |
-| No haptic feedback or audio confirmation on score submission | On a bright golf course, visual "Scores saved!" flash at top of screen is easily missed | Add `navigator.vibrate(50)` on submit; ensure flash is visible without shade |
-| Handicap setup requires understanding "playerA gives to playerB" convention | Casual golfers don't think in these terms; they think "Tom gets 3 strokes" | Reframe UX: show player names with "Who is the stronger player?" and "How many strokes?" |
+**Confidence:** HIGH -- these are universal narrative generation edge cases, well-documented in sports recap template systems.
 
-## "Looks Done But Isn't" Checklist
+---
 
-Things that appear complete but are missing critical pieces.
+### Pitfall 7: H2H Records Inflated by Phantom Players (0-Stroke Default)
 
-- [ ] **Game History:** Often missing export/import -- verify users can back up their data
-- [ ] **Stats Page:** Often missing "per-opponent" breakdown -- verify head-to-head record is shown (this is what golf groups actually care about)
-- [ ] **Offline Support:** Often missing offline-first for new routes added in v2 -- verify `/history`, `/stats` are in the service worker precache list
-- [ ] **Score Editing on Results:** Often missing recalculation cascade -- verify editing hole 3's score updates running totals for holes 4-18 and final rankings
-- [ ] **IndexedDB Migration:** Often missing error handling for corrupt/partial data -- verify the app gracefully handles malformed localStorage JSON
-- [ ] **Store Schema Migration:** Often missing test for "user skips a version" -- verify migration from v0 directly to v3 works
-- [ ] **PWA Update:** Often missing user notification that a new version is available -- verify service worker `controllerchange` event triggers an update prompt
-- [ ] **Touch Targets:** Often missing accessibility audit -- verify all interactive elements are at least 44x44px using browser DevTools touch target overlay
+**What goes wrong:** The scoring system defaults missing strokes to 0 (scoring.ts:46: `strokes.strokes[playerAId] ?? 0`). If a player was added to game setup but never had strokes entered for some holes (e.g., left the group), they are treated as scoring 0 strokes on those holes. Since 0 is impossibly good in golf, this player "wins" every hole where their strokes are missing.
 
-## Recovery Strategies
+**Why it happens:** The system has no concept of "player did not actually play this hole." The `?? 0` default was reasonable for v1.0 where all players are expected to complete all holes. But with game history and H2H, these phantom results persist and inflate statistics.
 
-When pitfalls occur despite prevention, how to recover.
+**Consequences:**
+- H2H records show a phantom player beating everyone on holes they never played
+- Lifetime win rates are inflated for players who had strokes missing
+- A player added by mistake but never having strokes entered appears as a dominant player in stats
 
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| Corrupted game history (bad migration) | MEDIUM | Add a "repair database" utility that re-derives computed fields from source data; keep raw strokes as ground truth |
-| Lost active game (setup reset bug) | HIGH | Cannot recover lost data; prevention is the only option. Add a "recently deleted" soft-delete with 24h retention |
-| ID collisions across games | HIGH | Write a one-time dedup script that assigns new IDs to colliding players while preserving score associations; complex and error-prone |
-| Bundle size regression | LOW | Audit with bundle analyzer; replace heavy library with lighter alternative or raw SVG; code-split aggressively |
-| IndexedDB eviction | MEDIUM | If export feature exists, user can re-import. If not, data is gone. Prevention (persistent storage) is critical |
-| Broken offline experience | LOW | Update service worker precache list; verify with Lighthouse PWA audit; deploy and wait for SW to update |
+**Prevention:**
+- Before including a game in H2H calculations, verify that BOTH players have non-zero strokes recorded for at least one hole. Use the `holeStrokes` data from `HistoryRecord` to filter.
+- Consider adding a `playedHoles: number` count per player to the history record summary for quick filtering.
+- Note: the results page edit modal allows min=0 strokes (NumberStepper with min=0 at results/page.tsx:298), while the play-page StrokeInput enforces min=1 (stroke-input.tsx:12). Harmonize these -- either both allow 0 or neither does.
+- For H2H specifically, only count holes where BOTH players in the pair had strokes > 0.
 
-## Pitfall-to-Phase Mapping
+**Detection:** Test: create a 3-player game where player C has strokes entered for 0 holes. Verify H2H between A and C shows "no games" rather than C winning everything.
 
-How roadmap phases should address these pitfalls.
+**Confidence:** MEDIUM -- the `?? 0` default is confirmed in code. The results page min=0 vs play page min=1 inconsistency is confirmed (results/page.tsx:298 vs stroke-input.tsx:12).
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Setup mount `resetGame()` wipes active game | Phase 1 (Store Hardening) | Test: navigate to `/setup` with active game, verify game persists |
-| `Math.random()` ID collisions | Phase 1 (Store Hardening) | Test: generate 10,000 IDs, assert zero collisions; verify `crypto.randomUUID()` is used |
-| `verifyZeroSum()` never called | Phase 1 (Test Coverage) | Test: scoring tests assert zero-sum for all configurations; `submitHoleStrokes` calls verifier |
-| No store version / migration infra | Phase 1 (Store Hardening) | Verify `version: 1` in persist config; migration function exists and is tested |
-| localStorage-to-IndexedDB migration | Phase 2 (Game History) | Test: seed localStorage, boot app, verify data appears in IndexedDB and localStorage is cleared |
-| IndexedDB data eviction | Phase 2 (Game History) | Verify `navigator.storage.persist()` is called; check `persisted()` status in dev tools |
-| Store schema evolution without cascading | Phase 2+ (every phase that changes store shape) | Test: migrate from v0 to latest in one step; test each intermediate step |
-| Charting library bundle bloat | Phase 3 (Stats & Charts) | Run `next build`; assert no route > 200KB first-load JS; verify charts work offline |
-| Scoreboard unreadable on mobile | Phase 4 (UX Redesign) | Manual test on real phone in sunlight; verify 9-hole chunking and auto-scroll |
-| NumberStepper too small for outdoor use | Phase 4 (UX Redesign) | Verify touch targets >= 48px; test with gloves; test one-handed operation |
-| Default stroke value wastes taps | Phase 4 (UX Redesign) | Measure average taps-per-hole in usability test; target <= 3 taps per player per hole |
+---
+
+### Pitfall 8: Score Edit on Results Page Creates Duplicate History Records
+
+**What goes wrong:** If the results page component unmounts and remounts during or after a score edit (React Strict Mode, layout shift, mobile browser background/foreground cycle), the `savedRef` in `useSaveGame` resets. The `isComplete` flag is still true, so the game gets saved to IndexedDB again as a new record with a new auto-incremented `id`.
+
+**Why it happens:** `savedRef` is a React ref, which resets on component remount. React 18+ Strict Mode double-invokes effects in development. While the ref guard works for a single mount cycle, any full unmount/remount resets it.
+
+**Consequences:**
+- History page shows duplicate games
+- Stats are inflated (games played count increases, win rates skewed by duplicates)
+- User confusion seeing the same game listed multiple times
+- If the duplicate has different scores (because of an edit between mounts), stats become inconsistent
+
+**Prevention:**
+- Add a `gameId: string` field to `GameConfig` (generated via `crypto.randomUUID()` during game setup). Use this as a deduplication key.
+- Before saving to IndexedDB, check if a record with the same `gameId` already exists. If so, use `put()` to update instead of `add()` to insert.
+- Alternatively, after the first successful save, store the IndexedDB record `id` in the Zustand store and use it for all subsequent saves.
+- This also solves Pitfall 2 (stale history after edit) -- every save becomes an upsert keyed on `gameId`.
+
+**Detection:** Test in React Strict Mode: complete a game, verify only one history record exists. Navigate away and back to results, verify still only one record.
+
+**Confidence:** MEDIUM -- the `savedRef` fragility is a known React pattern issue. Whether it manifests depends on exact component lifecycle behavior during edits.
+
+---
+
+### Pitfall 9: State Version Migration Needed But Not Planned for New Fields
+
+**What goes wrong:** Adding new fields to game state (e.g., `gameId`, `editHistory`, extended stroke metadata) without bumping the Zustand persist version causes existing saved games to load without the new fields. Any code that accesses `state.gameId.length` or `state.editHistory.map(...)` will crash with a TypeError on undefined.
+
+**Why it happens:** Developers add fields to the TypeScript interface, see no compile errors (because TypeScript doesn't know about runtime persisted state), and forget that existing `localStorage["golf-handicap-game"]` from v1.0 users does not contain the new fields.
+
+**Consequences:**
+- App crashes on load for users with existing saved games
+- Loss of in-progress game data if migration resets state
+- The existing `migrate` function (game-store.ts:351-358) wipes state on major version bumps: `return { ...initialState }`. This is destructive -- the user's in-progress game disappears.
+
+**Prevention:**
+- Plan ALL new fields needed for v1.1 features before implementation. Add them in a single version bump (v1 -> v2).
+- Write a non-destructive migration function that preserves existing data and adds defaults for new fields:
+  ```typescript
+  if (version < 2) {
+    const state = persistedState as GameStateV1;
+    return {
+      ...state,
+      gameId: crypto.randomUUID(),
+      // other new v1.1 fields with safe defaults
+    };
+  }
+  ```
+- Write a migration test: serialize a v1 state JSON, run it through the v2 migrator, verify all new fields are present AND all existing data (strokes, scores, config) is preserved.
+- Use `<` comparisons (not `===`) in the migration chain so users who skip versions still get migrated correctly.
+
+**Detection:** Test: construct a v1 persisted state object, pass it through the v2 migration, assert it produces valid v2 state with all new fields populated and all existing fields intact. Verify no data loss.
+
+**Confidence:** HIGH -- the current v0->v1 migration is verifiably destructive (game-store.ts:354: `return { ...initialState }`). A v1->v2 migration MUST be non-destructive.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 10: Extended Stroke Input Breaks Layout on Small Screens
+
+**What goes wrong:** The current `StrokeInput` component (stroke-input.tsx) shows 5 preset buttons [3, 4, 5, 6, 7] with +/- buttons = 7 elements in a row. If extended input adds more presets (e.g., [2, 3, 4, 5, 6, 7, 8]) or additional UI (par indicator, putt count field), the row overflows on small phones (320px width, iPhone SE).
+
+**Prevention:** Test on 320px viewport width. Use a scrollable row or adaptive layout that adjusts based on screen width. Keep the existing 5-button layout as default and only expand via a "more" toggle. The current `min-w-[44px]` per button x 7 = 308px + gaps already leaves almost no margin on 320px screens.
+
+**Confidence:** MEDIUM -- depends on what "extended stroke input" actually entails.
+
+---
+
+### Pitfall 11: Narrative Text Mixes Poorly with Thai Player Names
+
+**What goes wrong:** If narrative generation produces English sentences with embedded Thai names, mixed-script text can have awkward line breaks, inconsistent font metrics, and confusing reading flow. Template strings like `"${playerName} dominated the back nine"` produce `"som dominated the back nine"` or `"som dominated the back nine"` with mixed Thai/English runs.
+
+**Prevention:** Keep narratives short and data-focused rather than prose-heavy. Use factual statements ("Longest streak: Om, 5 consecutive wins from hole 8") rather than flowing English sentences. Test with 4+ character Thai names to verify line wrapping and font rendering.
+
+**Confidence:** LOW -- depends on actual user behavior and whether Thai names are commonly used. The issue is real for any mixed-script UI.
+
+---
+
+### Pitfall 12: Confirmation Flash Overlay Disrupts Edit Flow
+
+**What goes wrong:** The confirmation flash overlay (play/page.tsx:253-262) is a `fixed inset-0 z-50` element that appears for 1 second after every score submission. Although it has `pointer-events-none`, during rapid sequential edits (fixing multiple holes), the visual flash every time is distracting and makes the user wait 1 second between edits.
+
+**Prevention:** For edit submissions (not first-time submissions), use a smaller, less intrusive toast notification (e.g., bottom-edge toast rather than full-screen flash). Reduce the duration to 500ms for edits. The `pointer-events-none` already prevents blocking, but the visual distraction during edit workflows is the real problem.
+
+**Confidence:** MEDIUM -- the overlay has `pointer-events-none` so no taps are blocked. But the 1-second visual disruption during rapid editing is a real UX issue.
+
+---
+
+### Pitfall 13: H2H Performance is Fine at Current Scale But Architecture Should Not Preclude Optimization
+
+**What goes wrong:** For a H2H record between two players, all history records must be scanned to find games where both participated. With 100+ saved games and 10 unique players (C(10,2) = 45 pairs), that is 4,500 iterations.
+
+**Prevention:** This is a non-issue until ~500+ games. For v1.1, simple iteration over `HistoryRecord[]` is fine. Do not pre-optimize. BUT: structure the H2H computation as a pure function (`computeH2H(playerA, playerB, games)`) so it can be wrapped in a web worker or cached later without refactoring.
+
+**Confidence:** HIGH -- 4,500 iterations over small JavaScript objects is < 10ms on any modern phone.
+
+---
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Severity | Mitigation |
+|-------------|---------------|----------|------------|
+| Extended stroke input | Layout overflow on small screens (#10) | Minor | Test on 320px viewport, keep 5-preset default |
+| Editable scores on /play | Auto-advance fires after edit (#4) | **Critical** | Branch on `holeAlreadyScored` before auto-advance |
+| Editable scores on /play | Undo snapshot confusion (#3) | **Critical** | Separate edit action from submit action in store |
+| Post-submission correction | Running total cascade (#1) | **Critical** | Derive `runningTotal` at render time OR rebuild all totals after any edit |
+| Post-submission correction | History record stale (#2) | **Critical** | Update IndexedDB record after edit via upsert on `gameId` |
+| Post-submission correction | Duplicate history records (#8) | Moderate | Add `gameId` to config, upsert instead of insert |
+| Any new state fields | State migration needed (#9) | Moderate | Plan all fields upfront, single version bump, non-destructive migration |
+| Score storytelling | Degenerate game states (#6) | Moderate | Classify game shape first, test all edge cases |
+| Score storytelling | Mixed-script text (#11) | Minor | Data-focused statements, not prose |
+| Lifetime H2H | Name fragmentation (#5) | Moderate | Player name autocomplete from history, Unicode normalization |
+| Lifetime H2H | Phantom player inflation (#7) | Moderate | Filter by actual strokes recorded per player per hole |
+| Lifetime H2H | Query performance (#13) | Minor | Non-issue now, structure for future optimization |
+| Confirmation overlay | Visual disruption during edits (#12) | Minor | Smaller toast for edits, shorter duration |
+
+## Recommended Implementation Order (Risk-Informed)
+
+Based on pitfall severity, dependency chains, and the principle of fixing foundations before building on them:
+
+1. **State migration infrastructure + gameId** (#9, #8) -- Must come first. Every subsequent feature needs new state fields. Get the migration right once, add `gameId` for deduplication.
+2. **Derive runningTotal instead of storing it** (#1) -- Prerequisite for any editing feature. Eliminates the entire class of cascade bugs. Touch `playerScores` type, `submitHoleStrokes`, and all consumers.
+3. **Separate edit pathway in store** (#3) -- Create `editHoleStrokes()` action distinct from `submitHoleStrokes()`. Prerequisite for both play-page and results-page editing to not corrupt undo state.
+4. **History record upsert mechanism** (#2, #8) -- Change `useSaveGame` to support updates after initial save. Uses `gameId` from step 1.
+5. **Auto-advance fix for edits on /play** (#4) -- Now safe because the store, totals, and history are all correct. Small change but critical for UX.
+6. **Player name autocomplete + improved normalization** (#5) -- Prerequisite for reliable H2H. Fix the source of name fragmentation before building on it.
+7. **Lifetime H2H with phantom-player filtering** (#7) -- Depends on clean player identity from step 6.
+8. **Score storytelling with game shape classifier** (#6) -- Independent feature, build last. Comprehensive edge case testing required.
 
 ## Sources
 
-- [Zustand persist middleware docs](https://zustand.docs.pmnd.rs/integrations/persisting-store-data) -- version/migrate/merge behavior (HIGH confidence)
-- [Zustand persist with IndexedDB discussion #1721](https://github.com/pmndrs/zustand/discussions/1721) -- idb-keyval integration patterns (HIGH confidence)
-- [Zustand multi-version migration issue #984](https://github.com/pmndrs/zustand/issues/984) -- cascading migration problem (HIGH confidence)
-- [web.dev Persistent Storage](https://web.dev/articles/persistent-storage) -- `navigator.storage.persist()` behavior (HIGH confidence)
-- [MDN Storage quotas and eviction criteria](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria) -- browser eviction policies (HIGH confidence)
-- [JavaScript UUID Collisions](https://www.javaspring.net/blog/collisions-when-generating-uuids-in-javascript/) -- Math.random collision risk analysis (MEDIUM confidence)
-- [MDN crypto.randomUUID()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) -- secure alternative (HIGH confidence)
-- [WCAG 2.5.5 Target Size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html) -- 44px touch target recommendation (HIGH confidence)
-- [Smashing Magazine Accessible Target Sizes](https://www.smashingmagazine.com/2023/04/accessible-tap-target-sizes-rage-taps-clicks/) -- outdoor/mobile touch target research (MEDIUM confidence)
-- [LogRocket React Chart Libraries 2025](https://blog.logrocket.com/best-react-chart-libraries-2025/) -- bundle size comparison (MEDIUM confidence)
-- Codebase analysis: `src/lib/game-store.ts`, `src/app/setup/page.tsx`, `src/lib/scoring.ts` -- verified current bugs (HIGH confidence)
+- Codebase analysis: `game-store.ts`, `scoring.ts`, `types.ts`, `stats.ts`, `history-db.ts`, `use-save-game.ts`, `results/page.tsx`, `play/page.tsx`, `stroke-input.tsx` (all verified by direct file reading -- HIGH confidence)
+- [Zundo - undo/redo middleware for Zustand](https://github.com/charkour/zundo) -- alternative undo/redo approach (HIGH confidence)
+- [React - Preserving and Resetting State](https://react.dev/learn/preserving-and-resetting-state) -- ref lifecycle behavior (HIGH confidence)
+- [React blog - You Probably Don't Need Derived State](https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html) -- runningTotal should be derived (HIGH confidence)
+- [Identity resolution deduplication pitfalls](https://us.fitgap.com/stack-guides/resolving-identity-and-deduplication-issues-that-break-persona-classification) -- over-merge vs under-merge tradeoffs (MEDIUM confidence)
+- [Writing effective game recaps - Fiveable](https://library.fiveable.me/sports-reporting-and-production/unit-4/writing-effective-game-recaps/study-guide/GPcsMuMiHnsy0zJt) -- narrative structure patterns (MEDIUM confidence)
+- [IndexedDB for save game data](https://lvl17.com/wp/using-indexeddb-for-save-game-data/) -- put vs add, eviction risks (MEDIUM confidence)
+- [Pardot scoring recalculation cascade](https://pardotgeeks.com/2020/12/pardot-prospect-score-changes/) -- cascading score recalculation real-world failures (MEDIUM confidence)
 
 ---
-*Pitfalls research for: Golf Handicap Scorer v2 rebuild*
-*Researched: 2026-02-17*
+*Pitfalls research for: Golf Handicap Scorer v1.1 features*
+*Researched: 2026-02-22*

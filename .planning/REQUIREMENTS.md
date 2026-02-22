@@ -61,26 +61,26 @@ Deferred beyond v1.1. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | — | Pending |
-| INPUT-02 | — | Pending |
-| EDIT-01 | — | Pending |
-| EDIT-02 | — | Pending |
-| EDIT-03 | — | Pending |
-| EDIT-04 | — | Pending |
-| REDT-01 | — | Pending |
-| REDT-02 | — | Pending |
-| REDT-03 | — | Pending |
-| STORY-01 | — | Pending |
-| STORY-02 | — | Pending |
-| H2H-01 | — | Pending |
-| H2H-02 | — | Pending |
-| H2H-03 | — | Pending |
+| INPUT-01 | Phase 8 | Pending |
+| INPUT-02 | Phase 8 | Pending |
+| EDIT-01 | Phase 9 | Pending |
+| EDIT-02 | Phase 8 | Pending |
+| EDIT-03 | Phase 9 | Pending |
+| EDIT-04 | Phase 9 | Pending |
+| REDT-01 | Phase 10 | Pending |
+| REDT-02 | Phase 10 | Pending |
+| REDT-03 | Phase 10 | Pending |
+| STORY-01 | Phase 11 | Pending |
+| STORY-02 | Phase 11 | Pending |
+| H2H-01 | Phase 12 | Pending |
+| H2H-02 | Phase 12 | Pending |
+| H2H-03 | Phase 12 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-22*
-*Last updated: 2026-02-22 after initial definition*
+*Last updated: 2026-02-22 after roadmap creation*
