@@ -13,6 +13,7 @@ import { WinnerPodium } from "@/components/results/winner-podium";
 import { ShareResultsCard } from "@/components/results/share-results-card";
 import { useSaveGame } from "@/hooks/use-save-game";
 import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
+import { StoryHighlights } from "@/components/results/story-highlights";
 
 const MEDAL_COLORS = ["text-amber-400", "text-muted-foreground", "text-amber-700"];
 const MEDAL_BG = [
@@ -157,6 +158,13 @@ export default function ResultsPage() {
           players={config.players}
           playerScores={playerScores}
           numberOfHoles={config.numberOfHoles}
+        />
+
+        {/* Story Highlights */}
+        <StoryHighlights
+          players={config.players}
+          playerScores={playerScores}
+          pairResults={pairResults}
         />
 
         {/* Head-to-Head Pair Breakdowns */}
