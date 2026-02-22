@@ -3,12 +3,15 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { usePlayerStats } from "@/hooks/use-player-stats";
+import { useH2HRecords } from "@/hooks/use-h2h-records";
 import { PlayerStatCard } from "@/components/stats/player-stat-card";
 import { WinRateChart } from "@/components/stats/win-rate-chart";
+import { H2HSection } from "@/components/stats/h2h-section";
 
 export default function StatsPage() {
   const router = useRouter();
   const stats = usePlayerStats();
+  const h2hRecords = useH2HRecords();
 
   return (
     <div className="min-h-dvh bg-background">
@@ -57,6 +60,11 @@ export default function StatsPage() {
             {stats.map((s) => (
               <PlayerStatCard key={s.displayName} stats={s} />
             ))}
+
+            {/* Head-to-Head Records */}
+            {h2hRecords && h2hRecords.length > 0 && (
+              <H2HSection records={h2hRecords} />
+            )}
           </>
         )}
       </div>

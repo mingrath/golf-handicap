@@ -124,3 +124,113 @@ export function computeAllPlayerStats(games: HistoryRecord[]): PlayerStats[] {
 
   return allStats;
 }
+
+// ── Head-to-Head ────────────────────────────────────────────────────
+
+export interface H2HRecord {
+  playerAName: string;
+  playerBName: string;
+  playerAWins: number;
+  playerBWins: number;
+  ties: number;
+  gamesPlayed: number;
+}
+
+/** Canonical pair key for H2H: alphabetically sorted normalized names. */
+function h2hPairKey(a: string, b: string): string {
+  const na = normalizePlayerName(a);
+  const nb = normalizePlayerName(b);
+  return na < nb ? `${na}::${nb}` : `${nb}::${na}`;
+}
+
+/**
+ * Compute lifetime head-to-head records for all player pairs across saved games.
+ * A "win" means the player had a higher totalScore in that game's rankings.
+ * Sorted by gamesPlayed desc.
+ */
+export function computeH2HRecords(games: HistoryRecord[]): H2HRecord[] {
+  const pairMap = new Map<
+    string,
+    { aName: string; bName: string; aWins: number; bWins: number; ties: number }
+  >();
+
+  for (const game of games) {
+    const rankings = game.rankings;
+    for (let i = 0; i < rankings.length; i++) {
+      for (let j = i + 1; j < rankings.length; j++) {
+        const rA = rankings[i];
+        const rB = rankings[j];
+        const pk = h2hPairKey(rA.playerName, rB.playerName);
+
+        if (!pairMap.has(pk)) {
+          // Determine display order: alphabetical by normalized name
+          const nA = normalizePlayerName(rA.playerName);
+          const nB = normalizePlayerName(rB.playerName);
+          pairMap.set(pk, {
+            aName: nA < nB ? rA.playerName : rB.playerName,
+            bName: nA < nB ? rB.playerName : rA.playerName,
+            aWins: 0,
+            bWins: 0,
+            ties: 0,
+          });
+        }
+
+        const rec = pairMap.get(pk)!;
+        const nA = normalizePlayerName(rA.playerName);
+        const isRaPlayerA = normalizePlayerName(rec.aName) === nA;
+
+        if (rA.totalScore > rB.totalScore) {
+          if (isRaPlayerA) rec.aWins++;
+          else rec.bWins++;
+        } else if (rB.totalScore > rA.totalScore) {
+          if (isRaPlayerA) rec.bWins++;
+          else rec.aWins++;
+        } else {
+          rec.ties++;
+        }
+      }
+    }
+  }
+
+  return Array.from(pairMap.values())
+    .map((r) => ({
+      playerAName: r.aName,
+      playerBName: r.bName,
+      playerAWins: r.aWins,
+      playerBWins: r.bWins,
+      ties: r.ties,
+      gamesPlayed: r.aWins + r.bWins + r.ties,
+    }))
+    .sort((a, b) => b.gamesPlayed - a.gamesPlayed);
+}
+
+/**
+ * Look up a specific pair's H2H record.
+ * Returns the record oriented so playerAName matches the first name provided.
+ */
+export function getH2HForPair(
+  records: H2HRecord[],
+  nameA: string,
+  nameB: string
+): H2HRecord | null {
+  const nA = normalizePlayerName(nameA);
+  const nB = normalizePlayerName(nameB);
+
+  for (const r of records) {
+    const rNA = normalizePlayerName(r.playerAName);
+    const rNB = normalizePlayerName(r.playerBName);
+    if ((rNA === nA && rNB === nB) || (rNA === nB && rNB === nA)) {
+      // Orient the record so nameA is playerA
+      if (rNA === nA) return r;
+      return {
+        playerAName: r.playerBName,
+        playerBName: r.playerAName,
+        playerAWins: r.playerBWins,
+        playerBWins: r.playerAWins,
+        ties: r.ties,
+        gamesPlayed: r.gamesPlayed,
+      };
+    }
+  }
+  return null;
+}

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { generatePairs, getPlayerName } from "@/lib/pairs";
 import { Player, PairHoleResult } from "@/lib/types";
+import { H2HBadge } from "./h2h-badge";
 
 interface PairBreakdownProps {
   players: Player[];
@@ -200,6 +201,9 @@ function PairCard({ pair }: { pair: PairData }) {
           </div>
         </details>
       )}
+
+      {/* Lifetime H2H record */}
+      <H2HBadge playerAName={pair.playerAName} playerBName={pair.playerBName} />
     </div>
   );
 }
