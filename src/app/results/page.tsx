@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Home, RotateCcw, RefreshCcw, Pencil, X, TableProperties } from "lucide-react";
+import { Home, RotateCcw, RefreshCcw, Pencil, X, TableProperties, ArrowLeft } from "lucide-react";
 import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { getFinalRankings } from "@/lib/scoring";
@@ -34,8 +34,9 @@ interface EditingCell {
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame, isComplete } =
+  const { config, playerScores, pairResults, holeStrokes, submitHoleStrokes, resetGame, isComplete, historyId } =
     useGameStore();
+  const isHistoryMode = historyId !== null && historyId !== undefined;
   // Auto-save completed game to history (IndexedDB)
   useSaveGame();
 
@@ -57,8 +58,8 @@ export default function ResultsPage() {
   }, [config, router]);
 
   useEffect(() => {
-    // Trigger animation on first mount when game is complete; clear it after a brief delay
-    if (isComplete) {
+    // Trigger animation on first mount when game is complete; skip for history mode
+    if (isComplete && !useGameStore.getState().historyId) {
       setShouldAnimate(true);
       const t = setTimeout(() => setShouldAnimate(false), 2000);
       return () => clearTimeout(t);
@@ -118,7 +119,21 @@ export default function ResultsPage() {
     <div className="min-h-dvh bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border px-4 py-4 flex items-center">
-        <h1 className="text-lg font-bold text-foreground flex-1">Final Results</h1>
+        {isHistoryMode && (
+          <button
+            className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors mr-2"
+            onClick={() => {
+              resetGame();
+              router.push("/history");
+            }}
+            aria-label="Back to history"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+        )}
+        <h1 className="text-lg font-bold text-foreground flex-1">
+          {isHistoryMode ? "Game Details" : "Final Results"}
+        </h1>
         <ScoreAuditDialog
           trigger={
             <button
@@ -290,29 +305,44 @@ export default function ResultsPage() {
       </div>
 
       {/* Bottom actions */}
-      <div className="sticky bottom-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border flex gap-3">
-        <button
-          className="h-14 w-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center"
-          onClick={handleGoHome}
-          aria-label="Home"
-        >
-          <Home className="h-5 w-5" />
-        </button>
-        <button
-          className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-          onClick={() => handlePlayAgain(latestGame)}
-        >
-          <RefreshCcw className="h-5 w-5" />
-          Play Again
-        </button>
-        <button
-          className="flex-1 h-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
-          onClick={handleNewGame}
-        >
-          <RotateCcw className="h-5 w-5" />
-          New Game
-        </button>
-      </div>
+      {isHistoryMode ? (
+        <div className="sticky bottom-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border">
+          <button
+            className="w-full h-14 rounded-xl text-lg font-bold bg-muted border border-border text-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+            onClick={() => {
+              resetGame();
+              router.push("/history");
+            }}
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Back to History
+          </button>
+        </div>
+      ) : (
+        <div className="sticky bottom-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border flex gap-3">
+          <button
+            className="h-14 w-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center"
+            onClick={handleGoHome}
+            aria-label="Home"
+          >
+            <Home className="h-5 w-5" />
+          </button>
+          <button
+            className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+            onClick={() => handlePlayAgain(latestGame)}
+          >
+            <RefreshCcw className="h-5 w-5" />
+            Play Again
+          </button>
+          <button
+            className="flex-1 h-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+            onClick={handleNewGame}
+          >
+            <RotateCcw className="h-5 w-5" />
+            New Game
+          </button>
+        </div>
+      )}
 
       {/* Edit modal overlay */}
       {editingCell && (
