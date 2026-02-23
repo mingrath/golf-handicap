@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Home, RotateCcw, Pencil, X, TableProperties } from "lucide-react";
+import { Home, RotateCcw, RefreshCcw, Pencil, X, TableProperties } from "lucide-react";
 import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { getFinalRankings } from "@/lib/scoring";
@@ -12,6 +12,9 @@ import { PairBreakdown } from "@/components/results/pair-breakdown";
 import { WinnerPodium } from "@/components/results/winner-podium";
 import { ShareResultsCard } from "@/components/results/share-results-card";
 import { useSaveGame } from "@/hooks/use-save-game";
+import { useLiveQuery } from "dexie-react-hooks";
+import { historyDb } from "@/lib/history-db";
+import { usePlayAgain } from "@/hooks/use-play-again";
 import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
 import { ScoreAuditDialog } from "@/components/shared/score-audit-dialog";
 import { StoryHighlights } from "@/components/results/story-highlights";
@@ -35,6 +38,13 @@ export default function ResultsPage() {
     useGameStore();
   // Auto-save completed game to history (IndexedDB)
   useSaveGame();
+
+  const latestGame = useLiveQuery(
+    () => historyDb.games.orderBy("completedAt").reverse().first(),
+    [],
+    null
+  );
+  const handlePlayAgain = usePlayAgain();
 
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   // Track whether the entrance animation has been triggered (once per mount)
@@ -282,14 +292,21 @@ export default function ResultsPage() {
       {/* Bottom actions */}
       <div className="sticky bottom-0 p-4 pb-safe bg-background/90 backdrop-blur-xl border-t border-border flex gap-3">
         <button
-          className="flex-1 h-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          className="h-14 w-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center"
           onClick={handleGoHome}
+          aria-label="Home"
         >
           <Home className="h-5 w-5" />
-          Home
         </button>
         <button
           className="flex-1 h-14 rounded-xl text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
+          onClick={() => handlePlayAgain(latestGame)}
+        >
+          <RefreshCcw className="h-5 w-5" />
+          Play Again
+        </button>
+        <button
+          className="flex-1 h-14 rounded-xl text-lg font-semibold bg-muted border border-border text-muted-foreground hover:bg-muted/80 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
           onClick={handleNewGame}
         >
           <RotateCcw className="h-5 w-5" />
