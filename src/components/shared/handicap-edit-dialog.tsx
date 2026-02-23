@@ -29,12 +29,36 @@ export function HandicapEditDialog() {
   const pairs = generatePairs(config.players);
   const hasScores = holeStrokes.length > 0;
 
-  const handleHandicapChange = (pairKey: string, value: number) => {
-    setHandicap(pairKey, value);
-    // Auto-distribute handicap holes when value changes
-    if (value !== 0) {
-      const holes = distributeHandicapHoles(value, config.numberOfHoles);
+  const handleHandicapChange = (pairKey: string, newValue: number) => {
+    const existing = config.handicaps[pairKey];
+    const oldValue = existing?.value ?? 0;
+    const oldHoles = existing?.handicapHoles ?? [];
+
+    setHandicap(pairKey, newValue);
+    // setHandicap resets handicapHoles to [] internally, so we must call setHandicapHoles after
+
+    if (newValue === 0) {
+      // No holes needed
+      return;
+    }
+
+    const signChanged = (oldValue > 0 && newValue < 0) || (oldValue < 0 && newValue > 0);
+
+    if (oldValue === 0 || signChanged) {
+      // Fresh start: auto-distribute as default
+      const holes = distributeHandicapHoles(newValue, config.numberOfHoles);
       setHandicapHoles(pairKey, holes);
+    } else {
+      // Same direction, value changed
+      const absNew = Math.abs(newValue);
+      if (oldHoles.length <= absNew) {
+        // Value increased or same: keep all existing selections
+        setHandicapHoles(pairKey, oldHoles);
+      } else {
+        // Value decreased: trim from highest hole numbers
+        const trimmed = [...oldHoles].sort((a, b) => a - b).slice(0, absNew);
+        setHandicapHoles(pairKey, trimmed);
+      }
     }
   };
 
@@ -67,6 +91,7 @@ export function HandicapEditDialog() {
           {pairs.map((pair) => {
             const handicap = config.handicaps[pair.pairKey];
             const value = handicap?.value ?? 0;
+            const handicapHoles = handicap?.handicapHoles ?? [];
             const playerAName = getPlayerName(config.players, pair.playerAId);
             const playerBName = getPlayerName(config.players, pair.playerBId);
 
@@ -90,6 +115,62 @@ export function HandicapEditDialog() {
                   max={config.numberOfHoles}
                   size="sm"
                 />
+                {Math.abs(value) > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Handicap holes (tap to toggle):
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {Array.from(
+                        { length: config.numberOfHoles },
+                        (_, i) => i + 1
+                      ).map((hole) => {
+                        const isSelected = handicapHoles.includes(hole);
+                        const maxSelectable = Math.abs(value);
+                        const atMax =
+                          handicapHoles.length >= maxSelectable && !isSelected;
+
+                        return (
+                          <button
+                            key={hole}
+                            onClick={() => {
+                              if (isSelected) {
+                                setHandicapHoles(
+                                  pair.pairKey,
+                                  handicapHoles.filter((h) => h !== hole)
+                                );
+                              } else if (!atMax) {
+                                setHandicapHoles(pair.pairKey, [
+                                  ...handicapHoles,
+                                  hole,
+                                ]);
+                              }
+                            }}
+                            disabled={atMax}
+                            className={`w-9 h-9 rounded-lg text-xs font-bold transition-all active:scale-90 ${
+                              isSelected
+                                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
+                                : atMax
+                                ? "bg-muted/30 text-muted-foreground/40"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
+                            }`}
+                          >
+                            {hole}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className={`text-xs mt-1.5 ${
+                      handicapHoles.length < Math.abs(value)
+                        ? "text-rose-400 font-medium"
+                        : "text-muted-foreground"
+                    }`}>
+                      {handicapHoles.length}/{Math.abs(value)} selected
+                      {handicapHoles.length < Math.abs(value) &&
+                        ` — select ${Math.abs(value) - handicapHoles.length} more`}
+                    </p>
+                  </div>
+                )}
               </div>
             );
           })}
