@@ -204,6 +204,11 @@ Plans:
   3. User can edit handicap values and manually adjust handicap hole assignments for any pair in the loaded past game (using the Phase 15 manual selection UI)
   4. After editing, all scores, rankings, storytelling, and head-to-head records recalculate correctly
   5. Edits persist back to IndexedDB -- closing and reopening the game shows the updated values
+**Plans**: 2 plans
+
+Plans:
+- [ ] 16-01-PLAN.md — Store infrastructure: historyId field + loadHistoryGame action + history-aware save hook
+- [ ] 16-02-PLAN.md — UI wiring: clickable history cards + history-mode results page
 
 ## Progress
 
@@ -227,7 +232,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 14 -> 15 -> 16
 | 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
 | 14. Play Again Config Restore | v1.2 | 2/2 | Complete | 2026-02-23 |
 | 15. Manual Handicap Hole Selection | v1.3 | 1/1 | Complete | 2026-02-23 |
-| 16. History Game Loading & Editing | v1.3 | 0/TBD | Not started | - |
+| 16. History Game Loading & Editing | v1.3 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2 shipped, v1.3 added)*
