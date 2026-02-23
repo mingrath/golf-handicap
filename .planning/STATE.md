@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22)
+See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** v1.1 milestone complete
+**Current focus:** v1.2 milestone — defining requirements
 
 ## Current Position
 
-Milestone: v1.1 UX Fixes & Insights
-Phase: 12 of 12 (all complete)
-Status: Milestone complete - ready to archive
-Last activity: 2026-02-22 -- all 5 phases (8-12) implemented
+Milestone: v1.2 Score Transparency & Fast Setup
+Phase: Not started (defining requirements)
+Status: Defining requirements
+Last activity: 2026-02-23 — Milestone v1.2 started
 
-Progress: [==========] 100% overall (v1.0 7/7 phases, v1.1 5/5 phases)
+Progress: [░░░░░░░░░░] 0% v1.2 (v1.0 7/7, v1.1 5/5 complete)
 
 ## Performance Metrics
 
@@ -47,6 +47,8 @@ Progress: [==========] 100% overall (v1.0 7/7 phases, v1.1 5/5 phases)
 - [v1.1 Roadmap]: Storytelling and H2H are independent insight features, no cross-dependency
 - [Phase 11]: Rivalry detector tracks lastNonZeroLeader to count lead changes through tied states
 - [Phase 12]: H2H uses case-insensitive name matching via normalizePlayerName for cross-game identity
+- [v1.2 Feedback]: Play Again on home page only restores player names + hole count, NOT handicap settings — root cause of slow setup
+- [v1.2 Feedback]: Users need raw input visibility when scores don't match paper scorecard (audit grid)
 
 ### Pending Todos
 
@@ -58,6 +60,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: v1.1 milestone complete. All 14 requirements implemented.
+Last session: 2026-02-23
+Stopped at: v1.2 milestone started. Requirements defined. Roadmap pending.
 Resume file: None

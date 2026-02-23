@@ -1,11 +1,25 @@
 # Requirements: Golf Handicap Scorer
 
-**Defined:** 2026-02-22
+**Defined:** 2026-02-23
 **Core Value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
 
-## v1.1 Requirements
+## v1.2 Requirements
 
-Requirements for v1.1 UX Fixes & Insights milestone. Each maps to roadmap phases.
+Requirements for v1.2 Score Transparency & Fast Setup milestone. Each maps to roadmap phases.
+
+### Score Audit
+
+- [ ] **AUDIT-01**: User can open a raw stroke input grid during play showing all entered strokes (rows = holes, columns = players)
+- [ ] **AUDIT-02**: User can open the same raw stroke input grid from the results page
+- [ ] **AUDIT-03**: The audit grid shows which holes carry handicap strokes for each pair, so user can verify handicap configuration
+- [ ] **AUDIT-04**: User can tap any hole row in the audit grid to navigate directly to that hole for editing
+
+### Quick Setup
+
+- [ ] **QSET-01**: "Play Again" from home page restores full config — player names, hole count, AND all handicap settings (not just names + holes)
+- [ ] **QSET-02**: Results page has a "Play Again" button that pre-loads the same full config and starts a new game
+
+## Previous Requirements (v1.1 — all complete)
 
 ### Stroke Input
 
@@ -38,7 +52,7 @@ Requirements for v1.1 UX Fixes & Insights milestone. Each maps to roadmap phases
 
 ## Future Requirements
 
-Deferred beyond v1.1. Tracked but not in current roadmap.
+Deferred beyond v1.2. Tracked but not in current roadmap.
 
 ### Backlog
 
@@ -55,32 +69,26 @@ Deferred beyond v1.1. Tracked but not in current roadmap.
 | Shot-by-shot tracking | Slows down scoring, different input model |
 | Official USGA/R&A handicap calculation | Legally regulated, requires 20+ rounds |
 | AI-powered analysis | Rule-based highlights work fine |
-| Player profiles / avatars | Name-based matching sufficient for v1.1 |
+| Player profiles / avatars | Name-based matching sufficient |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | Phase 8 | Done |
-| INPUT-02 | Phase 8 | Done |
-| EDIT-01 | Phase 9 | Done |
-| EDIT-02 | Phase 8 | Done |
-| EDIT-03 | Phase 9 | Done |
-| EDIT-04 | Phase 9 | Done |
-| REDT-01 | Phase 10 | Done |
-| REDT-02 | Phase 10 | Done |
-| REDT-03 | Phase 10 | Done |
-| STORY-01 | Phase 11 | Done |
-| STORY-02 | Phase 11 | Done |
-| H2H-01 | Phase 12 | Done |
-| H2H-02 | Phase 12 | Done |
-| H2H-03 | Phase 12 | Done |
+| AUDIT-01 | TBD | Pending |
+| AUDIT-02 | TBD | Pending |
+| AUDIT-03 | TBD | Pending |
+| AUDIT-04 | TBD | Pending |
+| QSET-01 | TBD | Pending |
+| QSET-02 | TBD | Pending |
 
 **Coverage:**
-- v1.1 requirements: 14 total
-- Mapped to phases: 14
-- Unmapped: 0
+- v1.2 requirements: 6 total
+- Mapped to phases: 0 (roadmap pending)
+- Unmapped: 6 ⚠️
 
 ---
-*Requirements defined: 2026-02-22*
-*Last updated: 2026-02-22 after roadmap creation*
+*Requirements defined: 2026-02-23*
+*Last updated: 2026-02-23 after initial definition*

@@ -37,16 +37,21 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - ✓ Cross-round statistics: win rates, averages, best/worst -- v1.0
 - ✓ Dark/light theme with system detection and manual toggle -- v1.0
 - ✓ Undo last score submission (10-second floating banner) -- v1.0
+- ✓ Free-type stroke input (1–20), defaults to 4 per hole -- v1.1
+- ✓ Tap-to-edit any hole during play with full score replay -- v1.1
+- ✓ Edit strokes and handicap on results page, auto-updates saved history -- v1.1
+- ✓ Storytelling engine with 6 narrative detectors -- v1.1
+- ✓ Lifetime head-to-head records across saved games -- v1.1
 
 ### Active
 
-<!-- v1.1 milestone scope -->
+<!-- v1.2 milestone scope -->
 
-- [ ] Extended stroke input supporting scores > 7 (users often score higher than preset row allows)
-- [ ] Editable scorecard and handicap on final results page (fix keying mistakes after round)
-- [ ] Editable scores and handicap during play for cross-check (two scorers verify after each hole)
-- [ ] Score storytelling: narrative highlights ("biggest comeback", "longest winning streak")
-- [ ] Player-vs-player lifetime head-to-head records across saved rounds
+- [ ] Raw stroke input grid visible during play and on results (verify what was entered per hole per player)
+- [ ] Handicap hole assignments visible in audit grid (verify which holes carry strokes per pair)
+- [ ] Tap-to-edit from audit grid (jump to any hole directly)
+- [ ] "Play Again" restores full config including handicap settings (not just names + holes)
+- [ ] "Play Again" shortcut accessible directly from results page
 
 ### Out of Scope
 
@@ -58,22 +63,24 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - Apple Watch companion -- requires native app, not PWA
 - AI-powered analysis -- rule-based highlights work fine
 
-## Current Milestone: v1.1 UX Fixes & Insights
+## Current Milestone: v1.2 Score Transparency & Fast Setup
 
-**Goal:** Address real user feedback (stroke input, editability) and add round insight features (storytelling, head-to-head).
+**Goal:** Let users verify what was entered when scores look wrong, and eliminate handicap re-entry on repeat games.
 
 **Target features:**
-- Extended stroke input for scores > 7
-- Editable scorecard + handicap on results page
-- Editable scores + handicap during play (cross-check)
-- Score storytelling with narrative highlights
-- Lifetime player-vs-player head-to-head records
+- Raw stroke input audit grid (play screen + results page)
+- Handicap assignment visibility in audit grid
+- Tap-to-jump from audit grid to any hole
+- "Play Again" restores full config including handicap settings
+- "Play Again" shortcut on results page
 
 ## Context
 
 Shipped v1.0 on 2026-02-17 with 6,289 LOC TypeScript/CSS across 7 phases and 12 plans.
 
 **v1.1 user feedback (2026-02-22):** Real users reported: (1) preset stroke row caps at 6, need higher numbers since many score >7; (2) can't edit scorecard or handicap on results page if mistakes made; (3) can't edit scores during play — two people record and cross-check each hole, need immediate correction ability.
+
+**v1.2 user feedback (2026-02-23):** After real course use: (1) Computed scores don't match paper scorecard, can't tell if wrong strokes or wrong handicap — need a raw input verification view; (2) Setup takes too long re-entering handicaps — Play Again only restores names/holes, not handicap settings; (3) Stroke input during play works well.
 
 **Tech stack:** Next.js 16 (App Router, static prerendered), React 19, TypeScript 5, Zustand 5 (persist/localStorage), Dexie 4 (IndexedDB), Tailwind CSS 4, shadcn/ui (New York), next-themes 0.4.6, Recharts, Vitest 4.
 
@@ -106,4 +113,4 @@ Existing codebase analysis in `.planning/codebase/` (7 documents).
 | Glass-card two-block CSS approach | oklch(from ...) not well-supported; explicit light/dark blocks are reliable | ✓ Good |
 
 ---
-*Last updated: 2026-02-22 after v1.1 milestone start*
+*Last updated: 2026-02-23 after v1.2 milestone start*

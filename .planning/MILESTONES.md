@@ -22,3 +22,22 @@
 
 ---
 
+## v1.1 UX Fixes & Insights (Shipped: 2026-02-22)
+
+**Phases completed:** 5 phases (8–12), 5 plans
+**Requirements:** 14/14 satisfied
+**Timeline:** 2026-02-22 (single day)
+**Tests:** 112 tests across 5 test files (all passing)
+
+**Key accomplishments:**
+1. Free-type stroke input (any value 1–20), defaults to 4 per player per hole
+2. Replay engine (`recalculateAllResults`) — foundation for all editing features
+3. Tap-to-edit any hole during play, handicap edit dialog with full score replay
+4. Edit strokes and handicap on results page with auto-update to saved history
+5. Storytelling engine with 6 narrative detectors (biggest comeback, longest streak, clutch finish, etc.)
+6. Lifetime head-to-head records across saved games with case-insensitive name matching
+
+**Archive:** `milestones/v1.1-ROADMAP.md` (see ROADMAP.md phases 8–12)
+
+---
+
