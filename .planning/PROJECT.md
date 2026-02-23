@@ -43,15 +43,18 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - ✓ Storytelling engine with 6 narrative detectors -- v1.1
 - ✓ Lifetime head-to-head records across saved games -- v1.1
 
+- ✓ Raw stroke input grid visible during play and on results -- v1.2
+- ✓ Handicap hole assignments visible in audit grid -- v1.2
+- ✓ Tap-to-edit from audit grid (jump to any hole directly) -- v1.2
+- ✓ "Play Again" restores full config including handicap settings -- v1.2
+- ✓ "Play Again" shortcut accessible directly from results page -- v1.2
+
 ### Active
 
-<!-- v1.2 milestone scope -->
+<!-- v1.3 milestone scope -->
 
-- [ ] Raw stroke input grid visible during play and on results (verify what was entered per hole per player)
-- [ ] Handicap hole assignments visible in audit grid (verify which holes carry strokes per pair)
-- [ ] Tap-to-edit from audit grid (jump to any hole directly)
-- [ ] "Play Again" restores full config including handicap settings (not just names + holes)
-- [ ] "Play Again" shortcut accessible directly from results page
+- [ ] User can manually select which handicap holes to add/remove when changing handicap value (not auto-distribute)
+- [ ] User can tap a past game in history to load and edit its scores, handicaps, and handicap holes
 
 ### Out of Scope
 
@@ -63,16 +66,13 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - Apple Watch companion -- requires native app, not PWA
 - AI-powered analysis -- rule-based highlights work fine
 
-## Current Milestone: v1.2 Score Transparency & Fast Setup
+## Current Milestone: v1.3 Handicap Control & History Editing
 
-**Goal:** Let users verify what was entered when scores look wrong, and eliminate handicap re-entry on repeat games.
+**Goal:** Give users full control over handicap hole selection when adjusting handicaps, and allow editing past games directly from the history page.
 
 **Target features:**
-- Raw stroke input audit grid (play screen + results page)
-- Handicap assignment visibility in audit grid
-- Tap-to-jump from audit grid to any hole
-- "Play Again" restores full config including handicap settings
-- "Play Again" shortcut on results page
+- Manual handicap hole selection (add/remove specific holes when changing handicap value)
+- Tap past game in history to load into editable results view (scores, handicaps, handicap holes)
 
 ## Context
 
@@ -81,6 +81,8 @@ Shipped v1.0 on 2026-02-17 with 6,289 LOC TypeScript/CSS across 7 phases and 12 
 **v1.1 user feedback (2026-02-22):** Real users reported: (1) preset stroke row caps at 6, need higher numbers since many score >7; (2) can't edit scorecard or handicap on results page if mistakes made; (3) can't edit scores during play — two people record and cross-check each hole, need immediate correction ability.
 
 **v1.2 user feedback (2026-02-23):** After real course use: (1) Computed scores don't match paper scorecard, can't tell if wrong strokes or wrong handicap — need a raw input verification view; (2) Setup takes too long re-entering handicaps — Play Again only restores names/holes, not handicap settings; (3) Stroke input during play works well.
+
+**v1.3 user feedback (2026-02-23):** (1) Changing handicap value auto-distributes holes evenly, but users want to manually choose which holes to add/remove — the auto-distribution doesn't match their real course handicap hole assignments; (2) Users want to tap a past game in history to load it and edit scores/handicaps/handicap holes — they think they may have recorded something wrong and want to fix it after the fact.
 
 **Tech stack:** Next.js 16 (App Router, static prerendered), React 19, TypeScript 5, Zustand 5 (persist/localStorage), Dexie 4 (IndexedDB), Tailwind CSS 4, shadcn/ui (New York), next-themes 0.4.6, Recharts, Vitest 4.
 
@@ -113,4 +115,4 @@ Existing codebase analysis in `.planning/codebase/` (7 documents).
 | Glass-card two-block CSS approach | oklch(from ...) not well-supported; explicit light/dark blocks are reliable | ✓ Good |
 
 ---
-*Last updated: 2026-02-23 after v1.2 milestone start*
+*Last updated: 2026-02-23 after v1.3 milestone start*

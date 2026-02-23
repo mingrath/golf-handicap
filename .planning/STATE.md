@@ -5,17 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** v1.2 milestone -- COMPLETE
+**Current focus:** v1.3 Handicap Control & History Editing
 
 ## Current Position
 
-Milestone: v1.2 Score Transparency & Fast Setup -- SHIPPED
-Phase: 14 of 14 (Play Again Config Restore) -- COMPLETE
-Plan: 2 of 2 complete in Phase 14
-Status: Phase 14 Plan 02 complete -- usePlayAgain wired into home page + results page; QSET-01 + QSET-02 fixed and verified
-Last activity: 2026-02-23 -- Phase 14-02 executed: Play Again integrated into both pages, human verify approved
-
-Progress: [████████████] 100% overall (14 phases, all plans complete)
+Milestone: v1.3 Handicap Control & History Editing
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-23 — Milestone v1.3 started
 
 ## Performance Metrics
 
