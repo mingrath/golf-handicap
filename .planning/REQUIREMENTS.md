@@ -19,7 +19,7 @@ Requirements for v1.2 Score Transparency & Fast Setup milestone. Each maps to ro
 - [ ] **QSET-01**: "Play Again" from home page restores full config — player names, hole count, AND all handicap settings (not just names + holes)
 - [ ] **QSET-02**: Results page has a "Play Again" button that pre-loads the same full config and starts a new game
 
-## Previous Requirements (v1.1 — all complete)
+## Previous Requirements (v1.1 -- all complete)
 
 ### Stroke Input
 
@@ -77,18 +77,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUDIT-01 | TBD | Pending |
-| AUDIT-02 | TBD | Pending |
-| AUDIT-03 | TBD | Pending |
-| AUDIT-04 | TBD | Pending |
-| QSET-01 | TBD | Pending |
-| QSET-02 | TBD | Pending |
+| AUDIT-01 | Phase 13 | Pending |
+| AUDIT-02 | Phase 13 | Pending |
+| AUDIT-03 | Phase 13 | Pending |
+| AUDIT-04 | Phase 13 | Pending |
+| QSET-01 | Phase 14 | Pending |
+| QSET-02 | Phase 14 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 6 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 6 ⚠️
+- Mapped to phases: 6
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 after initial definition*
+*Last updated: 2026-02-23 -- traceability filled after roadmap creation*
