@@ -40,7 +40,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 **Milestone Goal:** Let users verify what was entered when scores look wrong, and eliminate handicap re-entry on repeat games.
 
-- [ ] **Phase 13: Score Audit Grid** - Raw stroke input grid visible during and after play, with handicap-hole visibility and tap-to-edit navigation
+- [x] **Phase 13: Score Audit Grid** - Raw stroke input grid visible during and after play, with handicap-hole visibility and tap-to-edit navigation -- completed 2026-02-23
 - [ ] **Phase 14: Play Again Config Restore** - "Play Again" restores full config including handicap settings, accessible from both home and results pages
 
 ## Phase Details
@@ -146,10 +146,10 @@ Full details: `milestones/v1.1-ROADMAP.md`
   2. User can open the same audit grid from the results page to verify entered strokes post-round
   3. The audit grid shows which holes carry handicap strokes for each pair, so the user can spot a misconfigured handicap
   4. User can tap any hole row in the audit grid to navigate directly to that hole for editing (during play) or for stroke correction (on results)
-**Plans**: 1 plan
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 13-01-PLAN.md — ScoreAuditDialog component + play/results page integration
+- [x] 13-01-PLAN.md — ScoreAuditDialog component + play/results page integration
 
 ### Phase 14: Play Again Config Restore
 **Goal**: Users can start a repeat game with zero re-entry -- "Play Again" from either the home page or results page restores player names, hole count, and all handicap settings exactly as configured in the previous game
@@ -183,7 +183,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 12 -> 13 -> 14
 | 10. Edit on Results | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 11. Storytelling | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
-| 13. Score Audit Grid | v1.2 | 0/1 | Not started | - |
+| 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
 | 14. Play Again Config Restore | v1.2 | 0/TBD | Not started | - |
 
 ---
