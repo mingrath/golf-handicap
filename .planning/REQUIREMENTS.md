@@ -3,27 +3,42 @@
 **Defined:** 2026-02-23
 **Core Value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
 
-## v1.2 Requirements
+## v1.3 Requirements
 
-Requirements for v1.2 Score Transparency & Fast Setup milestone. Each maps to roadmap phases.
+Requirements for v1.3 Handicap Control & History Editing milestone. Each maps to roadmap phases.
+
+### Handicap Hole Control
+
+- [ ] **HCTL-01**: User can see which holes currently have handicap strokes when editing a pair's handicap
+- [ ] **HCTL-02**: User can manually toggle individual holes on/off for handicap strokes (instead of only auto-distribute)
+- [ ] **HCTL-03**: When user changes handicap value, the app shows current hole selections and lets user adjust which holes to add/remove
+
+### History Editing
+
+- [ ] **HIST-01**: User can tap a past game in the history list to open it in a detail/results view
+- [ ] **HIST-02**: User can edit scores (strokes per hole per player) of a past game
+- [ ] **HIST-03**: User can edit handicap values and handicap hole assignments of a past game
+- [ ] **HIST-04**: Edits to a past game recalculate all scores, rankings, and storytelling, and persist back to IndexedDB
+
+## Previous Requirements (v1.2 -- all complete)
 
 ### Score Audit
 
-- [ ] **AUDIT-01**: User can open a raw stroke input grid during play showing all entered strokes (rows = holes, columns = players)
-- [ ] **AUDIT-02**: User can open the same raw stroke input grid from the results page
-- [ ] **AUDIT-03**: The audit grid shows which holes carry handicap strokes for each pair, so user can verify handicap configuration
-- [ ] **AUDIT-04**: User can tap any hole row in the audit grid to navigate directly to that hole for editing
+- [x] **AUDIT-01**: User can open a raw stroke input grid during play showing all entered strokes
+- [x] **AUDIT-02**: User can open the same raw stroke input grid from the results page
+- [x] **AUDIT-03**: The audit grid shows which holes carry handicap strokes for each pair
+- [x] **AUDIT-04**: User can tap any hole row in the audit grid to navigate directly to that hole for editing
 
 ### Quick Setup
 
-- [ ] **QSET-01**: "Play Again" from home page restores full config — player names, hole count, AND all handicap settings (not just names + holes)
-- [ ] **QSET-02**: Results page has a "Play Again" button that pre-loads the same full config and starts a new game
+- [x] **QSET-01**: "Play Again" from home page restores full config including handicap settings
+- [x] **QSET-02**: Results page has a "Play Again" button that pre-loads the same full config
 
 ## Previous Requirements (v1.1 -- all complete)
 
 ### Stroke Input
 
-- [x] **INPUT-01**: User can type any stroke number directly via numeric keypad (replacing preset button row)
+- [x] **INPUT-01**: User can type any stroke number directly via numeric keypad
 - [x] **INPUT-02**: Stroke input defaults to 4 for each player on each hole
 
 ### Play Editing
@@ -41,18 +56,18 @@ Requirements for v1.2 Score Transparency & Fast Setup milestone. Each maps to ro
 
 ### Storytelling
 
-- [x] **STORY-01**: App generates narrative highlights after each round (e.g., "biggest comeback", "longest winning streak", "clutch finish")
+- [x] **STORY-01**: App generates narrative highlights after each round
 - [x] **STORY-02**: Storytelling highlights display on the results page
 
 ### Head-to-Head
 
 - [x] **H2H-01**: App computes lifetime win/loss/tie records for each player pair across all saved games
-- [x] **H2H-02**: Head-to-head records display on the results page (current matchup context)
-- [x] **H2H-03**: Head-to-head records display on the stats page (full history view)
+- [x] **H2H-02**: Head-to-head records display on the results page
+- [x] **H2H-03**: Head-to-head records display on the stats page
 
 ## Future Requirements
 
-Deferred beyond v1.2. Tracked but not in current roadmap.
+Deferred beyond v1.3. Tracked but not in current roadmap.
 
 ### Backlog
 
@@ -77,18 +92,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUDIT-01 | Phase 13 | Pending |
-| AUDIT-02 | Phase 13 | Pending |
-| AUDIT-03 | Phase 13 | Pending |
-| AUDIT-04 | Phase 13 | Pending |
-| QSET-01 | Phase 14 | Pending |
-| QSET-02 | Phase 14 | Pending |
+| HCTL-01 | TBD | Pending |
+| HCTL-02 | TBD | Pending |
+| HCTL-03 | TBD | Pending |
+| HIST-01 | TBD | Pending |
+| HIST-02 | TBD | Pending |
+| HIST-03 | TBD | Pending |
+| HIST-04 | TBD | Pending |
 
 **Coverage:**
-- v1.2 requirements: 6 total
-- Mapped to phases: 6
-- Unmapped: 0
+- v1.3 requirements: 7 total
+- Mapped to phases: 0
+- Unmapped: 7 (awaiting roadmap)
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 -- traceability filled after roadmap creation*
+*Last updated: 2026-02-23 after v1.3 milestone definition*
