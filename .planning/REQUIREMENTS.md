@@ -92,19 +92,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HCTL-01 | TBD | Pending |
-| HCTL-02 | TBD | Pending |
-| HCTL-03 | TBD | Pending |
-| HIST-01 | TBD | Pending |
-| HIST-02 | TBD | Pending |
-| HIST-03 | TBD | Pending |
-| HIST-04 | TBD | Pending |
+| HCTL-01 | Phase 15 | Pending |
+| HCTL-02 | Phase 15 | Pending |
+| HCTL-03 | Phase 15 | Pending |
+| HIST-01 | Phase 16 | Pending |
+| HIST-02 | Phase 16 | Pending |
+| HIST-03 | Phase 16 | Pending |
+| HIST-04 | Phase 16 | Pending |
 
 **Coverage:**
 - v1.3 requirements: 7 total
-- Mapped to phases: 0
-- Unmapped: 7 (awaiting roadmap)
+- Mapped to phases: 7
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 after v1.3 milestone definition*
+*Last updated: 2026-02-23 after v1.3 roadmap creation*

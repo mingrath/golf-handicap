@@ -5,6 +5,7 @@
 - **v1.0 Golf Handicap Scorer v2** -- Phases 1-7 (shipped 2026-02-17)
 - **v1.1 UX Fixes & Insights** -- Phases 8-12 (shipped 2026-02-22)
 - **v1.2 Score Transparency & Fast Setup** -- Phases 13-14 (shipped 2026-02-23)
+- **v1.3 Handicap Control & History Editing** -- Phases 15-16 (in progress)
 
 ## Phases
 
@@ -142,6 +143,9 @@ Full details: `milestones/v1.2-ROADMAP.md`
 
 </details>
 
+<details>
+<summary>v1.2 Phases 13-14 (SHIPPED)</summary>
+
 ### Phase 13: Score Audit Grid
 **Goal**: Users can open a raw stroke input grid at any time during or after play to verify exactly what was entered per hole per player, see which holes carry handicap strokes per pair, and jump directly to any hole for editing
 **Depends on**: v1.1 (edit-during-play and edit-on-results infrastructure)
@@ -170,10 +174,38 @@ Plans:
 - [x] 14-01-PLAN.md — TDD: remapHandicaps pure function + usePlayAgain shared hook
 - [x] 14-02-PLAN.md — Wire usePlayAgain into home page (QSET-01) and results page (QSET-02)
 
+</details>
+
+### v1.3 Handicap Control & History Editing (Phases 15-16)
+
+**Milestone Goal:** Give users full control over handicap hole selection when adjusting handicaps, and allow editing past games directly from the history page.
+
+### Phase 15: Manual Handicap Hole Selection
+**Goal**: Users can see and manually control which specific holes receive handicap strokes when editing a pair's handicap, instead of relying solely on auto-distribution
+**Depends on**: v1.2 (shipped) -- builds on existing HandicapEditDialog and replay engine
+**Requirements**: HCTL-01, HCTL-02, HCTL-03
+**Success Criteria** (what must be TRUE):
+  1. When user opens the handicap edit dialog for a pair, they can see which holes currently have handicap strokes assigned
+  2. User can tap individual holes to toggle handicap strokes on or off for that pair, overriding the auto-distribution
+  3. When user changes the handicap value (e.g., from 3 to 5), the app shows the current hole selections and lets the user choose which new holes to add (rather than redistributing all holes automatically)
+  4. Manual hole selections persist correctly through score replay -- all pair results recalculate using the user-chosen handicap holes
+**Plans**: TBD
+
+### Phase 16: History Game Loading & Editing
+**Goal**: Users can tap any past game in the history list to open it in an editable results view, modify scores and handicap settings, and have all changes persist back to IndexedDB
+**Depends on**: Phase 15 (manual handicap hole selection UI reused for history editing)
+**Requirements**: HIST-01, HIST-02, HIST-03, HIST-04
+**Success Criteria** (what must be TRUE):
+  1. User can tap a past game in the history list to open it in a detail/results view showing scores, rankings, charts, and storytelling
+  2. User can edit stroke values for any hole and any player in the loaded past game
+  3. User can edit handicap values and manually adjust handicap hole assignments for any pair in the loaded past game (using the Phase 15 manual selection UI)
+  4. After editing, all scores, rankings, storytelling, and head-to-head records recalculate correctly
+  5. Edits persist back to IndexedDB -- closing and reopening the game shows the updated values
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> ... -> 12 -> 13 -> 14
+Phases execute in numeric order: 1 -> 2 -> ... -> 14 -> 15 -> 16
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -191,6 +223,8 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 12 -> 13 -> 14
 | 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
 | 14. Play Again Config Restore | v1.2 | 2/2 | Complete | 2026-02-23 |
+| 15. Manual Handicap Hole Selection | v1.3 | 0/TBD | Not started | - |
+| 16. History Game Loading & Editing | v1.3 | 0/TBD | Not started | - |
 
 ---
-*Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2 shipped)*
+*Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2 shipped, v1.3 added)*
