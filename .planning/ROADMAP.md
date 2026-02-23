@@ -159,10 +159,11 @@ Plans:
   1. "Play Again" on the home page restores player names, hole count, AND all handicap settings (pairwise handicap values and handicap hole assignments), not just names and hole count
   2. Results page has a "Play Again" button that pre-loads the same full config and starts a new game
   3. After tapping "Play Again" from either location, the setup page reflects the restored config with no manual re-entry required
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 14-01: TBD
+- [ ] 14-01-PLAN.md — TDD: remapHandicaps pure function + usePlayAgain shared hook
+- [ ] 14-02-PLAN.md — Wire usePlayAgain into home page (QSET-01) and results page (QSET-02)
 
 ## Progress
 
@@ -184,7 +185,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 12 -> 13 -> 14
 | 11. Storytelling | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
-| 14. Play Again Config Restore | v1.2 | 0/TBD | Not started | - |
+| 14. Play Again Config Restore | v1.2 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2)*
