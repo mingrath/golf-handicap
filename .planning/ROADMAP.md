@@ -4,7 +4,7 @@
 
 - **v1.0 Golf Handicap Scorer v2** -- Phases 1-7 (shipped 2026-02-17)
 - **v1.1 UX Fixes & Insights** -- Phases 8-12 (shipped 2026-02-22)
-- **v1.2 Score Transparency & Fast Setup** -- Phases 13-14 (in progress)
+- **v1.2 Score Transparency & Fast Setup** -- Phases 13-14 (shipped 2026-02-23)
 
 ## Phases
 
@@ -36,12 +36,17 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 </details>
 
-### v1.2 Score Transparency & Fast Setup (In Progress)
+<details>
+<summary>v1.2 Score Transparency & Fast Setup (Phases 13-14) -- SHIPPED 2026-02-23</summary>
 
 **Milestone Goal:** Let users verify what was entered when scores look wrong, and eliminate handicap re-entry on repeat games.
 
 - [x] **Phase 13: Score Audit Grid** - Raw stroke input grid visible during and after play, with handicap-hole visibility and tap-to-edit navigation -- completed 2026-02-23
-- [ ] **Phase 14: Play Again Config Restore** - "Play Again" restores full config including handicap settings, accessible from both home and results pages
+- [x] **Phase 14: Play Again Config Restore** - "Play Again" restores full config including handicap settings, accessible from both home and results pages -- completed 2026-02-23
+
+Full details: `milestones/v1.2-ROADMAP.md`
+
+</details>
 
 ## Phase Details
 
@@ -162,8 +167,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 14-01-PLAN.md — TDD: remapHandicaps pure function + usePlayAgain shared hook
-- [ ] 14-02-PLAN.md — Wire usePlayAgain into home page (QSET-01) and results page (QSET-02)
+- [x] 14-01-PLAN.md — TDD: remapHandicaps pure function + usePlayAgain shared hook
+- [x] 14-02-PLAN.md — Wire usePlayAgain into home page (QSET-01) and results page (QSET-02)
 
 ## Progress
 
@@ -185,7 +190,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 12 -> 13 -> 14
 | 11. Storytelling | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
-| 14. Play Again Config Restore | v1.2 | 0/2 | Not started | - |
+| 14. Play Again Config Restore | v1.2 | 2/2 | Complete | 2026-02-23 |
 
 ---
-*Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2)*
+*Roadmap created: 2026-02-17 (v1.0), updated 2026-02-22 (v1.1), updated 2026-02-23 (v1.2 shipped)*
