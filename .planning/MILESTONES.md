@@ -41,3 +41,38 @@
 
 ---
 
+
+## v1.2 Score Transparency & Fast Setup (Shipped: 2026-02-23)
+
+**Phases completed:** 2 phases (13-14), 3 plans
+**Requirements:** 6/6 satisfied (AUDIT-01/02/03/04, QSET-01/02)
+**Timeline:** 2026-02-23 (single day)
+**Tests:** 118 tests across 6 test files (all passing)
+
+**Key accomplishments:**
+1. Score audit grid (ScoreAuditDialog) for verifying raw stroke inputs during and after play, with handicap-hole visibility
+2. Tap-to-edit navigation from audit grid to specific holes
+3. "Play Again" config restore from home and results pages using remapHandicaps + usePlayAgain hook
+
+**Archive:** `milestones/v1.2-ROADMAP.md`, `milestones/v1.2-REQUIREMENTS.md`
+
+---
+
+## v1.3 Handicap Control & History Editing (Shipped: 2026-02-23)
+
+**Phases completed:** 2 phases (15-16), 3 plans
+**Requirements:** 7/7 satisfied (HCTL-01/02/03, HIST-01/02/03/04)
+**Timeline:** 2026-02-23 (~35 min)
+**Files changed:** 16 files (+1,259/-63 lines)
+**Git range:** b101f46..133e368
+
+**Key accomplishments:**
+1. Inline hole toggle grid in HandicapEditDialog with smart preserve/trim logic (HCTL-01/02/03)
+2. Two-store bridge: loadHistoryGame hydrates Zustand from IndexedDB with historyId tracking
+3. History-aware useSaveGame with skip-on-load pattern for seamless edit persistence
+4. Clickable history cards with tap-to-load and history-mode results page (HIST-01/02/03/04)
+
+**Archive:** `milestones/v1.3-ROADMAP.md`, `milestones/v1.3-REQUIREMENTS.md`
+
+---
+

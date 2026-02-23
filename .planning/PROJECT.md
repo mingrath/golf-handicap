@@ -49,12 +49,13 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - ✓ "Play Again" restores full config including handicap settings -- v1.2
 - ✓ "Play Again" shortcut accessible directly from results page -- v1.2
 
+- ✓ Manual handicap hole selection with smart preserve/trim logic -- v1.3
+- ✓ History game loading: tap past game to open editable results view -- v1.3
+- ✓ History game editing: edit scores, handicaps, and handicap holes with persistence -- v1.3
+
 ### Active
 
-<!-- v1.3 milestone scope -->
-
-- [ ] User can manually select which handicap holes to add/remove when changing handicap value (not auto-distribute)
-- [ ] User can tap a past game in history to load and edit its scores, handicaps, and handicap holes
+(No active milestone -- run `/gsd:new-milestone` to start next)
 
 ### Out of Scope
 
@@ -66,13 +67,10 @@ Fast, clear scoring on the course -- enter strokes quickly after each hole and a
 - Apple Watch companion -- requires native app, not PWA
 - AI-powered analysis -- rule-based highlights work fine
 
-## Current Milestone: v1.3 Handicap Control & History Editing
+## Current State
 
-**Goal:** Give users full control over handicap hole selection when adjusting handicaps, and allow editing past games directly from the history page.
-
-**Target features:**
-- Manual handicap hole selection (add/remove specific holes when changing handicap value)
-- Tap past game in history to load into editable results view (scores, handicaps, handicap holes)
+Shipped v1.3 on 2026-02-23. All 4 milestones delivered (v1.0–v1.3).
+No active milestone — ready for next feature cycle.
 
 ## Context
 
@@ -113,6 +111,9 @@ Existing codebase analysis in `.planning/codebase/` (7 documents).
 | next-themes with attribute="class" | De-facto standard for Next.js theming, handles FOUC/SSR/system detection | ✓ Good |
 | Undo via Zustand snapshot (not zundo) | Single-action 10s undo doesn't need full undo/redo history | ✓ Good |
 | Glass-card two-block CSS approach | oklch(from ...) not well-supported; explicit light/dark blocks are reliable | ✓ Good |
+| Smart handicap change (preserve/trim) | Preserve existing holes on value increase, trim highest on decrease | ✓ Good |
+| Two-store bridge (IndexedDB→Zustand) | loadHistoryGame hydrates Zustand, useSaveGame routes edits back | ✓ Good |
+| skipNextSave ref pattern | Prevents redundant save-on-load when historyId transitions | ✓ Good |
 
 ---
-*Last updated: 2026-02-23 after v1.3 milestone start*
+*Last updated: 2026-02-23 after v1.3 milestone complete*
