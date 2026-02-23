@@ -8,11 +8,13 @@ import {
   ChevronRight,
   Zap,
   Trophy,
+  TableProperties,
 } from "lucide-react";
 import { StrokeInput, DEFAULT_STROKES } from "@/components/shared/stroke-input";
 import { MiniLeaderboard } from "@/components/shared/mini-leaderboard";
 import { UndoBanner } from "@/components/shared/undo-banner";
 import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
+import { ScoreAuditDialog } from "@/components/shared/score-audit-dialog";
 import { useGameStore } from "@/lib/game-store";
 import { useSwipe } from "@/hooks/use-swipe";
 import { HoleStrokes } from "@/lib/types";
@@ -189,6 +191,21 @@ export default function PlayPage() {
             / {config.numberOfHoles}
           </span>
         </h1>
+        <ScoreAuditDialog
+          trigger={
+            <button
+              className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              aria-label="Score audit"
+            >
+              <TableProperties className="h-5 w-5" />
+            </button>
+          }
+          onHoleSelect={(hole) => {
+            goToHole(hole);
+            // Dialog closes itself after calling onHoleSelect
+          }}
+          mode="play"
+        />
         <HandicapEditDialog />
       </header>
 

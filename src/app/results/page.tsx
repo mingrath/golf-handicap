@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Home, RotateCcw, Pencil, X } from "lucide-react";
+import { Home, RotateCcw, Pencil, X, TableProperties } from "lucide-react";
 import { NumberStepper } from "@/components/shared/number-stepper";
 import { useGameStore } from "@/lib/game-store";
 import { getFinalRankings } from "@/lib/scoring";
@@ -13,6 +13,7 @@ import { WinnerPodium } from "@/components/results/winner-podium";
 import { ShareResultsCard } from "@/components/results/share-results-card";
 import { useSaveGame } from "@/hooks/use-save-game";
 import { HandicapEditDialog } from "@/components/shared/handicap-edit-dialog";
+import { ScoreAuditDialog } from "@/components/shared/score-audit-dialog";
 import { StoryHighlights } from "@/components/results/story-highlights";
 
 const MEDAL_COLORS = ["text-amber-400", "text-muted-foreground", "text-amber-700"];
@@ -36,7 +37,8 @@ export default function ResultsPage() {
   useSaveGame();
 
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
-  const hasAnimatedRef = useRef(false);
+  // Track whether the entrance animation has been triggered (once per mount)
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
     if (!config?.players?.length) {
@@ -44,15 +46,19 @@ export default function ResultsPage() {
     }
   }, [config, router]);
 
+  useEffect(() => {
+    // Trigger animation on first mount when game is complete; clear it after a brief delay
+    if (isComplete) {
+      setShouldAnimate(true);
+      const t = setTimeout(() => setShouldAnimate(false), 2000);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount only
+
   if (!config?.players?.length) return null;
 
   const rankings = getFinalRankings(config.players, playerScores);
-
-  // Animation plays only once per component mount after game completion
-  const shouldAnimate = isComplete && !hasAnimatedRef.current;
-  if (isComplete && !hasAnimatedRef.current) {
-    hasAnimatedRef.current = true;
-  }
 
   const handleNewGame = () => {
     resetGame();
@@ -65,6 +71,13 @@ export default function ResultsPage() {
 
   const handleEditStroke = (playerId: string, playerName: string, hole: number) => {
     setEditingCell({ playerId, playerName, hole });
+  };
+
+  const handleAuditHoleSelect = (hole: number) => {
+    // Open edit overlay for first player of this hole
+    const firstPlayer = config?.players[0];
+    if (!firstPlayer) return;
+    setEditingCell({ playerId: firstPlayer.id, playerName: firstPlayer.name, hole });
   };
 
   const getStrokeValue = (playerId: string, hole: number): number => {
@@ -96,6 +109,18 @@ export default function ResultsPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border px-4 py-4 flex items-center">
         <h1 className="text-lg font-bold text-foreground flex-1">Final Results</h1>
+        <ScoreAuditDialog
+          trigger={
+            <button
+              className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              aria-label="Score audit"
+            >
+              <TableProperties className="h-5 w-5" />
+            </button>
+          }
+          onHoleSelect={handleAuditHoleSelect}
+          mode="results"
+        />
         <HandicapEditDialog />
       </header>
 
