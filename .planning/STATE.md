@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Fast, clear scoring on the course -- enter strokes quickly after each hole and always know who's winning at a glance.
-**Current focus:** v1.2 milestone -- Phase 14: Play Again Fix
+**Current focus:** v1.2 milestone -- COMPLETE
 
 ## Current Position
 
-Milestone: v1.2 Score Transparency & Fast Setup
-Phase: 14 of 14 (Play Again Config Restore) -- IN PROGRESS
-Plan: 1 of 2 complete in Phase 14
-Status: Phase 14 Plan 01 complete -- remapHandicaps + usePlayAgain hook shipped
-Last activity: 2026-02-23 -- Phase 14-01 executed: usePlayAgain hook + remapHandicaps pure function (TDD)
+Milestone: v1.2 Score Transparency & Fast Setup -- SHIPPED
+Phase: 14 of 14 (Play Again Config Restore) -- COMPLETE
+Plan: 2 of 2 complete in Phase 14
+Status: Phase 14 Plan 02 complete -- usePlayAgain wired into home page + results page; QSET-01 + QSET-02 fixed and verified
+Last activity: 2026-02-23 -- Phase 14-02 executed: Play Again integrated into both pages, human verify approved
 
-Progress: [███████████░] 95% overall (14 phases, 1/2 plans in Phase 14)
+Progress: [████████████] 100% overall (14 phases, all plans complete)
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: [███████████░] 95% overall (14 phases, 1/2 pla
 |-----------|--------|-------|--------|
 | v1.0 | 7 | 12/12 | Shipped 2026-02-17 |
 | v1.1 | 5 | 5/5 | Shipped 2026-02-22 |
-| v1.2 | 2 | 2/TBD | In progress |
+| v1.2 | 2 | 4/4 | Shipped 2026-02-23 |
 
 **Phase 13 Metrics:**
 
@@ -43,6 +43,7 @@ Progress: [███████████░] 95% overall (14 phases, 1/2 pla
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 14-play-again-config-restore | 14-01 | 2 min | 1 (TDD) | 2 |
+| 14-play-again-config-restore | 14-02 | 8 min | 3 (2 auto + 1 verify) | 2 |
 
 ## Test Coverage
 
@@ -65,6 +66,9 @@ Progress: [███████████░] 95% overall (14 phases, 1/2 pla
 - [v1.2 Phase 14-01]: playerAId/playerBId derived from makePairKey sorted output (newKey.split("::")) not raw lookup order
 - [v1.2 Phase 14-01]: setHandicap must be called before setHandicapHoles -- setHandicap resets handicapHoles to [] internally
 - [v1.2 Phase 14-01]: Pure remapHandicaps co-located with usePlayAgain in same file for single import surface
+- [v1.2 Phase 14-02]: Home page delegates entirely to usePlayAgain hook -- removed setPlayers/setNumberOfHoles destructures
+- [v1.2 Phase 14-02]: Results page Play Again always visible (not conditional) -- hook is no-op on null; useLiveQuery resolves immediately after useSaveGame fires
+- [v1.2 Phase 14-02]: Results footer 3-button layout: Home icon-only square, Play Again flex-1 gradient, New Game flex-1 muted
 
 ### Pending Todos
 
@@ -77,5 +81,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 14-01-PLAN.md -- usePlayAgain hook + remapHandicaps pure function shipped. Ready for Phase 14-02 (home page / results page integration).
+Stopped at: Completed 14-02-PLAN.md -- Play Again wired into home + results page. QSET-01 + QSET-02 verified. v1.2 milestone SHIPPED.
 Resume file: None
