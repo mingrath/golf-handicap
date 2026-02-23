@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 ## Current Position
 
 Milestone: v1.2 Score Transparency & Fast Setup
-Phase: 13 of 14 (Score Audit Grid) -- COMPLETE
-Plan: 1 of 1 complete in Phase 13
-Status: Phase 13 complete -- ready for Phase 14
-Last activity: 2026-02-23 -- Phase 13 executed: ScoreAuditDialog shipped (AUDIT-01 through AUDIT-04)
+Phase: 14 of 14 (Play Again Config Restore) -- IN PROGRESS
+Plan: 1 of 2 complete in Phase 14
+Status: Phase 14 Plan 01 complete -- remapHandicaps + usePlayAgain hook shipped
+Last activity: 2026-02-23 -- Phase 14-01 executed: usePlayAgain hook + remapHandicaps pure function (TDD)
 
-Progress: [███████████░] 92% overall (13/14 phases complete across all milestones)
+Progress: [███████████░] 95% overall (14 phases, 1/2 plans in Phase 14)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18 (v1.0: 12, v1.1: 5, v1.2: 1)
+- Total plans completed: 19 (v1.0: 12, v1.1: 5, v1.2: 2)
 - Average duration: ~5 min/plan
 - Total execution time: ~1.5 hours
 
@@ -30,7 +30,7 @@ Progress: [███████████░] 92% overall (13/14 phases compl
 |-----------|--------|-------|--------|
 | v1.0 | 7 | 12/12 | Shipped 2026-02-17 |
 | v1.1 | 5 | 5/5 | Shipped 2026-02-22 |
-| v1.2 | 2 | 1/TBD | In progress |
+| v1.2 | 2 | 2/TBD | In progress |
 
 **Phase 13 Metrics:**
 
@@ -38,10 +38,16 @@ Progress: [███████████░] 92% overall (13/14 phases compl
 |-------|------|----------|-------|-------|
 | 13-score-audit-grid | 13-01 | 3 min | 2 | 3 |
 
+**Phase 14 Metrics:**
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 14-play-again-config-restore | 14-01 | 2 min | 1 (TDD) | 2 |
+
 ## Test Coverage
 
-- 112 tests across 5 test files (all passing as of Phase 13)
-- pairs: 25, scoring: 39, game-store: 30, storytelling: 8, stats-h2h: 10
+- 118 tests across 6 test files (all passing as of Phase 14-01)
+- pairs: 25, scoring: 39, game-store: 30, storytelling: 8, stats-h2h: 10, use-play-again: 6
 
 ## Accumulated Context
 
@@ -55,6 +61,10 @@ Progress: [███████████░] 92% overall (13/14 phases compl
 - [v1.2 Roadmap]: Play Again fix (QSET-01-02) are one logical change -- Phase 14 single delivery
 - [v1.2 Phase 13]: ScoreAuditDialog uses trigger-as-prop pattern; dialog closes itself after onHoleSelect -- callers do not manage open state
 - [v1.2 Phase 13]: Bottom-sheet dialog pattern: DialogContent className override (max-w-full h-[90dvh] top-[10dvh] translate-y-0 rounded-t-2xl rounded-b-none)
+- [v1.2 Phase 14-01]: remapHandicaps uses player name matching to bridge old-UUID to new-UUID gap across Play Again sessions
+- [v1.2 Phase 14-01]: playerAId/playerBId derived from makePairKey sorted output (newKey.split("::")) not raw lookup order
+- [v1.2 Phase 14-01]: setHandicap must be called before setHandicapHoles -- setHandicap resets handicapHoles to [] internally
+- [v1.2 Phase 14-01]: Pure remapHandicaps co-located with usePlayAgain in same file for single import surface
 
 ### Pending Todos
 
@@ -67,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 13-01-PLAN.md -- ScoreAuditDialog shipped. Phase 13 done. Ready for Phase 14 (Play Again Fix).
+Stopped at: Completed 14-01-PLAN.md -- usePlayAgain hook + remapHandicaps pure function shipped. Ready for Phase 14-02 (home page / results page integration).
 Resume file: None
