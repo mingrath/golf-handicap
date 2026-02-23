@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useGameStore } from "@/lib/game-store";
 import { historyDb } from "@/lib/history-db";
+import { usePlayAgain } from "@/hooks/use-play-again";
 
 export default function HomePage() {
   const router = useRouter();
@@ -16,8 +17,6 @@ export default function HomePage() {
     currentHole,
     isComplete,
     resetGame,
-    setPlayers,
-    setNumberOfHoles,
   } = useGameStore();
 
   const latestGame = useLiveQuery(
@@ -62,18 +61,7 @@ export default function HomePage() {
     router.push("/play");
   };
 
-  const handlePlayAgain = () => {
-    if (!latestGame) return;
-    // Fresh UUIDs, same names -- NEVER reuse old player IDs
-    const players = latestGame.players.map((p) => ({
-      id: crypto.randomUUID(),
-      name: p.name,
-    }));
-    resetGame();
-    setPlayers(players);
-    setNumberOfHoles(latestGame.numberOfHoles);
-    router.push("/setup");
-  };
+  const handlePlayAgain = usePlayAgain();
 
   return (
     <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-6 relative overflow-hidden">
@@ -153,7 +141,7 @@ export default function HomePage() {
         {latestGame && !hasActiveGame && (
           <button
             className="w-full glass-card p-4 text-left active:scale-[0.97] transition-all group"
-            onClick={handlePlayAgain}
+            onClick={() => handlePlayAgain(latestGame)}
           >
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-emerald-600/20 flex items-center justify-center">
