@@ -10,15 +10,15 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 ## Current Position
 
 Milestone: v1.3 Handicap Control & History Editing
-Phase: 15 of 16 (Manual Handicap Hole Selection)
-Plan: 01 complete
-Status: Phase 15 complete — ready for Phase 16
-Last activity: 2026-02-23 -- Phase 15-01 complete: manual handicap hole selection (HCTL-01/02/03) verified
+Phase: 16 of 16 (History Game Loading & Editing)
+Plan: 01 of 02 complete
+Status: Plan 16-01 complete -- ready for Plan 16-02
+Last activity: 2026-02-23 -- Phase 16-01 complete: history game loading infrastructure (loadHistoryGame + historyId + history-aware save)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19 (v1.0: 12, v1.1: 5, v1.2: 2)
+- Total plans completed: 20 (v1.0: 12, v1.1: 5, v1.2: 2, v1.3: 1)
 - Average duration: ~5 min/plan
 - Total execution time: ~1.5 hours
 
@@ -29,7 +29,7 @@ Last activity: 2026-02-23 -- Phase 15-01 complete: manual handicap hole selectio
 | v1.0 | 7 | 12/12 | Shipped 2026-02-17 |
 | v1.1 | 5 | 5/5 | Shipped 2026-02-22 |
 | v1.2 | 2 | 2/2 | Shipped 2026-02-23 |
-| v1.3 | 2 | 1/TBD | In progress |
+| v1.3 | 2 | 2/TBD | In progress |
 
 ## Test Coverage
 
@@ -48,6 +48,8 @@ Last activity: 2026-02-23 -- Phase 15-01 complete: manual handicap hole selectio
 - [v1.3 Roadmap]: HIST requires HCTL manual hole selection UI -- Phase 16 depends on Phase 15
 - [v1.3 Phase 15-01]: Preserve existing hole selections when value increases; trim from highest on decrease; auto-distribute only on fresh start or sign change (HCTL-03 smart logic)
 - [v1.3 Phase 15-01]: setHandicap must be called before setHandicapHoles -- confirmed pattern from Phase 14-01 holds
+- [v1.3 Phase 16-01]: historyId included in localStorage persistence for refresh resilience; skipNextSave ref prevents save-on-load
+- [v1.3 Phase 16-01]: Two-store bridge pattern: IndexedDB -> Zustand via loadHistoryGame, edits -> IndexedDB via history-aware useSaveGame
 
 ### Pending Todos
 
@@ -60,5 +62,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 15-01-PLAN.md (manual handicap hole selection). Phase 15 done, ready for Phase 16.
+Stopped at: Completed 16-01-PLAN.md (history game loading infrastructure). Ready for 16-02 (UI integration).
 Resume file: None
