@@ -92,9 +92,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HCTL-01 | Phase 15 | Pending |
-| HCTL-02 | Phase 15 | Pending |
-| HCTL-03 | Phase 15 | Pending |
+| HCTL-01 | Phase 15 | Complete |
+| HCTL-02 | Phase 15 | Complete |
+| HCTL-03 | Phase 15 | Complete |
 | HIST-01 | Phase 16 | Pending |
 | HIST-02 | Phase 16 | Pending |
 | HIST-03 | Phase 16 | Pending |

@@ -189,10 +189,10 @@ Plans:
   2. User can tap individual holes to toggle handicap strokes on or off for that pair, overriding the auto-distribution
   3. When user changes the handicap value (e.g., from 3 to 5), the app shows the current hole selections and lets the user choose which new holes to add (rather than redistributing all holes automatically)
   4. Manual hole selections persist correctly through score replay -- all pair results recalculate using the user-chosen handicap holes
-**Plans**: 1 plan
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 15-01-PLAN.md — Enhance HandicapEditDialog with inline hole toggle grid per pair
+- [x] 15-01-PLAN.md — Enhance HandicapEditDialog with inline hole toggle grid per pair
 
 ### Phase 16: History Game Loading & Editing
 **Goal**: Users can tap any past game in the history list to open it in an editable results view, modify scores and handicap settings, and have all changes persist back to IndexedDB
@@ -226,7 +226,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 14 -> 15 -> 16
 | 12. Head-to-Head | v1.1 | 1/1 | Complete | 2026-02-22 |
 | 13. Score Audit Grid | v1.2 | 1/1 | Complete | 2026-02-23 |
 | 14. Play Again Config Restore | v1.2 | 2/2 | Complete | 2026-02-23 |
-| 15. Manual Handicap Hole Selection | v1.3 | 0/1 | Not started | - |
+| 15. Manual Handicap Hole Selection | v1.3 | 1/1 | Complete | 2026-02-23 |
 | 16. History Game Loading & Editing | v1.3 | 0/TBD | Not started | - |
 
 ---
