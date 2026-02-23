@@ -57,4 +57,6 @@ export interface GameState {
   pairResults: PairHoleResult[];
   playerScores: PlayerHoleScore[];
   isComplete: boolean;
+  /** ID of the IndexedDB history record when viewing/editing a past game; null for live games */
+  historyId: number | null;
 }

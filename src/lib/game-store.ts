@@ -13,6 +13,7 @@ import {
   PlayerHoleScore,
   PairKey,
 } from "./types";
+import { type HistoryRecord } from "./history-db";
 import { generatePairs, distributeHandicapHoles, makePairKey } from "./pairs";
 import {
   calculatePairHoleResult,
@@ -53,6 +54,9 @@ interface GameStore extends GameState {
   undoLastSubmission: () => void;
   clearUndoSnapshot: () => void;
 
+  // History
+  loadHistoryGame: (record: HistoryRecord) => void;
+
   // Reset
   resetGame: () => void;
   hasActiveGame: () => boolean;
@@ -65,6 +69,7 @@ const initialState: GameState = {
   pairResults: [],
   playerScores: [],
   isComplete: false,
+  historyId: null,
 };
 
 export const useGameStore = create<GameStore>()(
@@ -354,7 +359,19 @@ export const useGameStore = create<GameStore>()(
 
       clearUndoSnapshot: () => set({ _undoSnapshot: null }),
 
-      resetGame: () => set({ ...initialState, _undoSnapshot: null }),
+      loadHistoryGame: (record) =>
+        set({
+          config: record.config,
+          currentHole: record.numberOfHoles,
+          holeStrokes: record.holeStrokes,
+          pairResults: record.pairResults,
+          playerScores: record.playerScores,
+          isComplete: true,
+          historyId: record.id ?? null,
+          _undoSnapshot: null,
+        }),
+
+      resetGame: () => set({ ...initialState, _undoSnapshot: null, historyId: null }),
 
       hasActiveGame: () => {
         const state = get();
