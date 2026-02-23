@@ -2,11 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
-import { ArrowLeft, Trophy, Calendar, Users, BarChart3 } from "lucide-react";
+import { ArrowLeft, Trophy, Calendar, Users, BarChart3, ChevronRight } from "lucide-react";
 import { historyDb, type HistoryRecord } from "@/lib/history-db";
+import { useGameStore } from "@/lib/game-store";
 
 export default function HistoryPage() {
   const router = useRouter();
+  const loadHistoryGame = useGameStore((s) => s.loadHistoryGame);
+
+  const handleGameSelect = (game: HistoryRecord) => {
+    loadHistoryGame(game);
+    router.push("/results");
+  };
 
   const games = useLiveQuery(
     () => historyDb.games.orderBy("completedAt").reverse().toArray(),
@@ -81,7 +88,8 @@ export default function HistoryPage() {
             return (
               <div
                 key={game.id}
-                className="glass-card p-4 hover:bg-muted/30 transition-colors"
+                className="glass-card p-4 hover:bg-muted/30 transition-colors cursor-pointer active:scale-[0.98]"
+                onClick={() => handleGameSelect(game)}
               >
                 {/* Date row */}
                 <div className="flex items-center gap-2 mb-2">
@@ -92,6 +100,7 @@ export default function HistoryPage() {
                   <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                     {game.numberOfHoles} holes
                   </span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0" />
                 </div>
 
                 {/* Winner row */}
