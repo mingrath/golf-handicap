@@ -11,9 +11,9 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 
 Milestone: v1.3 Handicap Control & History Editing
 Phase: 15 of 16 (Manual Handicap Hole Selection)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-02-23 -- Roadmap created for v1.3 (phases 15-16)
+Plan: 01 complete
+Status: Phase 15 complete — ready for Phase 16
+Last activity: 2026-02-23 -- Phase 15-01 complete: manual handicap hole selection (HCTL-01/02/03) verified
 
 ## Performance Metrics
 
@@ -29,7 +29,7 @@ Last activity: 2026-02-23 -- Roadmap created for v1.3 (phases 15-16)
 | v1.0 | 7 | 12/12 | Shipped 2026-02-17 |
 | v1.1 | 5 | 5/5 | Shipped 2026-02-22 |
 | v1.2 | 2 | 2/2 | Shipped 2026-02-23 |
-| v1.3 | 2 | 0/TBD | In progress |
+| v1.3 | 2 | 1/TBD | In progress |
 
 ## Test Coverage
 
@@ -46,6 +46,8 @@ Last activity: 2026-02-23 -- Roadmap created for v1.3 (phases 15-16)
 - [v1.2 Phase 14-01]: setHandicap must be called before setHandicapHoles -- setHandicap resets handicapHoles to [] internally
 - [v1.3 Roadmap]: HCTL requirements tightly coupled to existing HandicapEditDialog -- single phase delivery
 - [v1.3 Roadmap]: HIST requires HCTL manual hole selection UI -- Phase 16 depends on Phase 15
+- [v1.3 Phase 15-01]: Preserve existing hole selections when value increases; trim from highest on decrease; auto-distribute only on fresh start or sign change (HCTL-03 smart logic)
+- [v1.3 Phase 15-01]: setHandicap must be called before setHandicapHoles -- confirmed pattern from Phase 14-01 holds
 
 ### Pending Todos
 
@@ -58,5 +60,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: v1.3 roadmap created (phases 15-16). Ready to plan Phase 15.
+Stopped at: Completed 15-01-PLAN.md (manual handicap hole selection). Phase 15 done, ready for Phase 16.
 Resume file: None
