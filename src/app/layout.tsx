@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
@@ -16,9 +17,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Golf Handicap Scorer",
+  title: {
+    default: "Golf Handicap Scorer",
+    template: "%s | Golf Handicap Scorer",
+  },
   description: "Pairwise golf handicap scoring app",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -44,9 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="apple-touch-icon" href="/icon-192.png" />
-      </head>
+      <head />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -59,27 +65,22 @@ export default function RootLayout({
           <HydrationGate>{children}</HydrationGate>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js');
-                });
-              }
-              if (navigator.storage && navigator.storage.persist) {
-                navigator.storage.persist();
-              }
-              // Capture PWA install prompt for later use
-              window.__pwaInstallPrompt = null;
-              window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                window.__pwaInstallPrompt = e;
-                window.dispatchEvent(new Event('pwa-install-available'));
-              });
-            `,
-          }}
-        />
+        <Script id="sw-register" strategy="afterInteractive">{`
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }
+          if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist();
+          }
+          window.__pwaInstallPrompt = null;
+          window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.__pwaInstallPrompt = e;
+            window.dispatchEvent(new Event('pwa-install-available'));
+          });
+        `}</Script>
       </body>
     </html>
   );

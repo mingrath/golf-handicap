@@ -1,73 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import StatsClient from "./stats-client";
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { usePlayerStats } from "@/hooks/use-player-stats";
-import { useH2HRecords } from "@/hooks/use-h2h-records";
-import { PlayerStatCard } from "@/components/stats/player-stat-card";
-import { WinRateChart } from "@/components/stats/win-rate-chart";
-import { H2HSection } from "@/components/stats/h2h-section";
+export const metadata: Metadata = {
+  title: "Player Stats",
+};
 
-export default function StatsPage() {
-  const router = useRouter();
-  const stats = usePlayerStats();
-  const h2hRecords = useH2HRecords();
-
-  return (
-    <div className="min-h-dvh bg-background">
-      {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="max-w-lg mx-auto flex items-center gap-3 px-4 h-14">
-          <button
-            onClick={() => router.push("/")}
-            className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center active:scale-95 transition-transform"
-          >
-            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
-          </button>
-          <h1 className="text-lg font-bold text-foreground">Player Stats</h1>
-        </div>
-      </div>
-
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
-        {/* null = still loading (progressive enhancement) */}
-        {stats === null ? null : stats.length === 0 ? (
-          /* Empty state */
-          <div className="glass-card p-8 text-center">
-            <div className="text-5xl mb-4">&#9971;</div>
-            <p className="text-muted-foreground text-sm mb-6">
-              No games yet. Complete a round to see your stats.
-            </p>
-            <button
-              onClick={() => router.push("/setup")}
-              className="h-12 px-6 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-600/25 active:scale-[0.97] transition-all"
-            >
-              Start a Game
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Win Rate Chart */}
-            <WinRateChart
-              data={stats.map((s) => ({
-                name: s.displayName,
-                winRate: s.winRate,
-                wins: s.wins,
-                games: s.gamesPlayed,
-              }))}
-            />
-
-            {/* Per-player stat cards */}
-            {stats.map((s) => (
-              <PlayerStatCard key={s.displayName} stats={s} />
-            ))}
-
-            {/* Head-to-Head Records */}
-            {h2hRecords && h2hRecords.length > 0 && (
-              <H2HSection records={h2hRecords} />
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
+export default function Page() {
+  return <StatsClient />;
 }
