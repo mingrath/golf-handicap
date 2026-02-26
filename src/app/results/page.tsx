@@ -227,12 +227,23 @@ export default function ResultsPage() {
         <div className="glass-card p-4 overflow-x-auto">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-foreground">Scorecard</h2>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <button
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground active:text-foreground transition-colors px-2 py-1 -mr-2 rounded-lg active:bg-muted/50"
+              onClick={() => {
+                const firstPlayer = config?.players[0];
+                const firstHole = holeStrokes.find(
+                  (s) => firstPlayer && s.strokes[firstPlayer.id] != null
+                );
+                if (firstPlayer && firstHole) {
+                  handleEditStroke(firstPlayer.id, firstPlayer.name, firstHole.holeNumber);
+                }
+              }}
+            >
               <Pencil className="h-3 w-3" />
               <span>Tap to edit</span>
-            </div>
+            </button>
           </div>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" style={{ touchAction: "manipulation" }}>
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-2 pr-3 text-muted-foreground font-medium">Player</th>
@@ -270,11 +281,11 @@ export default function ResultsPage() {
                       return (
                         <td
                           key={hole}
-                          className={`text-center px-1.5 py-2 tabular-nums cursor-pointer transition-colors ${
+                          className={`text-center px-2 py-2.5 tabular-nums transition-colors select-none ${
                             isEditing
                               ? "bg-emerald-500/20 text-emerald-300 font-bold rounded"
                               : rawStrokes != null
-                              ? "text-muted-foreground hover:bg-muted/50 hover:text-foreground rounded"
+                              ? "text-muted-foreground active:bg-emerald-500/15 active:text-foreground rounded cursor-pointer"
                               : "text-muted-foreground/30"
                           }`}
                           onClick={() => {
