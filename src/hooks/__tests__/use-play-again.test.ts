@@ -125,6 +125,65 @@ describe("remapHandicaps", () => {
     expect(Object.keys(result)).toHaveLength(0);
   });
 
+  it("negates value when new UUID sort order flips playerA/playerB", () => {
+    // Old IDs sort as: old-a < old-b → playerA=old-a, playerB=old-b
+    const oldPlayers: Player[] = [
+      { id: "old-a", name: "Alice" },
+      { id: "old-b", name: "Bob" },
+    ];
+    // New IDs sort REVERSED: zzz-alice > aaa-bob → playerA=aaa-bob, playerB=zzz-alice
+    const newPlayers: Player[] = [
+      { id: "zzz-alice", name: "Alice" },
+      { id: "aaa-bob", name: "Bob" },
+    ];
+    const oldKey = makePairKey("old-a", "old-b");
+    const handicaps: Record<PairKey, PairHandicap> = {
+      [oldKey]: {
+        pairKey: oldKey,
+        playerAId: "old-a",
+        playerBId: "old-b",
+        value: 3, // Alice gives 3 strokes to Bob
+        handicapHoles: [1, 2, 5],
+      },
+    };
+
+    const result = remapHandicaps(oldPlayers, newPlayers, handicaps);
+    const newKey = makePairKey("zzz-alice", "aaa-bob");
+    // New sorted order: aaa-bob (playerA) :: zzz-alice (playerB)
+    // Alice was playerA, now she's playerB → value must negate
+    // -3 means playerB (Alice) gives 3 strokes to playerA (Bob) → same real-world direction
+    expect(result[newKey].value).toBe(-3);
+    expect(result[newKey].playerAId).toBe("aaa-bob");
+    expect(result[newKey].playerBId).toBe("zzz-alice");
+    expect(result[newKey].handicapHoles).toEqual([1, 2, 5]);
+  });
+
+  it("preserves value sign when new UUID sort order stays the same", () => {
+    const oldPlayers: Player[] = [
+      { id: "old-a", name: "Alice" },
+      { id: "old-b", name: "Bob" },
+    ];
+    // New IDs sort same way: aaa-alice < bbb-bob
+    const newPlayers: Player[] = [
+      { id: "aaa-alice", name: "Alice" },
+      { id: "bbb-bob", name: "Bob" },
+    ];
+    const oldKey = makePairKey("old-a", "old-b");
+    const handicaps: Record<PairKey, PairHandicap> = {
+      [oldKey]: {
+        pairKey: oldKey,
+        playerAId: "old-a",
+        playerBId: "old-b",
+        value: 2,
+        handicapHoles: [3, 9],
+      },
+    };
+
+    const result = remapHandicaps(oldPlayers, newPlayers, handicaps);
+    const newKey = makePairKey("aaa-alice", "bbb-bob");
+    expect(result[newKey].value).toBe(2);
+  });
+
   it("correctly remaps all three pairs for three players", () => {
     const oldPlayers: Player[] = [
       { id: "old-a", name: "Alice" },

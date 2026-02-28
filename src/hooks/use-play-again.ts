@@ -35,11 +35,15 @@ export function remapHandicaps(
     // playerAId/playerBId must come from the sorted key, NOT from newA/newB directly,
     // because makePairKey sorts alphabetically — the assignment may be swapped.
     const [sortedA, sortedB] = newKey.split("::");
+    // If the sort order flipped (newA was old playerA but is now sortedB),
+    // negate the value so the handicap direction stays correct.
+    const orderFlipped = newA !== sortedA;
     remapped[newKey] = {
       ...ph,
       pairKey: newKey,
       playerAId: sortedA,
       playerBId: sortedB,
+      value: orderFlipped ? -ph.value : ph.value,
     };
   }
   return remapped;
